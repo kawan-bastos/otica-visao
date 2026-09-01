@@ -2,6 +2,14 @@ namespace OticaVisao.Domain.Catalog;
 
 public sealed class Frame
 {
+    private Frame()
+    {
+        Code = null!;
+        Brand = null!;
+        Model = null!;
+        Color = null!;
+    }
+
     public Frame(
         string code,
         string brand,

@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\OticaVisao.Domain\OticaVisao.Domain.csproj" />
+    <ProjectReference Include="..\..\src\OticaVisao.Infrastructure\OticaVisao.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\OticaVisao.Web\OticaVisao.Web.csproj" />
   </ItemGroup>
 
