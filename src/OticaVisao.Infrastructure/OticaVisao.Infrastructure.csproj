@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\OticaVisao.Application\OticaVisao.Application.csproj" />
     <ProjectReference Include="..\OticaVisao.Domain\OticaVisao.Domain.csproj" />
   </ItemGroup>
 

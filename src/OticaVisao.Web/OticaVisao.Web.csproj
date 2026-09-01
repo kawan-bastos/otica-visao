@@ -8,6 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OticaVisao.Application\OticaVisao.Application.csproj" />
     <ProjectReference Include="..\OticaVisao.Domain\OticaVisao.Domain.csproj" />
     <ProjectReference Include="..\OticaVisao.Infrastructure\OticaVisao.Infrastructure.csproj" />
   </ItemGroup>
