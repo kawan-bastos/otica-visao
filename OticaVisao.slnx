@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OticaVisao.Domain/OticaVisao.Domain.csproj" />
+    <Project Path="src/OticaVisao.Infrastructure/OticaVisao.Infrastructure.csproj" />
+    <Project Path="src/OticaVisao.Web/OticaVisao.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OticaVisao.Tests/OticaVisao.Tests.csproj" />
+  </Folder>
+</Solution>
