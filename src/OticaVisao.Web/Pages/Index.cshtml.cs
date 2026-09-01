@@ -6,10 +6,10 @@ public class IndexModel : PageModel
 {
     public IReadOnlyList<FeaturedFrame> FeaturedFrames { get; } =
     [
-        new("Ray-Ban", "RX5228", "Preto brilho", 599.00m, "black"),
-        new("Armani Exchange", "AX3060", "Havana", 699.00m, "havana"),
-        new("Vogue", "VO4240", "Dourado", 529.00m, "gold"),
-        new("Oakley", "OX5138", "Preto fosco", 789.00m, "graphite")
+        new("Modelo demonstrativo", "OV1001", "Preto brilho", 219.00m, "black"),
+        new("Modelo demonstrativo", "OV1002", "Havana", 219.00m, "havana"),
+        new("Modelo demonstrativo", "OV1003", "Dourado", 219.00m, "gold"),
+        new("Modelo demonstrativo", "OV1004", "Preto fosco", 219.00m, "graphite")
     ];
 
     public void OnGet()
