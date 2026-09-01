@@ -5,8 +5,8 @@ um painel administrativo responsivo para manutenção dos produtos.
 
 ## Estado atual
 
-Fundação técnica da V1. O projeto ainda não contém funcionalidades de negócio nem
-deve ser publicado em produção.
+Protótipo visual responsivo da Home concluído, ainda com produtos, preços e dados
+de contato ilustrativos. O projeto não deve ser publicado em produção.
 
 ## Tecnologias
 

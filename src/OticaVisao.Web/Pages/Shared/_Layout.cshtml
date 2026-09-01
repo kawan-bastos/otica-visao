@@ -1,9 +1,10 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - OticaVisao.Web</title>
+    <meta name="description" content="Conheça as armações da Ótica Visão de Piabetá e fale com nossa equipe pelo WhatsApp." />
+    <title>@ViewData["Title"] - Ótica Visão de Piabetá</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -11,35 +12,54 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">OticaVisao.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <div class="topbar">
+            <div class="site-container topbar__content">
+                <span>Piabetá - RJ</span>
+                <a href="#contato">WhatsApp da loja</a>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg site-nav" aria-label="Navegação principal">
+            <div class="site-container nav-shell">
+                <a class="brand" asp-area="" asp-page="/Index" aria-label="Ótica Visão - página inicial">
+                    <span class="brand__eyebrow">Ótica</span>
+                    <span class="brand__name">Visão</span>
+                    <span class="brand__place">Piabetá</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation"
+                        aria-expanded="false" aria-label="Abrir menu de navegação">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse" id="mainNavigation">
+                    <ul class="navbar-nav nav-links ms-auto align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link active" href="#inicio">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" href="#armacoes">Armações</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#como-funciona">Como funciona</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sobre">Sobre nós</a>
+                        </li>
+                        <li class="nav-item nav-item--cta">
+                            <a class="button button--small button--whatsapp" href="#contato">Falar no WhatsApp</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">@RenderBody()</main>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - OticaVisao.Web - <a asp-area="" asp-page="/Privacy">Privacy</a>
+    <footer class="site-footer">
+        <div class="site-container site-footer__content">
+            <div>
+                <strong>Ótica Visão de Piabetá</strong>
+                <p>Cuidando da sua visão com atendimento próximo e especializado.</p>
+            </div>
+            <p>&copy; @DateTime.Now.Year Ótica Visão. Todos os direitos reservados.</p>
         </div>
     </footer>
 
