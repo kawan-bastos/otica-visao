@@ -1,7 +1,14 @@
+using OticaVisao.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("A conexão 'DefaultConnection' não foi configurada.");
+
+builder.Services.AddInfrastructure(connectionString);
 
 var app = builder.Build();
 

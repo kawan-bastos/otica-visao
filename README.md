@@ -13,7 +13,8 @@ de contato ilustrativos. O projeto não deve ser publicado em produção.
 - .NET 10 LTS
 - ASP.NET Core Razor Pages
 - xUnit
-- PostgreSQL e Entity Framework Core serão adicionados na etapa de persistência
+- PostgreSQL
+- Entity Framework Core com o provedor Npgsql
 
 ## Estrutura
 
@@ -28,6 +29,8 @@ tests/
 
 As responsabilidades e a direção das dependências estão descritas em
 [`docs/architecture.md`](docs/architecture.md).
+O contexto do banco, a configuração local e os comandos de migration estão em
+[`docs/persistence.md`](docs/persistence.md).
 
 ## Executar localmente
 
@@ -35,6 +38,7 @@ Requer o SDK .NET definido em `global.json`.
 
 ```powershell
 dotnet restore
+dotnet tool restore
 dotnet build --no-restore
 dotnet test --no-build
 dotnet run --project src/OticaVisao.Web
