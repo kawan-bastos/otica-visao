@@ -411,9 +411,9 @@ a { color: inherit; }
 .nav-action-link:hover { color: var(--teal-600); }
 
 @media (min-width: 992px) {
-  .nav-shell { display: grid; grid-template-columns: 190px minmax(460px, 1fr) auto; column-gap: 2rem; }
+  .nav-shell { display: grid; grid-template-columns: 176px minmax(460px, 1fr) auto; column-gap: 1.25rem; }
   .navbar-collapse { grid-column: 2 / 4; display: flex !important; align-items: center; }
-  .nav-primary { margin-inline: auto !important; padding-right: 280px; justify-content: center; }
+  .nav-primary { margin: 0 !important; padding: 0 280px 0 0; justify-content: flex-start; }
   .nav-actions { position: absolute; top: 50%; right: 0; z-index: 2; transform: translateY(-50%); }
 }
 
