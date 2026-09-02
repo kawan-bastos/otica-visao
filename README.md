@@ -5,8 +5,9 @@ um painel administrativo responsivo para manutenção dos produtos.
 
 ## Estado atual
 
-Protótipo visual responsivo da Home concluído, ainda com produtos, preços e dados
-de contato ilustrativos. O projeto não deve ser publicado em produção.
+Home responsiva, domínio, persistência e primeira consulta administrativa do catálogo
+concluídos. Os produtos exibidos ainda são fictícios e o painel não possui
+autenticação, portanto o projeto não deve ser publicado em produção.
 
 ## Tecnologias
 
@@ -21,6 +22,7 @@ de contato ilustrativos. O projeto não deve ser publicado em produção.
 ```text
 src/
   OticaVisao.Web/
+  OticaVisao.Application/
   OticaVisao.Domain/
   OticaVisao.Infrastructure/
 tests/
@@ -31,6 +33,8 @@ As responsabilidades e a direção das dependências estão descritas em
 [`docs/architecture.md`](docs/architecture.md).
 O contexto do banco, a configuração local e os comandos de migration estão em
 [`docs/persistence.md`](docs/persistence.md).
+Os casos de uso e a listagem administrativa estão em
+[`docs/catalog-application.md`](docs/catalog-application.md).
 
 ## Executar localmente
 

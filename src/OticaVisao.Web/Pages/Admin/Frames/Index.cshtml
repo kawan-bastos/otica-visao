@@ -1,0 +1,58 @@
+@page
+@using OticaVisao.Domain.Catalog
+@model OticaVisao.Web.Pages.Admin.Frames.IndexModel
+@{
+    ViewData["Title"] = "Armações do catálogo";
+}
+
+<main class="admin-page">
+    <header class="admin-page__header">
+        <div>
+            <span class="eyebrow">Painel administrativo</span>
+            <h1>Armações do catálogo</h1>
+            <p>Consulte os modelos, preços, estoque e publicação cadastrados.</p>
+        </div>
+    </header>
+
+    @if (Model.Frames.Count == 0)
+    {
+        <div class="admin-empty">
+            <h2>Nenhuma armação cadastrada</h2>
+            <p>Os produtos adicionados ao catálogo aparecerão aqui.</p>
+        </div>
+    }
+    else
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Armação</th>
+                        <th>Tipo</th>
+                        <th>Preço</th>
+                        <th>Estoque</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var frame in Model.Frames)
+                    {
+                        <tr>
+                            <td><strong>@frame.Code</strong></td>
+                            <td>@frame.Brand @frame.Model <small>@frame.Color</small></td>
+                            <td>@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
+                            <td>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
+                            <td>@frame.StockQuantity</td>
+                            <td>
+                                <span class="status-badge @(frame.IsAvailable ? "status-badge--available" : "status-badge--unavailable")">
+                                    @(frame.IsAvailable ? "Disponível" : "Indisponível")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>

@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/OticaVisao.Application/OticaVisao.Application.csproj" />
     <Project Path="src/OticaVisao.Domain/OticaVisao.Domain.csproj" />
     <Project Path="src/OticaVisao.Infrastructure/OticaVisao.Infrastructure.csproj" />
     <Project Path="src/OticaVisao.Web/OticaVisao.Web.csproj" />

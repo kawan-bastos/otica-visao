@@ -9,6 +9,7 @@ na rota `/admin`.
 ## Projetos
 
 - `OticaVisao.Web`: interface web, composição da aplicação e endpoints.
+- `OticaVisao.Application`: casos de uso e contratos necessários ao catálogo.
 - `OticaVisao.Domain`: entidades e regras de negócio sem dependências externas.
 - `OticaVisao.Infrastructure`: PostgreSQL, Entity Framework Core e serviços externos.
 - `OticaVisao.Tests`: testes de regras, integração e arquitetura.
@@ -16,15 +17,16 @@ na rota `/admin`.
 As dependências seguem este sentido:
 
 ```text
-Web -> Domain
-Web -> Infrastructure -> Domain
+Web -> Application -> Domain
+Web -> Infrastructure -> Application
+Infrastructure -> Domain
 Tests -> aplicação sob teste
 ```
 
 O domínio não pode depender da camada Web nem da Infrastructure.
 
-## Limites desta fundação
+## Estado atual
 
-Esta etapa não adiciona banco, autenticação, entidades do catálogo ou upload. Essas
-dependências serão introduzidas junto ao primeiro caso de uso que realmente precisar
-delas, evitando configuração e abstrações prematuras.
+O catálogo já possui domínio, persistência PostgreSQL e casos de uso. O painel ainda
+não possui autenticação, formulários de manutenção ou upload de imagens; esses itens
+serão adicionados em etapas próprias.
