@@ -56,4 +56,35 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
 
         Assert.True(response.StatusCode == HttpStatusCode.OK, body);
     }
+
+    [Theory]
+    [InlineData("/Account/Login")]
+    [InlineData("/Account/Register")]
+    public async Task CustomerAccountPagesAreAvailableWithoutAuthentication(string path)
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        var response = await client.GetAsync(path);
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, body);
+    }
+
+    [Fact]
+    public async Task AnonymousVisitorIsRedirectedFromProfileToCustomerLogin()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        var response = await client.GetAsync("/Account");
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal("/Account/Login", response.Headers.Location?.AbsolutePath);
+    }
 }

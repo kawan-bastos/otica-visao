@@ -1,0 +1,17 @@
+@page
+@model OticaVisao.Web.Pages.Account.IndexModel
+@{ ViewData["Title"] = "Minha conta"; }
+
+<section class="account-page">
+    <div class="site-container account-page__shell">
+        <span class="eyebrow">Minha conta</span>
+        <h1>Olá, @Model.DisplayName!</h1>
+        <p>Confira os dados usados no seu cadastro.</p>
+        <dl class="account-details">
+            <div><dt>Nome</dt><dd>@Model.DisplayName</dd></div>
+            <div><dt>E-mail</dt><dd>@Model.Email</dd></div>
+            <div><dt>Telefone</dt><dd>@(Model.PhoneNumber ?? "Não informado")</dd></div>
+        </dl>
+        <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
+    </div>
+</section>

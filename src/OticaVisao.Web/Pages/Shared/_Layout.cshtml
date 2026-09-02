@@ -52,7 +52,7 @@
                         <li class="nav-item">
                             <a class="nav-link @(isContact ? "active" : null)" asp-page="/Contact" aria-current="@(isContact ? "page" : null)">Contato</a>
                         </li>
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link @(isAdmin ? "active" : null)" asp-page="/Admin/Frames/Index" aria-current="@(isAdmin ? "page" : null)">Painel</a>
@@ -61,6 +61,29 @@
                                 <form method="post" asp-page="/Admin/Account/Logout">
                                     <button class="nav-link nav-link--button" type="submit">Sair</button>
                                 </form>
+                            </li>
+                        }
+                        else if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Account/Index">Minha conta</a>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-page="/Account/Logout">
+                                    <button class="nav-link nav-link--button" type="submit">Sair</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Account/Login">Entrar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="button button--small button--admin" asp-page="/Admin/Frames/Index">Painel administrativo</a>
                             </li>
                         }
                         <li class="nav-item nav-item--cta">
@@ -85,7 +108,7 @@
                     <a asp-page="/About">Sobre nós</a>
                     <a asp-page="/Contact">Contato e localização</a>
                     <a asp-page="/Privacy">Privacidade</a>
-                    @if (User.Identity?.IsAuthenticated != true)
+                    @if (!User.IsInRole("Admin"))
                     {
                         <a asp-page="/Admin/Account/Login">Acesso administrativo</a>
                     }

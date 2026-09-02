@@ -8,7 +8,9 @@ using OticaVisao.Web.Models.Admin;
 namespace OticaVisao.Web.Pages.Admin.Account;
 
 [AllowAnonymous]
-public sealed class LoginModel(SignInManager<ApplicationUser> signInManager) : PageModel
+public sealed class LoginModel(
+    SignInManager<ApplicationUser> signInManager,
+    UserManager<ApplicationUser> userManager) : PageModel
 {
     [BindProperty]
     public LoginInputModel Input { get; set; } = new();
@@ -36,7 +38,13 @@ public sealed class LoginModel(SignInManager<ApplicationUser> signInManager) : P
 
         if (result.Succeeded)
         {
-            return LocalRedirect(ReturnUrl ?? Url.Page("/Admin/Frames/Index")!);
+            var user = await userManager.FindByEmailAsync(Input.Email.Trim());
+            if (user is not null && await userManager.IsInRoleAsync(user, AdminAuthorization.Role))
+            {
+                return LocalRedirect(ReturnUrl ?? Url.Page("/Admin/Frames/Index")!);
+            }
+
+            await signInManager.SignOutAsync();
         }
 
         ModelState.AddModelError(
