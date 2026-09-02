@@ -31,6 +31,8 @@ registros não representam o estoque real da loja e podem ser substituídos depo
 A rota `/Admin/Frames` apresenta a listagem do painel, com código, modelo, tipo,
 preço, estoque e disponibilidade. A partir dela é possível cadastrar uma armação e
 editar seus dados, medidas, estoque, ativação e publicação.
+O cadastro também recebe uma foto principal; detalhes de validação e armazenamento
+estão em [`frame-images.md`](frame-images.md).
 
 O painel é protegido por autenticação e permite apenas usuários com a função
 administrativa. A configuração do acesso está descrita em

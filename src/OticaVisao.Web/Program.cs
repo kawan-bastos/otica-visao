@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using OticaVisao.Infrastructure;
 using OticaVisao.Infrastructure.Authentication;
+using OticaVisao.Infrastructure.Images;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
 });
+builder.Services.Configure<FormOptions>(options =>
+    options.MultipartBodyLengthLimit = 6 * 1024 * 1024);
 
 var app = builder.Build();
 
@@ -50,6 +54,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapGet("/frame-images/{fileName}", async (
+    string fileName,
+    IFrameImageStorage storage,
+    CancellationToken cancellationToken) =>
+{
+    var image = await storage.OpenReadAsync(fileName, cancellationToken);
+    return image is null
+        ? Results.NotFound()
+        : Results.Stream(image.Content, image.ContentType, enableRangeProcessing: true);
+}).AllowAnonymous();
 app.MapRazorPages()
    .WithStaticAssets();
 

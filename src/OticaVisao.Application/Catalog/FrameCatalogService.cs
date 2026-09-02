@@ -33,7 +33,8 @@ public sealed class FrameCatalogService(IFrameRepository repository)
             request.Type,
             request.Shape,
             request.TargetAudience,
-            request.Measurements);
+            request.Measurements,
+            request.ImageFileName);
 
         await repository.AddAsync(frame, cancellationToken);
         await repository.SaveChangesAsync(cancellationToken);
@@ -116,6 +117,16 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         await repository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task SetImageAsync(
+        Guid id,
+        string imageFileName,
+        CancellationToken cancellationToken = default)
+    {
+        var frame = await GetRequiredAsync(id, cancellationToken);
+        frame.SetImage(imageFileName);
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task<Frame> GetRequiredAsync(Guid id, CancellationToken cancellationToken)
     {
         return await repository.GetByIdAsync(id, cancellationToken)
@@ -136,6 +147,7 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         frame.Measurements?.LensWidthMillimeters,
         frame.Measurements?.BridgeWidthMillimeters,
         frame.Measurements?.TempleLengthMillimeters,
+        frame.ImageFileName,
         frame.IsActive,
         frame.IsPublished,
         frame.IsAvailable);

@@ -24,6 +24,7 @@ public sealed class ApplicationDbContextTests
         Assert.Equal("code", entity.FindProperty(nameof(Frame.Code))?.GetColumnName(table));
         Assert.Equal("numeric(10,2)", entity.FindProperty(nameof(Frame.Price))?.GetColumnType());
         Assert.Equal("stock_quantity", entity.FindProperty(nameof(Frame.StockQuantity))?.GetColumnName(table));
+        Assert.Equal("image_file_name", entity.FindProperty(nameof(Frame.ImageFileName))?.GetColumnName(table));
 
         var codeIndex = entity.GetIndexes().Single(index =>
             index.Properties.Single().Name == nameof(Frame.Code));

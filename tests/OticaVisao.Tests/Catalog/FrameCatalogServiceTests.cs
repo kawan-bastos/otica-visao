@@ -76,6 +76,19 @@ public sealed class FrameCatalogServiceTests
         Assert.Equal(1, repository.SaveCount);
     }
 
+    [Fact]
+    public async Task SetImageUpdatesStoredFileReference()
+    {
+        var existing = CreateFrame("ARM-103");
+        var repository = new FakeFrameRepository(existing);
+        var service = new FrameCatalogService(repository);
+
+        await service.SetImageAsync(existing.Id, "imagem-segura.webp");
+
+        Assert.Equal("imagem-segura.webp", existing.ImageFileName);
+        Assert.Equal(1, repository.SaveCount);
+    }
+
     private static CreateFrameRequest CreateRequest(string code) => new(
         code,
         "Linha Visão",

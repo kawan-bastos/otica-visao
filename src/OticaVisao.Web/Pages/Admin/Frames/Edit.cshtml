@@ -14,7 +14,14 @@
         <a class="button button--secondary" asp-page="Index">Voltar ao catálogo</a>
     </header>
 
-    <form method="post" class="admin-form">
+    <form method="post" enctype="multipart/form-data" class="admin-form">
+        @if (!string.IsNullOrWhiteSpace(Model.ExistingImageFileName))
+        {
+            <div class="admin-current-image">
+                <img src="/frame-images/@Model.ExistingImageFileName" alt="Foto atual da armação" />
+                <span>Foto atual</span>
+            </div>
+        }
         <partial name="_FrameForm" for="Input" />
 
         <section class="admin-form__section">

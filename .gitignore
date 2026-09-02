@@ -60,3 +60,6 @@ TestResults/
 # Publicação
 publish/
 artifacts/
+
+# Imagens enviadas no desenvolvimento
+App_Data/

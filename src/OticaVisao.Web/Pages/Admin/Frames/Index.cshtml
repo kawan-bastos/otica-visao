@@ -34,6 +34,7 @@
                 <thead>
                     <tr>
                         <th>Código</th>
+                        <th>Foto</th>
                         <th>Armação</th>
                         <th>Tipo</th>
                         <th>Preço</th>
@@ -47,6 +48,16 @@
                     {
                         <tr>
                             <td><strong>@frame.Code</strong></td>
+                            <td>
+                                @if (frame.ImageFileName is not null)
+                                {
+                                    <img class="admin-frame-thumbnail" src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model" />
+                                }
+                                else
+                                {
+                                    <span class="admin-frame-thumbnail admin-frame-thumbnail--empty">Sem foto</span>
+                                }
+                            </td>
                             <td>@frame.Brand @frame.Model <small>@frame.Color</small></td>
                             <td>@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
                             <td>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>

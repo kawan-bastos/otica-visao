@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace OticaVisao.Tests.Authentication;
@@ -13,11 +14,18 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
     public AdminAuthorizationTests(WebApplicationFactory<Program> factory)
     {
         this.factory = factory.WithWebHostBuilder(builder =>
+        {
             builder.ConfigureServices(services =>
             {
+                var accountInitializer = services
+                    .Where(descriptor => descriptor.ServiceType == typeof(IHostedService))
+                    .Single(descriptor =>
+                        descriptor.ImplementationType?.Name == "AdminAccountInitializationService");
+                services.Remove(accountInitializer);
                 services.AddLogging(logging => logging.ClearProviders());
                 services.AddDataProtection().UseEphemeralDataProtectionProvider();
-            }));
+            });
+        });
     }
 
     [Fact]
