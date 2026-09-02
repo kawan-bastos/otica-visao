@@ -17,7 +17,7 @@ public sealed class CreateModel(CustomerService customerService) : PageModel
         {
             await customerService.CreateAsync(Input.ToCreateRequest(), cancellationToken);
         }
-        catch (ArgumentException exception)
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, exception.Message);
             return Page();

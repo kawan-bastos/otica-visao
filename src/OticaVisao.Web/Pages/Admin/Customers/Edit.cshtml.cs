@@ -28,7 +28,7 @@ public sealed class EditModel(CustomerService customerService) : PageModel
             await customerService.UpdateAsync(id, Input.ToUpdateRequest(), cancellationToken);
         }
         catch (KeyNotFoundException) { return NotFound(); }
-        catch (ArgumentException exception)
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, exception.Message);
             return Page();

@@ -5,13 +5,16 @@ O cadastro de clientes é uma ficha administrativa independente das contas usada
 ## Escopo atual
 
 - acesso restrito à função administrativa;
-- busca por nome, telefone ou e-mail;
-- cadastro e edição de nome, telefone, e-mail opcional e observações;
+- busca por nome, telefone, e-mail ou CPF;
+- cadastro e edição de nome, telefone, CPF, data de nascimento, endereço completo, e-mail opcional e observações;
+- validação dos dígitos verificadores do CPF e bloqueio de CPF duplicado;
 - atalho do telefone para iniciar uma conversa no WhatsApp;
 - datas de criação e última atualização registradas em UTC;
 - persistência na tabela `customers` do PostgreSQL.
 
 As observações são destinadas apenas a lembretes comuns de atendimento. Receitas, prescrições e dados médicos não devem ser registrados nesse campo. Esses dados exigirão uma etapa específica de segurança e LGPD.
+
+O CPF é armazenado somente com números. CPF, data de nascimento e endereço são dados pessoais e ficam disponíveis apenas no painel administrativo. A migração mantém as novas colunas opcionais no banco para não invalidar fichas criadas anteriormente, mas a tela exige o preenchimento ao criar ou atualizar um cliente.
 
 ## Separação das contas online
 

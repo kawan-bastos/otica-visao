@@ -21,7 +21,14 @@ public sealed class CustomerService(ICustomerRepository repository)
     public async Task<Guid> CreateAsync(CreateCustomerRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var customer = new Customer(request.Name, request.Phone, request.Email, request.Notes);
+        var cpf = BrazilianCpf.Normalize(request.Cpf);
+        if (await repository.CpfExistsAsync(cpf, cancellationToken: cancellationToken))
+        {
+            throw new InvalidOperationException("Já existe um cliente cadastrado com este CPF.");
+        }
+
+        var customer = new Customer(
+            request.Name, request.Phone, cpf, request.BirthDate, CreateAddress(request), request.Email, request.Notes);
         await repository.AddAsync(customer, cancellationToken);
         await repository.SaveChangesAsync(cancellationToken);
         return customer.Id;
@@ -32,11 +39,29 @@ public sealed class CustomerService(ICustomerRepository repository)
         ArgumentNullException.ThrowIfNull(request);
         var customer = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Cliente não encontrado.");
-        customer.Update(request.Name, request.Phone, request.Email, request.Notes);
+        var cpf = BrazilianCpf.Normalize(request.Cpf);
+        if (await repository.CpfExistsAsync(cpf, id, cancellationToken))
+        {
+            throw new InvalidOperationException("Já existe outro cliente cadastrado com este CPF.");
+        }
+
+        customer.Update(
+            request.Name, request.Phone, cpf, request.BirthDate, CreateAddress(request), request.Email, request.Notes);
         await repository.SaveChangesAsync(cancellationToken);
     }
 
     private static CustomerListItem ToListItem(Customer customer) => new(
-        customer.Id, customer.Name, customer.Phone, customer.Email, customer.Notes,
+        customer.Id, customer.Name, customer.Phone, customer.Cpf, customer.BirthDate,
+        customer.Address?.PostalCode, customer.Address?.Street, customer.Address?.Number,
+        customer.Address?.Complement, customer.Address?.Neighborhood, customer.Address?.City, customer.Address?.State,
+        customer.Email, customer.Notes,
         customer.CreatedAtUtc, customer.UpdatedAtUtc);
+
+    private static CustomerAddress CreateAddress(CreateCustomerRequest request) => new(
+        request.PostalCode, request.Street, request.Number, request.Complement,
+        request.Neighborhood, request.City, request.State);
+
+    private static CustomerAddress CreateAddress(UpdateCustomerRequest request) => new(
+        request.PostalCode, request.Street, request.Number, request.Complement,
+        request.Neighborhood, request.City, request.State);
 }

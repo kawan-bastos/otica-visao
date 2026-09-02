@@ -16,6 +16,7 @@ public sealed class CustomerRepository(ApplicationDbContext context) : ICustomer
             query = query.Where(customer =>
                 EF.Functions.ILike(customer.Name, pattern)
                 || EF.Functions.ILike(customer.Phone, pattern)
+                || (customer.Cpf != null && EF.Functions.ILike(customer.Cpf, pattern))
                 || (customer.Email != null && EF.Functions.ILike(customer.Email, pattern)));
         }
 
@@ -24,6 +25,9 @@ public sealed class CustomerRepository(ApplicationDbContext context) : ICustomer
 
     public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         context.Customers.SingleOrDefaultAsync(customer => customer.Id == id, cancellationToken);
+
+    public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) =>
+        context.Customers.AnyAsync(customer => customer.Cpf == cpf && (!excludingId.HasValue || customer.Id != excludingId), cancellationToken);
 
     public Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
         context.Customers.AddAsync(customer, cancellationToken).AsTask();

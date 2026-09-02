@@ -23,7 +23,7 @@
     <form class="customer-search" method="get">
         <div class="form-field">
             <label asp-for="Search">Buscar cliente</label>
-            <input asp-for="Search" placeholder="Nome, telefone ou e-mail" />
+            <input asp-for="Search" placeholder="Nome, telefone, CPF ou e-mail" />
         </div>
         <button class="button button--primary" type="submit">Buscar</button>
         <a class="button button--secondary" asp-page="Index">Limpar</a>
@@ -40,14 +40,15 @@
     {
         <div class="admin-table-wrapper">
             <table class="admin-table">
-                <thead><tr><th>Cliente</th><th>Telefone</th><th>E-mail</th><th>Cadastro</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <thead><tr><th>Cliente</th><th>CPF</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
                 <tbody>
                 @foreach (var customer in Model.Customers)
                 {
                     <tr>
                         <td data-label="Cliente"><strong>@customer.Name</strong>@if (!string.IsNullOrWhiteSpace(customer.Notes)) { <small>Possui observações</small> }</td>
+                        <td data-label="CPF">@CustomerCpf.Format(customer.Cpf)</td>
                         <td data-label="Telefone"><a class="admin-contact-link" href="https://wa.me/@CustomerPhone.WhatsAppNumber(customer.Phone)" target="_blank" rel="noopener noreferrer">@customer.Phone</a></td>
-                        <td data-label="E-mail">@(customer.Email ?? "Não informado")</td>
+                        <td data-label="Nascimento">@(customer.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informado")</td>
                         <td data-label="Cadastro">@customer.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy")</td>
                         <td class="admin-table__actions" data-label="Ações"><a asp-page="Edit" asp-route-id="@customer.Id">Ver e editar</a></td>
                     </tr>
@@ -66,5 +67,12 @@
             var digits = new string(value.Where(char.IsDigit).ToArray());
             return digits.StartsWith("55", StringComparison.Ordinal) ? digits : $"55{digits}";
         }
+    }
+
+    private static class CustomerCpf
+    {
+        public static string Format(string? value) => value?.Length == 11
+            ? $"{value[..3]}.{value[3..6]}.{value[6..9]}-{value[9..]}"
+            : "Não informado";
     }
 }
