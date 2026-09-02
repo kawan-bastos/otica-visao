@@ -18,7 +18,7 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         ArgumentNullException.ThrowIfNull(request);
 
         var normalizedCode = request.Code.Trim().ToUpperInvariant();
-        if (await repository.CodeExistsAsync(normalizedCode, cancellationToken))
+        if (await repository.CodeExistsAsync(normalizedCode, cancellationToken: cancellationToken))
         {
             throw new InvalidOperationException($"Já existe uma armação com o código '{normalizedCode}'.");
         }
@@ -39,6 +39,61 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         await repository.SaveChangesAsync(cancellationToken);
 
         return frame.Id;
+    }
+
+    public async Task<FrameCatalogItem?> GetAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var frame = await repository.GetByIdAsync(id, cancellationToken);
+        return frame is null ? null : ToCatalogItem(frame);
+    }
+
+    public async Task UpdateAsync(
+        Guid id,
+        UpdateFrameRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var frame = await GetRequiredAsync(id, cancellationToken);
+        var normalizedCode = request.Code.Trim().ToUpperInvariant();
+
+        if (await repository.CodeExistsAsync(normalizedCode, id, cancellationToken))
+        {
+            throw new InvalidOperationException($"Já existe uma armação com o código '{normalizedCode}'.");
+        }
+
+        frame.UpdateCatalogDetails(
+            normalizedCode,
+            request.Brand,
+            request.Model,
+            request.Color,
+            request.Type,
+            request.Shape,
+            request.TargetAudience,
+            request.Measurements);
+        frame.ChangePrice(request.Price);
+        frame.SetStock(request.StockQuantity);
+
+        if (request.IsActive)
+        {
+            frame.Reactivate();
+            if (request.IsPublished)
+            {
+                frame.Publish();
+            }
+            else
+            {
+                frame.Unpublish();
+            }
+        }
+        else
+        {
+            frame.Deactivate();
+        }
+
+        await repository.SaveChangesAsync(cancellationToken);
     }
 
     public async Task ChangePriceAsync(
@@ -78,6 +133,9 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         frame.Type,
         frame.Shape,
         frame.TargetAudience,
+        frame.Measurements?.LensWidthMillimeters,
+        frame.Measurements?.BridgeWidthMillimeters,
+        frame.Measurements?.TempleLengthMillimeters,
         frame.IsActive,
         frame.IsPublished,
         frame.IsAvailable);

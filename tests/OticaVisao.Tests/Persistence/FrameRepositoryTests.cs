@@ -28,6 +28,7 @@ public sealed class FrameRepositoryTests
             first => Assert.Equal("ARM-001", first.Code),
             second => Assert.Equal("ARM-002", second.Code));
         Assert.True(await repository.CodeExistsAsync("ARM-002"));
+        Assert.False(await repository.CodeExistsAsync("ARM-002", frames[1].Id));
     }
 
     private static Frame CreateFrame(string code, string brand, string model) => new(

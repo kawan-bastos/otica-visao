@@ -12,7 +12,13 @@
             <h1>Armações do catálogo</h1>
             <p>Consulte os modelos, preços, estoque e publicação cadastrados.</p>
         </div>
+        <a class="button button--primary" asp-page="Create">Cadastrar armação</a>
     </header>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
+    }
 
     @if (Model.Frames.Count == 0)
     {
@@ -33,6 +39,7 @@
                         <th>Preço</th>
                         <th>Estoque</th>
                         <th>Status</th>
+                        <th><span class="visually-hidden">Ações</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +55,9 @@
                                 <span class="status-badge @(frame.IsAvailable ? "status-badge--available" : "status-badge--unavailable")">
                                     @(frame.IsAvailable ? "Disponível" : "Indisponível")
                                 </span>
+                            </td>
+                            <td class="admin-table__actions">
+                                <a asp-page="Edit" asp-route-id="@frame.Id">Editar</a>
                             </td>
                         </tr>
                     }

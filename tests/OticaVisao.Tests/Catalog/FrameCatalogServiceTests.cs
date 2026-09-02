@@ -46,6 +46,36 @@ public sealed class FrameCatalogServiceTests
         Assert.Equal(1, repository.SaveCount);
     }
 
+    [Fact]
+    public async Task UpdateChangesCatalogDataAndVisibility()
+    {
+        var existing = CreateFrame("ARM-101");
+        var repository = new FakeFrameRepository(existing);
+        var service = new FrameCatalogService(repository);
+        var request = new UpdateFrameRequest(
+            " arm-102 ",
+            "Nova marca",
+            "Novo modelo",
+            "Azul",
+            199m,
+            4,
+            FrameType.Sunglasses,
+            FrameShape.Round,
+            TargetAudience.Child,
+            true,
+            true,
+            new FrameMeasurements(50, 18, 140));
+
+        await service.UpdateAsync(existing.Id, request);
+
+        Assert.Equal("ARM-102", existing.Code);
+        Assert.Equal(199m, existing.Price);
+        Assert.Equal(4, existing.StockQuantity);
+        Assert.True(existing.IsPublished);
+        Assert.True(existing.IsAvailable);
+        Assert.Equal(1, repository.SaveCount);
+    }
+
     private static CreateFrameRequest CreateRequest(string code) => new(
         code,
         "Linha Visão",
@@ -80,8 +110,11 @@ public sealed class FrameCatalogServiceTests
         public Task<Frame?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
             Task.FromResult(Frames.SingleOrDefault(frame => frame.Id == id));
 
-        public Task<bool> CodeExistsAsync(string code, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Frames.Any(frame => frame.Code == code));
+        public Task<bool> CodeExistsAsync(
+            string code,
+            Guid? excludingId = null,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(Frames.Any(frame => frame.Code == code && frame.Id != excludingId));
 
         public Task AddAsync(Frame frame, CancellationToken cancellationToken = default)
         {

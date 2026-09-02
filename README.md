@@ -5,7 +5,7 @@ um painel administrativo responsivo para manutenção dos produtos.
 
 ## Estado atual
 
-Home responsiva, domínio, persistência e primeira consulta administrativa do catálogo
+Home responsiva, domínio, persistência e manutenção administrativa do catálogo
 concluídos. Os produtos exibidos ainda são fictícios e o painel não possui
 autenticação, portanto o projeto não deve ser publicado em produção.
 

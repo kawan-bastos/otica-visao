@@ -21,9 +21,14 @@ public sealed class FrameRepository(ApplicationDbContext context) : IFrameReposi
         return context.Frames.SingleOrDefaultAsync(frame => frame.Id == id, cancellationToken);
     }
 
-    public Task<bool> CodeExistsAsync(string code, CancellationToken cancellationToken = default)
+    public Task<bool> CodeExistsAsync(
+        string code,
+        Guid? excludingId = null,
+        CancellationToken cancellationToken = default)
     {
-        return context.Frames.AnyAsync(frame => frame.Code == code, cancellationToken);
+        return context.Frames.AnyAsync(
+            frame => frame.Code == code && (!excludingId.HasValue || frame.Id != excludingId.Value),
+            cancellationToken);
     }
 
     public Task AddAsync(Frame frame, CancellationToken cancellationToken = default)

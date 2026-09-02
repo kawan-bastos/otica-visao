@@ -8,7 +8,10 @@ public interface IFrameRepository
 
     Task<Frame?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<bool> CodeExistsAsync(string code, CancellationToken cancellationToken = default);
+    Task<bool> CodeExistsAsync(
+        string code,
+        Guid? excludingId = null,
+        CancellationToken cancellationToken = default);
 
     Task AddAsync(Frame frame, CancellationToken cancellationToken = default);
 
