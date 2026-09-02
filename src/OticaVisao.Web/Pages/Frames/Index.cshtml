@@ -1,0 +1,97 @@
+@page
+@using OticaVisao.Domain.Catalog
+@model OticaVisao.Web.Pages.Frames.IndexModel
+@{
+    ViewData["Title"] = "Catálogo de armações";
+}
+
+<main class="public-catalog">
+    <header class="catalog-hero">
+        <div class="site-container">
+            <span class="eyebrow">Catálogo online</span>
+            <h1>Encontre uma armação para experimentar na loja.</h1>
+            <p>Veja os modelos disponíveis e converse com nossa equipe antes de visitar a Ótica Visão de Piabetá.</p>
+        </div>
+    </header>
+
+    <div class="site-container catalog-layout">
+        <form method="get" class="catalog-filters">
+            <h2>Filtrar armações</h2>
+            <div class="form-field">
+                <label asp-for="Search">Buscar</label>
+                <input asp-for="Search" placeholder="Marca, modelo, cor ou código" />
+            </div>
+            <div class="form-field">
+                <label asp-for="Type">Tipo</label>
+                <select asp-for="Type">
+                    <option value="">Todos</option>
+                    <option value="Prescription">Óculos de grau</option>
+                    <option value="Sunglasses">Óculos de sol</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label asp-for="Shape">Formato</label>
+                <select asp-for="Shape">
+                    <option value="">Todos</option>
+                    <option value="Round">Redondo</option>
+                    <option value="Square">Quadrado</option>
+                    <option value="Aviator">Aviador</option>
+                    <option value="Other">Outro</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label asp-for="TargetAudience">Público</label>
+                <select asp-for="TargetAudience">
+                    <option value="">Todos</option>
+                    <option value="Adult">Adulto</option>
+                    <option value="Child">Infantil</option>
+                </select>
+            </div>
+            <button class="button button--primary" type="submit">Aplicar filtros</button>
+            <a class="catalog-filters__clear" asp-page="Index">Limpar filtros</a>
+        </form>
+
+        <section class="catalog-results" aria-live="polite">
+            <div class="catalog-results__heading">
+                <h2>Modelos disponíveis</h2>
+                <span>@Model.Frames.Count @(Model.Frames.Count == 1 ? "armação" : "armações")</span>
+            </div>
+            @if (Model.Frames.Count == 0)
+            {
+                <div class="catalog-empty">
+                    <h3>Nenhuma armação encontrada</h3>
+                    <p>Altere os filtros ou fale com nossa equipe para conhecer outras opções.</p>
+                </div>
+            }
+            else
+            {
+                <div class="catalog-grid">
+                    @foreach (var frame in Model.Frames)
+                    {
+                        <article class="frame-card">
+                            <a class="frame-card__visual" asp-page="Details" asp-route-id="@frame.Id">
+                                @if (frame.ImageFileName is not null)
+                                {
+                                    <img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model na cor @frame.Color" />
+                                }
+                                else
+                                {
+                                    <span class="frame-placeholder">Foto em breve</span>
+                                }
+                            </a>
+                            <div class="frame-card__body">
+                                <p class="frame-card__brand">@frame.Brand · @IndexModel.TypeName(frame.Type)</p>
+                                <h3>@frame.Model</h3>
+                                <p class="frame-card__color">@frame.Color · Código @frame.Code</p>
+                                <div class="frame-card__footer">
+                                    <strong>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong>
+                                    <a asp-page="Details" asp-route-id="@frame.Id">Ver detalhes</a>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+</main>

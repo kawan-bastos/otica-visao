@@ -6,7 +6,14 @@ public interface IFrameRepository
 {
     Task<IReadOnlyList<Frame>> ListAsync(CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<Frame>> ListPublicAsync(
+        PublicFrameFilter filter,
+        int? maximumItems = null,
+        CancellationToken cancellationToken = default);
+
     Task<Frame?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    Task<Frame?> GetPublicByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<bool> CodeExistsAsync(
         string code,
