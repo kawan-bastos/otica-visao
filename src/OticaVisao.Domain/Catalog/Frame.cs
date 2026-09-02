@@ -111,6 +111,28 @@ public sealed class Frame
 
     public void ChangePrice(decimal price) => Price = ValidPrice(price);
 
+    public void SetStock(int stockQuantity) => StockQuantity = ValidStock(stockQuantity);
+
+    public void UpdateCatalogDetails(
+        string code,
+        string brand,
+        string model,
+        string color,
+        FrameType type,
+        FrameShape shape,
+        TargetAudience targetAudience,
+        FrameMeasurements? measurements = null)
+    {
+        Code = RequiredText(code, nameof(code), 40);
+        Brand = RequiredText(brand, nameof(brand), 100);
+        Model = RequiredText(model, nameof(model), 100);
+        Color = RequiredText(color, nameof(color), 80);
+        Type = type;
+        Shape = shape;
+        TargetAudience = targetAudience;
+        Measurements = measurements;
+    }
+
     private static string RequiredText(string value, string parameterName, int maximumLength)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, parameterName);

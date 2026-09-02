@@ -2,8 +2,7 @@ using OticaVisao.Domain.Catalog;
 
 namespace OticaVisao.Application.Catalog;
 
-public sealed record FrameCatalogItem(
-    Guid Id,
+public sealed record UpdateFrameRequest(
     string Code,
     string Brand,
     string Model,
@@ -13,9 +12,6 @@ public sealed record FrameCatalogItem(
     FrameType Type,
     FrameShape Shape,
     TargetAudience TargetAudience,
-    int? LensWidthMillimeters,
-    int? BridgeWidthMillimeters,
-    int? TempleLengthMillimeters,
     bool IsActive,
     bool IsPublished,
-    bool IsAvailable);
+    FrameMeasurements? Measurements = null);

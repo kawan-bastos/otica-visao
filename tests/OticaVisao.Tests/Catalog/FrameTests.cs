@@ -100,6 +100,29 @@ public sealed class FrameTests
         Assert.Equal("Preto", frame.Color);
     }
 
+    [Fact]
+    public void CatalogDetailsAndStockCanBeUpdated()
+    {
+        var frame = CreateFrame(stockQuantity: 1);
+
+        frame.UpdateCatalogDetails(
+            " NOVO-01 ",
+            " Nova marca ",
+            " Novo modelo ",
+            " Azul ",
+            FrameType.Sunglasses,
+            FrameShape.Round,
+            TargetAudience.Child,
+            new FrameMeasurements(50, 18, 140));
+        frame.SetStock(5);
+
+        Assert.Equal("NOVO-01", frame.Code);
+        Assert.Equal("Nova marca", frame.Brand);
+        Assert.Equal(5, frame.StockQuantity);
+        Assert.Equal(FrameType.Sunglasses, frame.Type);
+        Assert.NotNull(frame.Measurements);
+    }
+
     private static Frame CreateFrame(int stockQuantity) =>
         new(
             "OV-1001",

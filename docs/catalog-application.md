@@ -11,6 +11,7 @@ O `FrameCatalogService` permite:
 - cadastrar uma armação, impedindo códigos repetidos;
 - alterar o preço de uma armação;
 - adicionar unidades ao estoque.
+- carregar e editar todos os dados de uma armação existente.
 
 Os códigos são armazenados em letras maiúsculas. Unidades iguais continuam usando
 o mesmo código e aumentam a quantidade em estoque.
@@ -27,7 +28,10 @@ registros não representam o estoque real da loja e podem ser substituídos depo
 
 ## Consulta administrativa
 
-A rota `/Admin/Frames` apresenta a primeira listagem do painel, com código, modelo,
-tipo, preço, estoque e disponibilidade. A página ainda não possui autenticação nem
-formulários de cadastro e edição; esses recursos serão implementados nas próximas
-etapas.
+A rota `/Admin/Frames` apresenta a listagem do painel, com código, modelo, tipo,
+preço, estoque e disponibilidade. A partir dela é possível cadastrar uma armação e
+editar seus dados, medidas, estoque, ativação e publicação.
+
+O painel ainda não possui autenticação. Por isso, ele deve permanecer apenas no
+ambiente de desenvolvimento até que o acesso do proprietário e de seu filho seja
+protegido na próxima etapa.

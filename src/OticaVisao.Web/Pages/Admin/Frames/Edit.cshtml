@@ -1,0 +1,46 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Frames.EditModel
+@{
+    ViewData["Title"] = "Editar armação";
+}
+
+<main class="admin-page admin-page--form">
+    <header class="admin-page__header">
+        <div>
+            <span class="eyebrow">Painel administrativo</span>
+            <h1>Editar armação</h1>
+            <p>Atualize os dados, o estoque e a visibilidade do modelo.</p>
+        </div>
+        <a class="button button--secondary" asp-page="Index">Voltar ao catálogo</a>
+    </header>
+
+    <form method="post" class="admin-form">
+        <partial name="_FrameForm" for="Input" />
+
+        <section class="admin-form__section">
+            <div class="admin-form__section-heading">
+                <h2>Visibilidade</h2>
+                <p>Somente produtos ativos, publicados e com estoque aparecem como disponíveis.</p>
+            </div>
+            <div class="form-checks">
+                <label class="form-check">
+                    <input asp-for="Input.IsActive" />
+                    <span><strong>Produto ativo</strong>Permite manter o modelo em uso no sistema.</span>
+                </label>
+                <label class="form-check">
+                    <input asp-for="Input.IsPublished" />
+                    <span><strong>Publicado no catálogo</strong>Autoriza a exibição para clientes.</span>
+                </label>
+            </div>
+        </section>
+
+        <div class="admin-form__actions">
+            <a class="button button--secondary" asp-page="Index">Cancelar</a>
+            <button class="button button--primary" type="submit">Salvar alterações</button>
+        </div>
+    </form>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

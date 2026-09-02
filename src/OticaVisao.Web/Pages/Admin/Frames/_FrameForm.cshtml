@@ -1,0 +1,101 @@
+@model OticaVisao.Web.Models.Admin.FrameInputModel
+
+<div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Identificação</h2>
+        <p>Use o mesmo código para unidades do mesmo modelo.</p>
+    </div>
+    <div class="form-grid">
+        <div class="form-field">
+            <label asp-for="Code"></label>
+            <input asp-for="Code" autocomplete="off" />
+            <span asp-validation-for="Code"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Brand"></label>
+            <input asp-for="Brand" autocomplete="off" />
+            <span asp-validation-for="Brand"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Model"></label>
+            <input asp-for="Model" autocomplete="off" />
+            <span asp-validation-for="Model"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Color"></label>
+            <input asp-for="Color" autocomplete="off" />
+            <span asp-validation-for="Color"></span>
+        </div>
+    </div>
+</section>
+
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Catálogo e estoque</h2>
+        <p>O preço padrão informado pela loja é R$ 219.</p>
+    </div>
+    <div class="form-grid form-grid--three">
+        <div class="form-field">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" inputmode="decimal" />
+            <span asp-validation-for="Price"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="StockQuantity"></label>
+            <input asp-for="StockQuantity" inputmode="numeric" />
+            <span asp-validation-for="StockQuantity"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Type"></label>
+            <select asp-for="Type">
+                <option value="Prescription">Óculos de grau</option>
+                <option value="Sunglasses">Óculos de sol</option>
+            </select>
+            <span asp-validation-for="Type"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Shape"></label>
+            <select asp-for="Shape">
+                <option value="Other">Outro</option>
+                <option value="Round">Redondo</option>
+                <option value="Square">Quadrado</option>
+                <option value="Aviator">Aviador</option>
+            </select>
+            <span asp-validation-for="Shape"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="TargetAudience"></label>
+            <select asp-for="TargetAudience">
+                <option value="Adult">Adulto</option>
+                <option value="Child">Infantil</option>
+            </select>
+            <span asp-validation-for="TargetAudience"></span>
+        </div>
+    </div>
+</section>
+
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Medidas opcionais</h2>
+        <p>Se informar uma medida, preencha as três.</p>
+    </div>
+    <div class="form-grid form-grid--three">
+        <div class="form-field">
+            <label asp-for="LensWidthMillimeters"></label>
+            <input asp-for="LensWidthMillimeters" inputmode="numeric" />
+            <span asp-validation-for="LensWidthMillimeters"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="BridgeWidthMillimeters"></label>
+            <input asp-for="BridgeWidthMillimeters" inputmode="numeric" />
+            <span asp-validation-for="BridgeWidthMillimeters"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="TempleLengthMillimeters"></label>
+            <input asp-for="TempleLengthMillimeters" inputmode="numeric" />
+            <span asp-validation-for="TempleLengthMillimeters"></span>
+        </div>
+    </div>
+</section>
