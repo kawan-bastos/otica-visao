@@ -1,0 +1,23 @@
+@page
+@model OticaVisao.Web.Pages.Account.LoginModel
+@{ ViewData["Title"] = "Entrar"; }
+
+<section class="login-page">
+    <div class="login-card">
+        <div class="login-card__intro">
+            <span class="eyebrow">Área do cliente</span>
+            <h1>Que bom ter você por aqui</h1>
+            <p>Entre para acessar seus dados e ter uma experiência mais prática com a Ótica Visão.</p>
+        </div>
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl" class="login-form">
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+            <div class="form-field"><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="username" /><span asp-validation-for="Input.Email"></span></div>
+            <div class="form-field"><label asp-for="Input.Password"></label><input asp-for="Input.Password" autocomplete="current-password" /><span asp-validation-for="Input.Password"></span></div>
+            <label class="login-remember"><input asp-for="Input.RememberMe" /><span>Continuar conectado neste dispositivo</span></label>
+            <button type="submit" class="button button--primary">Entrar</button>
+            <p class="account-form__aside">Ainda não possui uma conta? <a asp-page="Register">Cadastre-se</a></p>
+        </form>
+    </div>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

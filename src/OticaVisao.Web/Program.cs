@@ -25,7 +25,7 @@ builder.Services.Configure<AdminAccountOptions>(
     builder.Configuration.GetSection(AdminAccountOptions.SectionName));
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.Name = "OticaVisao.Admin";
+    options.Cookie.Name = "OticaVisao.Auth";
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
@@ -35,6 +35,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Admin/Account/AccessDenied";
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        var redirectUri = context.Request.Path.StartsWithSegments("/Account")
+            ? context.RedirectUri.Replace(options.LoginPath.Value!, "/Account/Login", StringComparison.Ordinal)
+            : context.RedirectUri;
+        context.Response.Redirect(redirectUri);
+        return Task.CompletedTask;
+    };
 });
 builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 6 * 1024 * 1024);
