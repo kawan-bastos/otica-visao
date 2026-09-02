@@ -47,6 +47,33 @@ public sealed class FrameCatalogServiceTests
     }
 
     [Fact]
+    public async Task RemoveFromStockUpdatesExistingFrame()
+    {
+        var existing = CreateFrame("ARM-106");
+        var repository = new FakeFrameRepository(existing);
+        var service = new FrameCatalogService(repository);
+
+        await service.RemoveFromStockAsync(existing.Id, 1);
+
+        Assert.Equal(1, existing.StockQuantity);
+        Assert.Equal(1, repository.SaveCount);
+    }
+
+    [Fact]
+    public async Task RemoveFromStockRejectsQuantityAboveAvailableStock()
+    {
+        var existing = CreateFrame("ARM-107");
+        var repository = new FakeFrameRepository(existing);
+        var service = new FrameCatalogService(repository);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => service.RemoveFromStockAsync(existing.Id, 3));
+
+        Assert.Equal(2, existing.StockQuantity);
+        Assert.Equal(0, repository.SaveCount);
+    }
+
+    [Fact]
     public async Task UpdateChangesCatalogDataAndVisibility()
     {
         var existing = CreateFrame("ARM-101");

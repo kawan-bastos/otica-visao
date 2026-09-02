@@ -135,6 +135,16 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         await repository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task RemoveFromStockAsync(
+        Guid id,
+        int quantity,
+        CancellationToken cancellationToken = default)
+    {
+        var frame = await GetRequiredAsync(id, cancellationToken);
+        frame.RemoveFromStock(quantity);
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task SetImageAsync(
         Guid id,
         string imageFileName,

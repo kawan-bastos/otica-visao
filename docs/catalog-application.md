@@ -1,5 +1,16 @@
 # Casos de uso do catálogo
 
+## Operação diária do estoque
+
+O painel administrativo apresenta totais de produtos disponíveis, com estoque
+baixo e sem estoque. A busca localiza por código, marca, modelo ou cor, enquanto
+o filtro separa as principais situações do catálogo.
+
+Os botões `−` e `+` retiram ou adicionam uma unidade diretamente na listagem. A
+operação passa pelas regras do domínio: o estoque nunca fica negativo e, ao chegar
+a zero, a armação deixa automaticamente de ser considerada disponível no catálogo
+público. O cadastro não é excluído e pode receber novas unidades depois.
+
 A camada `OticaVisao.Application` fica entre a interface web e a persistência. Ela
 coordena os casos de uso sem conhecer Razor Pages, Entity Framework ou PostgreSQL.
 
