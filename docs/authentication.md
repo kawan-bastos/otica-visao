@@ -14,20 +14,16 @@ O painel em `/Admin` é protegido pelo ASP.NET Core Identity e exige a função
 - logout disponível somente por requisição POST;
 - bloqueio de URLs externas no redirecionamento após o login.
 
-## Criar os dois acessos no desenvolvimento
+## Criar o acesso no desenvolvimento
 
 As contas iniciais são lidas da configuração segura no primeiro início do site.
 Não coloque e-mails ou senhas em `appsettings.json`. No terminal, dentro do projeto,
 defina os segredos substituindo os exemplos pelos dados escolhidos:
 
 ```powershell
-dotnet user-secrets set "AdminAccounts:Accounts:0:DisplayName" "Seu nome" --project src/OticaVisao.Web
-dotnet user-secrets set "AdminAccounts:Accounts:0:Email" "seu-email@exemplo.com" --project src/OticaVisao.Web
+dotnet user-secrets set "AdminAccounts:Accounts:0:DisplayName" "Nome do administrador" --project src/OticaVisao.Web
+dotnet user-secrets set "AdminAccounts:Accounts:0:Email" "email-do-administrador@exemplo.com" --project src/OticaVisao.Web
 dotnet user-secrets set "AdminAccounts:Accounts:0:Password" "SUA-SENHA-FORTE" --project src/OticaVisao.Web
-
-dotnet user-secrets set "AdminAccounts:Accounts:1:DisplayName" "Nome do seu pai" --project src/OticaVisao.Web
-dotnet user-secrets set "AdminAccounts:Accounts:1:Email" "email-do-seu-pai@exemplo.com" --project src/OticaVisao.Web
-dotnet user-secrets set "AdminAccounts:Accounts:1:Password" "OUTRA-SENHA-FORTE" --project src/OticaVisao.Web
 ```
 
 Depois de aplicar a migration e iniciar o site, as contas ausentes serão criadas.
