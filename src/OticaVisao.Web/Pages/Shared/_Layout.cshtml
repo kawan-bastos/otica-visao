@@ -24,8 +24,6 @@
                 <span>Rua Arthur Rodrigues Loivos, 370 - Piabetá</span>
                 <div class="topbar__actions">
                     <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">WhatsApp: (21) 96591-2440</a>
-                    <span class="topbar__separator" aria-hidden="true"></span>
-                    <a class="topbar__admin" asp-page="/Admin/Frames/Index">@(User.IsInRole("Admin") ? "Ir para o painel" : "Área administrativa")</a>
                 </div>
             </div>
         </div>
@@ -65,12 +63,14 @@
                         else if (User.Identity?.IsAuthenticated == true)
                         {
                             <a class="nav-action-link" asp-page="/Account/Index">Minha conta</a>
+                            <a class="button button--small button--panel" asp-page="/Admin/Frames/Index">Painel</a>
                             <form method="post" asp-page="/Account/Logout"><button class="nav-action-link" type="submit">Sair</button></form>
                         }
                         else
                         {
                             <a class="nav-action-link" asp-page="/Account/Login">Entrar</a>
                             <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
+                            <a class="button button--small button--panel" asp-page="/Admin/Frames/Index">Painel</a>
                         }
                     </div>
                 </div>
