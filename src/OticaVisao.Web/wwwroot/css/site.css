@@ -382,8 +382,10 @@
 .account-details dt { color: var(--muted); font-size: .78rem; }
 .account-details dd { margin: .2rem 0 0; color: var(--navy-900); font-weight: 750; }
 
-html { font-size: 16px; scroll-behavior: smooth; }
-body { margin: 0; color: var(--ink); background: var(--white); font-family: Inter, "Segoe UI", Arial, sans-serif; }
+html { min-height: 100%; font-size: 16px; scroll-behavior: smooth; }
+body { min-height: 100vh; margin: 0; display: flex; flex-direction: column; color: var(--ink); background: var(--white); font-family: Inter, "Segoe UI", Arial, sans-serif; }
+body > main { flex: 1 0 auto; display: flex; flex-direction: column; }
+.login-page, .account-page { flex: 1 0 auto; }
 a { color: inherit; }
 .site-container { width: calc(100% - clamp(32px, 3vw, 64px)); margin-inline: auto; }
 .section-shell { scroll-margin-top: 96px; }
@@ -549,7 +551,7 @@ a { color: inherit; }
 .contact p { margin: 0; color: #d9f3f5; line-height: 1.65; }
 .contact__actions { flex: 0 0 auto; display: flex; flex-direction: column; gap: 10px; }
 
-.site-footer { padding: 42px 0; color: #becae2; background: var(--navy-950); }
+.site-footer { flex-shrink: 0; padding: 42px 0; color: #becae2; background: var(--navy-950); }
 .site-footer__content { display: flex; justify-content: space-between; gap: 40px; }
 .site-footer strong { color: #fff; }
 .site-footer p { max-width: 470px; margin: 8px 0 0; font-size: .85rem; }
