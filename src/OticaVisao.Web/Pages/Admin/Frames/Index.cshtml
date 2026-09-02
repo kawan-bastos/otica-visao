@@ -20,11 +20,42 @@
         <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
     }
 
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="admin-alert admin-alert--error" role="alert">@errorMessage</div>
+    }
+
+    <section class="admin-summary" aria-label="Resumo do estoque">
+        <article><span>Total cadastrado</span><strong>@Model.TotalFrames</strong></article>
+        <article><span>Disponíveis no site</span><strong>@Model.AvailableFrames</strong></article>
+        <article class="admin-summary__warning"><span>Estoque baixo</span><strong>@Model.LowStockFrames</strong></article>
+        <article class="admin-summary__danger"><span>Sem estoque</span><strong>@Model.OutOfStockFrames</strong></article>
+    </section>
+
+    <form class="admin-filters" method="get">
+        <div class="form-field">
+            <label asp-for="Search">Buscar armação</label>
+            <input asp-for="Search" placeholder="Código, marca, modelo ou cor" />
+        </div>
+        <div class="form-field">
+            <label asp-for="Status">Situação</label>
+            <select asp-for="Status">
+                <option value="">Todas</option>
+                <option value="available">Disponíveis no site</option>
+                <option value="low">Estoque baixo</option>
+                <option value="out">Sem estoque</option>
+                <option value="hidden">Ocultas ou desativadas</option>
+            </select>
+        </div>
+        <button class="button button--primary" type="submit">Filtrar</button>
+        <a class="button button--secondary" asp-page="Index">Limpar</a>
+    </form>
+
     @if (Model.Frames.Count == 0)
     {
         <div class="admin-empty">
             <h2>Nenhuma armação cadastrada</h2>
-            <p>Os produtos adicionados ao catálogo aparecerão aqui.</p>
+            <p>@(Model.TotalFrames == 0 ? "Os produtos adicionados ao catálogo aparecerão aqui." : "Nenhuma armação corresponde aos filtros informados.")</p>
         </div>
     }
     else
@@ -61,7 +92,23 @@
                             <td data-label="Armação">@frame.Brand @frame.Model <small>@frame.Color</small></td>
                             <td data-label="Tipo">@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
                             <td data-label="Preço">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
-                            <td data-label="Estoque">@frame.StockQuantity</td>
+                            <td data-label="Estoque">
+                                <div class="stock-control">
+                                    <form method="post" asp-page-handler="DecreaseStock">
+                                        <input type="hidden" name="id" value="@frame.Id" />
+                                        <input type="hidden" name="search" value="@Model.Search" />
+                                        <input type="hidden" name="status" value="@Model.Status" />
+                                        <button type="submit" aria-label="Retirar uma unidade de @frame.Brand @frame.Model" @(frame.StockQuantity == 0 ? "disabled" : null)>−</button>
+                                    </form>
+                                    <strong class="@(frame.StockQuantity <= 2 ? "stock-control__low" : null)">@frame.StockQuantity</strong>
+                                    <form method="post" asp-page-handler="IncreaseStock">
+                                        <input type="hidden" name="id" value="@frame.Id" />
+                                        <input type="hidden" name="search" value="@Model.Search" />
+                                        <input type="hidden" name="status" value="@Model.Status" />
+                                        <button type="submit" aria-label="Adicionar uma unidade de @frame.Brand @frame.Model">+</button>
+                                    </form>
+                                </div>
+                            </td>
                             <td data-label="Status">
                                 <span class="status-badge @(frame.IsAvailable ? "status-badge--available" : "status-badge--unavailable")">
                                     @(frame.IsAvailable ? "Disponível" : "Indisponível")
