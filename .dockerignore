@@ -1,0 +1,9 @@
+.git
+.vs
+**/bin
+**/obj
+App_Data
+TestResults
+artifacts
+*.user
+*.suo

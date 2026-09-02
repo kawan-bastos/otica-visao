@@ -13,7 +13,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        string connectionString)
+        string connectionString,
+        Action<FrameImageStorageOptions>? configureImageStorage = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
@@ -40,6 +41,15 @@ public static class DependencyInjection
 
         services.AddScoped<AdminAccountSeeder>();
         services.AddHostedService<AdminAccountInitializationService>();
+        if (configureImageStorage is not null)
+        {
+            services.Configure(configureImageStorage);
+        }
+        else
+        {
+            services.Configure<FrameImageStorageOptions>(_ => { });
+        }
+
         services.AddSingleton<IFrameImageStorage, LocalFrameImageStorage>();
         services.AddScoped<IFrameRepository, FrameRepository>();
         services.AddScoped<FrameCatalogService>();
