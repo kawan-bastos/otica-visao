@@ -39,7 +39,10 @@
                             <a class="nav-link" asp-page="/Index" asp-fragment="como-funciona">Como funciona</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Index" asp-fragment="sobre">Sobre nós</a>
+                            <a class="nav-link" asp-page="/About">Sobre nós</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Contact">Contato</a>
                         </li>
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -70,6 +73,11 @@
                 <p>Segunda a sexta, das 9h às 17h. Sábado, das 9h às 13h.</p>
             </div>
             <div class="site-footer__social">
+                <div class="site-footer__links">
+                    <a asp-page="/About">Sobre nós</a>
+                    <a asp-page="/Contact">Contato e localização</a>
+                    <a asp-page="/Privacy">Privacidade</a>
+                </div>
                 <a href="https://www.instagram.com/oticavisaodepiabeta/" target="_blank" rel="noopener noreferrer">@@oticavisaodepiabeta</a>
                 <p>&copy; @DateTime.Now.Year Ótica Visão. Todos os direitos reservados.</p>
             </div>
