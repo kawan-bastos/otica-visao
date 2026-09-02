@@ -1,0 +1,9 @@
+@{
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    var customersActive = page.StartsWith("/Admin/Customers", StringComparison.OrdinalIgnoreCase);
+}
+
+<nav class="admin-navigation" aria-label="Seções do painel administrativo">
+    <a class="@(!customersActive ? "active" : null)" asp-page="/Admin/Frames/Index">Armações e estoque</a>
+    <a class="@(customersActive ? "active" : null)" asp-page="/Admin/Customers/Index">Clientes</a>
+</nav>

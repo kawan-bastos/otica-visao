@@ -1,0 +1,15 @@
+@model OticaVisao.Web.Models.Admin.CustomerInputModel
+
+<div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Dados do cliente</h2>
+        <p>Nome e telefone são suficientes para criar a ficha. O e-mail é opcional.</p>
+    </div>
+    <div class="form-grid">
+        <div class="form-field"><label asp-for="Name"></label><input asp-for="Name" autocomplete="name" /><span asp-validation-for="Name"></span></div>
+        <div class="form-field"><label asp-for="Phone"></label><input asp-for="Phone" autocomplete="tel" inputmode="tel" placeholder="(21) 99999-9999" /><span asp-validation-for="Phone"></span></div>
+        <div class="form-field form-field--wide"><label asp-for="Email"></label><input asp-for="Email" autocomplete="email" /><span asp-validation-for="Email"></span></div>
+        <div class="form-field form-field--wide"><label asp-for="Notes"></label><textarea asp-for="Notes" rows="5" placeholder="Preferências, informações de atendimento ou lembretes não sensíveis"></textarea><span asp-validation-for="Notes"></span></div>
+    </div>
+</section>

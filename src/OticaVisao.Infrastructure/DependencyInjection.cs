@@ -6,6 +6,8 @@ using OticaVisao.Infrastructure.Catalog;
 using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Infrastructure.Persistence;
 using OticaVisao.Infrastructure.Images;
+using OticaVisao.Application.Customers;
+using OticaVisao.Infrastructure.Customers;
 
 namespace OticaVisao.Infrastructure;
 
@@ -53,6 +55,8 @@ public static class DependencyInjection
         services.AddSingleton<IFrameImageStorage, LocalFrameImageStorage>();
         services.AddScoped<IFrameRepository, FrameRepository>();
         services.AddScoped<FrameCatalogService>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<CustomerService>();
 
         return services;
     }

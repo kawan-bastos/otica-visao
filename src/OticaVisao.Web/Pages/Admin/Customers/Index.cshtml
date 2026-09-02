@@ -1,0 +1,70 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Customers.IndexModel
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div>
+            <span class="eyebrow">Painel administrativo</span>
+            <h1>Clientes</h1>
+            <p>Consulte e mantenha as fichas básicas dos clientes atendidos pela loja.</p>
+        </div>
+        <a class="button button--primary" asp-page="Create">Cadastrar cliente</a>
+    </header>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
+    }
+
+    <form class="customer-search" method="get">
+        <div class="form-field">
+            <label asp-for="Search">Buscar cliente</label>
+            <input asp-for="Search" placeholder="Nome, telefone ou e-mail" />
+        </div>
+        <button class="button button--primary" type="submit">Buscar</button>
+        <a class="button button--secondary" asp-page="Index">Limpar</a>
+    </form>
+
+    @if (Model.Customers.Count == 0)
+    {
+        <div class="admin-empty">
+            <h2>@(string.IsNullOrWhiteSpace(Model.Search) ? "Nenhum cliente cadastrado" : "Nenhum cliente encontrado")</h2>
+            <p>@(string.IsNullOrWhiteSpace(Model.Search) ? "As fichas cadastradas aparecerão aqui." : "Tente buscar por outro nome, telefone ou e-mail.")</p>
+        </div>
+    }
+    else
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead><tr><th>Cliente</th><th>Telefone</th><th>E-mail</th><th>Cadastro</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr>
+                        <td data-label="Cliente"><strong>@customer.Name</strong>@if (!string.IsNullOrWhiteSpace(customer.Notes)) { <small>Possui observações</small> }</td>
+                        <td data-label="Telefone"><a class="admin-contact-link" href="https://wa.me/@CustomerPhone.WhatsAppNumber(customer.Phone)" target="_blank" rel="noopener noreferrer">@customer.Phone</a></td>
+                        <td data-label="E-mail">@(customer.Email ?? "Não informado")</td>
+                        <td data-label="Cadastro">@customer.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td class="admin-table__actions" data-label="Ações"><a asp-page="Edit" asp-route-id="@customer.Id">Ver e editar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@functions {
+    private static class CustomerPhone
+    {
+        public static string WhatsAppNumber(string value)
+        {
+            var digits = new string(value.Where(char.IsDigit).ToArray());
+            return digits.StartsWith("55", StringComparison.Ordinal) ? digits : $"55{digits}";
+        }
+    }
+}
