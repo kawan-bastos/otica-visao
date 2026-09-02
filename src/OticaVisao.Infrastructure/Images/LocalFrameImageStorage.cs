@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace OticaVisao.Infrastructure.Images;
 
-internal sealed class LocalFrameImageStorage(IWebHostEnvironment environment) : IFrameImageStorage
+internal sealed class LocalFrameImageStorage(
+    IWebHostEnvironment environment,
+    IOptions<FrameImageStorageOptions> options) : IFrameImageStorage
 {
-    private readonly string storagePath = Path.Combine(environment.ContentRootPath, "App_Data", "frame-images");
+    private readonly string storagePath = ResolveStoragePath(environment, options.Value.Path);
 
     public async Task<string> SaveAsync(
         Stream content,
@@ -64,6 +67,19 @@ internal sealed class LocalFrameImageStorage(IWebHostEnvironment environment) : 
         !string.IsNullOrWhiteSpace(fileName)
         && fileName == Path.GetFileName(fileName)
         && fileName.Length <= 80;
+
+    private static string ResolveStoragePath(IWebHostEnvironment environment, string? configuredPath)
+    {
+        if (string.IsNullOrWhiteSpace(configuredPath))
+        {
+            return Path.Combine(environment.ContentRootPath, "App_Data", "frame-images");
+        }
+
+        return Path.GetFullPath(
+            Path.IsPathRooted(configuredPath)
+                ? configuredPath
+                : Path.Combine(environment.ContentRootPath, configuredPath));
+    }
 
     private static readonly Dictionary<string, string> ContentTypes =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http.Features;
 using OticaVisao.Infrastructure;
 using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Infrastructure.Images;
+using OticaVisao.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,8 @@ builder.Services.AddRazorPages(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("A conexão 'DefaultConnection' não foi configurada.");
 
-builder.Services.AddInfrastructure(connectionString);
+builder.Services.AddInfrastructure(connectionString, options =>
+    builder.Configuration.GetSection(FrameImageStorageOptions.SectionName).Bind(options));
 builder.Services.Configure<AdminAccountOptions>(
     builder.Configuration.GetSection(AdminAccountOptions.SectionName));
 builder.Services.ConfigureApplicationCookie(options =>
@@ -38,15 +41,39 @@ builder.Services.Configure<FormOptions>(options =>
 
 var app = builder.Build();
 
+if (builder.Configuration.GetValue<bool>("Database:ApplyMigrations"))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await database.Database.MigrateAsync();
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.XContentTypeOptions = "nosniff";
+    context.Response.Headers.XFrameOptions = "DENY";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+
+    if (!app.Environment.IsDevelopment())
+    {
+        context.Response.Headers.ContentSecurityPolicy =
+            "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; " +
+            "frame-src https://www.google.com; object-src 'none'; base-uri 'self'; " +
+            "form-action 'self'; frame-ancestors 'none'";
+    }
+
+    await next();
+});
 
 app.UseRouting();
 
@@ -54,6 +81,19 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapGet("/health", async (ApplicationDbContext database, CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return await database.Database.CanConnectAsync(cancellationToken)
+            ? Results.Ok(new { status = "healthy" })
+            : Results.Problem("Banco de dados indisponível.", statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
+    catch
+    {
+        return Results.Problem("Banco de dados indisponível.", statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
+}).AllowAnonymous();
 app.MapGet("/frame-images/{fileName}", async (
     string fileName,
     IFrameImageStorage storage,

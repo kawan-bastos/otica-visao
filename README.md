@@ -45,6 +45,8 @@ As páginas de apresentação, contato e localização estão descritas em
 [`docs/store-information.md`](docs/store-information.md).
 A revisão dos fluxos e telas responsivas está registrada em
 [`docs/v1-validation.md`](docs/v1-validation.md).
+A configuração do contêiner, banco, fotos e variáveis de produção está em
+[`docs/production.md`](docs/production.md).
 
 ## Executar localmente
 
