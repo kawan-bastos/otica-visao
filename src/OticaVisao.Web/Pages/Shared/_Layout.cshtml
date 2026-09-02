@@ -5,7 +5,6 @@
     var isCatalog = currentPage.StartsWith("/Frames", StringComparison.OrdinalIgnoreCase);
     var isAbout = string.Equals(currentPage, "/About", StringComparison.OrdinalIgnoreCase);
     var isContact = string.Equals(currentPage, "/Contact", StringComparison.OrdinalIgnoreCase);
-    var isAdmin = currentPage.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase);
 }
 <html lang="pt-BR">
 <head>
@@ -23,7 +22,11 @@
         <div class="topbar">
             <div class="site-container topbar__content">
                 <span>Rua Arthur Rodrigues Loivos, 370 - Piabetá</span>
-                <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">(21) 96591-2440</a>
+                <div class="topbar__actions">
+                    <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">WhatsApp: (21) 96591-2440</a>
+                    <span class="topbar__separator" aria-hidden="true"></span>
+                    <a class="topbar__admin" asp-page="/Admin/Frames/Index">@(User.IsInRole("Admin") ? "Ir para o painel" : "Área administrativa")</a>
+                </div>
             </div>
         </div>
         <nav class="navbar navbar-expand-lg site-nav" aria-label="Navegação principal">
@@ -36,7 +39,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse" id="mainNavigation">
-                    <ul class="navbar-nav nav-links ms-auto align-items-lg-center">
+                    <ul class="navbar-nav nav-links nav-primary mx-lg-auto align-items-lg-center">
                         <li class="nav-item">
                             <a class="nav-link @(isHome ? "active" : null)" asp-page="/Index" asp-fragment="inicio" aria-current="@(isHome ? "page" : null)">Início</a>
                         </li>
@@ -52,44 +55,24 @@
                         <li class="nav-item">
                             <a class="nav-link @(isContact ? "active" : null)" asp-page="/Contact" aria-current="@(isContact ? "page" : null)">Contato</a>
                         </li>
+                    </ul>
+                    <div class="nav-actions">
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link @(isAdmin ? "active" : null)" asp-page="/Admin/Frames/Index" aria-current="@(isAdmin ? "page" : null)">Painel</a>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" asp-page="/Admin/Account/Logout">
-                                    <button class="nav-link nav-link--button" type="submit">Sair</button>
-                                </form>
-                            </li>
+                            <a class="button button--small button--account" asp-page="/Admin/Frames/Index">Painel</a>
+                            <form method="post" asp-page="/Admin/Account/Logout"><button class="nav-action-link" type="submit">Sair</button></form>
                         }
                         else if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-page="/Account/Index">Minha conta</a>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" asp-page="/Account/Logout">
-                                    <button class="nav-link nav-link--button" type="submit">Sair</button>
-                                </form>
-                            </li>
+                            <a class="nav-action-link" asp-page="/Account/Index">Minha conta</a>
+                            <form method="post" asp-page="/Account/Logout"><button class="nav-action-link" type="submit">Sair</button></form>
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-page="/Account/Login">Entrar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="button button--small button--admin" asp-page="/Admin/Frames/Index">Painel administrativo</a>
-                            </li>
+                            <a class="nav-action-link" asp-page="/Account/Login">Entrar</a>
+                            <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
                         }
-                        <li class="nav-item nav-item--cta">
-                            <a class="button button--small button--whatsapp" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20%C3%93tica%20Vis%C3%A3o%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
-                        </li>
-                    </ul>
+                    </div>
                 </div>
             </div>
         </nav>
