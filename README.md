@@ -43,6 +43,8 @@ O catálogo público, seus filtros e as regras de disponibilidade estão em
 [`docs/public-catalog.md`](docs/public-catalog.md).
 As páginas de apresentação, contato e localização estão descritas em
 [`docs/store-information.md`](docs/store-information.md).
+A revisão dos fluxos e telas responsivas está registrada em
+[`docs/v1-validation.md`](docs/v1-validation.md).
 
 ## Executar localmente
 

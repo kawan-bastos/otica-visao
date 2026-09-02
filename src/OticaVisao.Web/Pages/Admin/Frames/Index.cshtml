@@ -47,8 +47,8 @@
                     @foreach (var frame in Model.Frames)
                     {
                         <tr>
-                            <td><strong>@frame.Code</strong></td>
-                            <td>
+                            <td data-label="Código"><strong>@frame.Code</strong></td>
+                            <td data-label="Foto">
                                 @if (frame.ImageFileName is not null)
                                 {
                                     <img class="admin-frame-thumbnail" src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model" />
@@ -58,16 +58,16 @@
                                     <span class="admin-frame-thumbnail admin-frame-thumbnail--empty">Sem foto</span>
                                 }
                             </td>
-                            <td>@frame.Brand @frame.Model <small>@frame.Color</small></td>
-                            <td>@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
-                            <td>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
-                            <td>@frame.StockQuantity</td>
-                            <td>
+                            <td data-label="Armação">@frame.Brand @frame.Model <small>@frame.Color</small></td>
+                            <td data-label="Tipo">@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
+                            <td data-label="Preço">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
+                            <td data-label="Estoque">@frame.StockQuantity</td>
+                            <td data-label="Status">
                                 <span class="status-badge @(frame.IsAvailable ? "status-badge--available" : "status-badge--unavailable")">
                                     @(frame.IsAvailable ? "Disponível" : "Indisponível")
                                 </span>
                             </td>
-                            <td class="admin-table__actions">
+                            <td class="admin-table__actions" data-label="Ações">
                                 <a asp-page="Edit" asp-route-id="@frame.Id">Editar</a>
                             </td>
                         </tr>

@@ -517,6 +517,17 @@ a { color: inherit; }
 }
 
 @media (max-width: 767.98px) {
+  .admin-table-wrapper { overflow: visible; border: 0; background: transparent; box-shadow: none; }
+  .admin-table { min-width: 0; display: block; }
+  .admin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .admin-table tbody { display: grid; gap: 1rem; }
+  .admin-table tr { padding: .6rem 1rem; display: block; border: 1px solid var(--line); border-radius: 1rem; background: #fff; box-shadow: 0 8px 24px rgba(7,39,102,.06); }
+  .admin-table td { padding: .7rem 0; display: grid; grid-template-columns: minmax(85px, .7fr) minmax(0, 1.3fr); align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); text-align: right; }
+  .admin-table td::before { content: attr(data-label); color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
+  .admin-table td:last-child { border-bottom: 0; }
+  .admin-table td > * { justify-self: end; }
+  .admin-table td small { text-align: right; }
+  .admin-table__actions { text-align: right !important; }
   .institutional-hero, .institutional-hero--compact { padding: 4rem 0; }
   .story, .service-values, .visit-information, .location { padding: 4rem 0; }
   .story__image, .story__image img { min-height: 340px; height: 340px; }
