@@ -33,5 +33,5 @@ preço, estoque e disponibilidade. A partir dela é possível cadastrar uma arma
 editar seus dados, medidas, estoque, ativação e publicação.
 
 O painel é protegido por autenticação e permite apenas usuários com a função
-administrativa. A configuração dos dois acessos está descrita em
+administrativa. A configuração do acesso está descrita em
 [`authentication.md`](authentication.md).

@@ -35,7 +35,7 @@ O contexto do banco, a configuração local e os comandos de migration estão em
 [`docs/persistence.md`](docs/persistence.md).
 Os casos de uso e a listagem administrativa estão em
 [`docs/catalog-application.md`](docs/catalog-application.md).
-A proteção do painel e a criação segura dos dois acessos estão em
+A proteção do painel e a criação segura do acesso administrativo estão em
 [`docs/authentication.md`](docs/authentication.md).
 
 ## Executar localmente
