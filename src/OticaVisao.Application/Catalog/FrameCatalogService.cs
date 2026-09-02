@@ -11,6 +11,24 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         return frames.Select(ToCatalogItem).ToArray();
     }
 
+    public async Task<IReadOnlyList<FrameCatalogItem>> ListPublicAsync(
+        PublicFrameFilter filter,
+        int? maximumItems = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(filter);
+        var frames = await repository.ListPublicAsync(filter, maximumItems, cancellationToken);
+        return frames.Select(ToCatalogItem).ToArray();
+    }
+
+    public async Task<FrameCatalogItem?> GetPublicAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var frame = await repository.GetPublicByIdAsync(id, cancellationToken);
+        return frame is null ? null : ToCatalogItem(frame);
+    }
+
     public async Task<Guid> CreateAsync(
         CreateFrameRequest request,
         CancellationToken cancellationToken = default)

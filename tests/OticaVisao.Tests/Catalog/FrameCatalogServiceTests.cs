@@ -89,6 +89,21 @@ public sealed class FrameCatalogServiceTests
         Assert.Equal(1, repository.SaveCount);
     }
 
+    [Fact]
+    public async Task PublicCatalogExcludesUnpublishedFrames()
+    {
+        var visible = CreateFrame("ARM-104");
+        visible.Publish();
+        var hidden = CreateFrame("ARM-105");
+        var repository = new FakeFrameRepository(visible, hidden);
+        var service = new FrameCatalogService(repository);
+
+        var frames = await service.ListPublicAsync(new PublicFrameFilter());
+
+        var frame = Assert.Single(frames);
+        Assert.Equal("ARM-104", frame.Code);
+    }
+
     private static CreateFrameRequest CreateRequest(string code) => new(
         code,
         "Linha Visão",
@@ -120,8 +135,30 @@ public sealed class FrameCatalogServiceTests
         public Task<IReadOnlyList<Frame>> ListAsync(CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<Frame>>(Frames);
 
+        public Task<IReadOnlyList<Frame>> ListPublicAsync(
+            PublicFrameFilter filter,
+            int? maximumItems = null,
+            CancellationToken cancellationToken = default)
+        {
+            IEnumerable<Frame> query = Frames.Where(frame => frame.IsAvailable);
+            if (filter.Type.HasValue)
+            {
+                query = query.Where(frame => frame.Type == filter.Type);
+            }
+
+            if (maximumItems.HasValue)
+            {
+                query = query.Take(maximumItems.Value);
+            }
+
+            return Task.FromResult<IReadOnlyList<Frame>>(query.ToArray());
+        }
+
         public Task<Frame?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
             Task.FromResult(Frames.SingleOrDefault(frame => frame.Id == id));
+
+        public Task<Frame?> GetPublicByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Frames.SingleOrDefault(frame => frame.Id == id && frame.IsAvailable));
 
         public Task<bool> CodeExistsAsync(
             string code,

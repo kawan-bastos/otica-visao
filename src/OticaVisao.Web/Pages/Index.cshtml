@@ -40,26 +40,29 @@
                 <h2>Armações em destaque</h2>
                 <p>Uma seleção inicial para você conhecer antes de visitar nossa loja.</p>
             </div>
-            <a class="text-link" href="#armacoes">Ver todas as armações <span aria-hidden="true">→</span></a>
+            <a class="text-link" asp-page="/Frames/Index">Ver todas as armações <span aria-hidden="true">→</span></a>
         </div>
         <div class="category-list" aria-label="Categorias de armações">
-            <a class="category-chip category-chip--active" href="#armacoes">Todas</a>
-            <a class="category-chip" href="#armacoes">Óculos de grau</a>
-            <a class="category-chip" href="#armacoes">Óculos de sol</a>
-            <a class="category-chip" href="#armacoes">Infantil</a>
-            <a class="category-chip" href="#armacoes">Redondo</a>
-            <a class="category-chip" href="#armacoes">Quadrado</a>
+            <a class="category-chip category-chip--active" asp-page="/Frames/Index">Todas</a>
+            <a class="category-chip" asp-page="/Frames/Index" asp-route-type="Prescription">Óculos de grau</a>
+            <a class="category-chip" asp-page="/Frames/Index" asp-route-type="Sunglasses">Óculos de sol</a>
+            <a class="category-chip" asp-page="/Frames/Index" asp-route-targetAudience="Child">Infantil</a>
+            <a class="category-chip" asp-page="/Frames/Index" asp-route-shape="Round">Redondo</a>
+            <a class="category-chip" asp-page="/Frames/Index" asp-route-shape="Square">Quadrado</a>
         </div>
         <div class="frame-grid">
             @foreach (var frame in Model.FeaturedFrames)
             {
                 <article class="frame-card">
-                    <div class="frame-card__visual frame-card__visual--@frame.VisualStyle">
-                        <svg viewBox="0 0 360 150" aria-hidden="true">
-                            <rect x="38" y="36" width="118" height="72" rx="28" />
-                            <rect x="204" y="36" width="118" height="72" rx="28" />
-                            <path d="M156 62c14-11 34-11 48 0M38 48 9 33m313 15 29-15" />
-                        </svg>
+                    <div class="frame-card__visual">
+                        @if (frame.ImageFileName is not null)
+                        {
+                            <img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model na cor @frame.Color" />
+                        }
+                        else
+                        {
+                            <span class="frame-placeholder">Foto em breve</span>
+                        }
                     </div>
                     <div class="frame-card__body">
                         <p class="frame-card__brand">@frame.Brand</p>
@@ -67,13 +70,13 @@
                         <p class="frame-card__color">@frame.Color</p>
                         <div class="frame-card__footer">
                             <strong>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong>
-                            <a href="#contato" aria-label="Ver detalhes da armação @frame.Brand @frame.Model">Ver detalhes</a>
+                            <a asp-page="/Frames/Details" asp-route-id="@frame.Id" aria-label="Ver detalhes da armação @frame.Brand @frame.Model">Ver detalhes</a>
                         </div>
                     </div>
                 </article>
             }
         </div>
-        <p class="prototype-note">Imagens, nomes e códigos ilustrativos. Preço padrão informado pela loja.</p>
+        <p class="prototype-note">Consulte a disponibilidade com nossa equipe antes de visitar a loja.</p>
     </div>
 </section>
 

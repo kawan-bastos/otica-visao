@@ -19,7 +19,7 @@ public sealed class AdminAccountSeederTests
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-                options.Password.RequiredLength = 12;
+                options.Password.RequiredLength = 8;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>();
         services.Configure<AdminAccountOptions>(options =>

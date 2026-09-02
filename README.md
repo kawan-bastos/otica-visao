@@ -39,6 +39,8 @@ A proteção do painel e a criação segura do acesso administrativo estão em
 [`docs/authentication.md`](docs/authentication.md).
 As regras e a estratégia de armazenamento das fotos estão em
 [`docs/frame-images.md`](docs/frame-images.md).
+O catálogo público, seus filtros e as regras de disponibilidade estão em
+[`docs/public-catalog.md`](docs/public-catalog.md).
 
 ## Executar localmente
 

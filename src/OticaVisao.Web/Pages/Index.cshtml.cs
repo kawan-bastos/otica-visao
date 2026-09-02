@@ -1,20 +1,17 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OticaVisao.Application.Catalog;
 
 namespace OticaVisao.Web.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(FrameCatalogService catalogService) : PageModel
 {
-    public IReadOnlyList<FeaturedFrame> FeaturedFrames { get; } =
-    [
-        new("Modelo demonstrativo", "OV1001", "Preto brilho", 219.00m, "black"),
-        new("Modelo demonstrativo", "OV1002", "Havana", 219.00m, "havana"),
-        new("Modelo demonstrativo", "OV1003", "Dourado", 219.00m, "gold"),
-        new("Modelo demonstrativo", "OV1004", "Preto fosco", 219.00m, "graphite")
-    ];
+    public IReadOnlyList<FrameCatalogItem> FeaturedFrames { get; private set; } = [];
 
-    public void OnGet()
+    public async Task OnGetAsync(CancellationToken cancellationToken)
     {
+        FeaturedFrames = await catalogService.ListPublicAsync(
+            new PublicFrameFilter(),
+            maximumItems: 4,
+            cancellationToken);
     }
 }
-
-public sealed record FeaturedFrame(string Brand, string Model, string Color, decimal Price, string VisualStyle);

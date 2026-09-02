@@ -7,7 +7,7 @@ O painel em `/Admin` é protegido pelo ASP.NET Core Identity e exige a função
 ## Proteções configuradas
 
 - senhas armazenadas somente como hash pelo Identity;
-- senha mínima de 12 caracteres, com maiúscula, minúscula, número e símbolo;
+- senha mínima de 8 caracteres, com maiúscula, minúscula, número e símbolo;
 - e-mail único para cada administrador;
 - bloqueio por 15 minutos após cinco tentativas incorretas;
 - cookie HTTP-only, renovação deslizante e duração máxima de oito horas;

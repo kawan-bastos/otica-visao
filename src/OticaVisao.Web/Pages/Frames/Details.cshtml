@@ -1,0 +1,45 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Frames.DetailsModel
+@{
+    ViewData["Title"] = $"{Model.Frame.Brand} {Model.Frame.Model}";
+}
+
+<main class="frame-details">
+    <div class="site-container">
+        <a class="details-back" asp-page="Index">← Voltar ao catálogo</a>
+        <div class="frame-details__grid">
+            <div class="frame-details__image">
+                @if (Model.Frame.ImageFileName is not null)
+                {
+                    <img src="/frame-images/@Model.Frame.ImageFileName" alt="@Model.Frame.Brand @Model.Frame.Model na cor @Model.Frame.Color" />
+                }
+                else
+                {
+                    <span class="frame-placeholder">Foto em breve</span>
+                }
+            </div>
+            <section class="frame-details__content">
+                <span class="details-code">Código @Model.Frame.Code</span>
+                <h1>@Model.Frame.Brand @Model.Frame.Model</h1>
+                <p class="details-color">@Model.Frame.Color · @DetailsModel.TypeName(Model.Frame.Type)</p>
+                <strong class="details-price">@Model.Frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong>
+
+                @if (Model.Frame.LensWidthMillimeters.HasValue)
+                {
+                    <dl class="details-measurements">
+                        <div><dt>Lente</dt><dd>@Model.Frame.LensWidthMillimeters mm</dd></div>
+                        <div><dt>Ponte</dt><dd>@Model.Frame.BridgeWidthMillimeters mm</dd></div>
+                        <div><dt>Haste</dt><dd>@Model.Frame.TempleLengthMillimeters mm</dd></div>
+                    </dl>
+                }
+
+                <div class="details-notice">
+                    <strong>Experimente presencialmente</strong>
+                    <p>Confirme a disponibilidade e visite nossa loja para verificar conforto, encaixe e realizar os ajustes necessários.</p>
+                </div>
+                <a class="button button--primary details-whatsapp" href="@Model.WhatsAppUrl" target="_blank" rel="noopener noreferrer">Tenho interesse no WhatsApp</a>
+                <p class="details-promotion">Na compra dos óculos completos, a armação sai por R$ 39. Consulte as condições.</p>
+            </section>
+        </div>
+    </div>
+</main>

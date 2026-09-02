@@ -355,6 +355,8 @@ a { color: inherit; }
 .frame-card { overflow: hidden; border: 1px solid var(--line); border-radius: 17px; background: #fff; box-shadow: 0 10px 30px rgba(7,39,102,.06); transition: transform .2s ease, box-shadow .2s ease; }
 .frame-card:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(7,39,102,.12); }
 .frame-card__visual { height: 190px; padding: 28px 14px 15px; display: grid; place-items: center; background: linear-gradient(145deg, #f9fbfd, #edf3f8); }
+.frame-card__visual img { width: 100%; height: 100%; object-fit: contain; }
+.frame-placeholder { color: var(--muted); font-size: .85rem; font-weight: 750; }
 .frame-card__visual svg { width: 100%; fill: rgba(15,29,51,.04); stroke: #151c27; stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 13px 8px rgba(8,25,55,.12)); }
 .frame-card__visual--havana svg { fill: rgba(118,73,38,.12); stroke: #6d432b; }
 .frame-card__visual--gold svg { fill: rgba(206,156,74,.06); stroke: #c79747; stroke-width: 5; }
@@ -367,6 +369,41 @@ a { color: inherit; }
 .frame-card__footer strong { color: var(--navy-900); font-size: 1.08rem; }
 .frame-card__footer a { padding: 7px 10px; color: var(--teal-600); border: 1px solid #9ee1e5; border-radius: 7px; font-size: .74rem; font-weight: 800; text-decoration: none; }
 .prototype-note { margin: 18px 0 0; color: #8993a8; font-size: .76rem; text-align: right; }
+
+.public-catalog { padding-bottom: 6rem; background: var(--surface); }
+.catalog-hero { padding: 4.5rem 0; color: #fff; background: linear-gradient(110deg, var(--navy-950), var(--navy-800) 65%, #087e99); }
+.catalog-hero h1 { max-width: 780px; margin: .4rem 0 1rem; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1; letter-spacing: -.05em; }
+.catalog-hero p { max-width: 700px; margin: 0; color: #d9e8ff; font-size: 1.05rem; line-height: 1.65; }
+.catalog-layout { padding-top: 3rem; display: grid; grid-template-columns: 260px minmax(0, 1fr); align-items: start; gap: 2rem; }
+.catalog-filters { padding: 1.35rem; display: flex; flex-direction: column; gap: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; box-shadow: 0 10px 30px rgba(7,39,102,.06); }
+.catalog-filters h2 { margin: 0 0 .25rem; color: var(--navy-900); font-size: 1.2rem; }
+.catalog-filters__clear { color: var(--teal-600); font-size: .85rem; font-weight: 750; text-align: center; }
+.catalog-results__heading { margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.catalog-results__heading h2 { margin: 0; color: var(--navy-900); }
+.catalog-results__heading span { color: var(--muted); font-size: .88rem; }
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.catalog-empty { padding: 4rem 2rem; border: 1px dashed #cbd5e1; border-radius: 1rem; background: #fff; text-align: center; }
+.catalog-empty h3 { color: var(--navy-900); }
+.catalog-empty p { color: var(--muted); }
+
+.frame-details { padding: 3rem 0 6rem; background: var(--surface); }
+.details-back { display: inline-block; margin-bottom: 1.5rem; color: var(--teal-600); font-weight: 800; text-decoration: none; }
+.frame-details__grid { overflow: hidden; display: grid; grid-template-columns: 1.15fr .85fr; border: 1px solid var(--line); border-radius: 1.5rem; background: #fff; box-shadow: var(--shadow); }
+.frame-details__image { min-height: 540px; padding: 3rem; display: grid; place-items: center; background: linear-gradient(145deg, #f9fbfd, #eaf1f6); }
+.frame-details__image img { width: 100%; height: 100%; max-height: 500px; object-fit: contain; }
+.frame-details__content { padding: 3.5rem; }
+.details-code { color: var(--teal-600); font-size: .78rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.frame-details__content h1 { margin: .65rem 0 .5rem; color: var(--navy-900); font-size: clamp(2.2rem, 5vw, 3.7rem); font-weight: 900; line-height: 1; letter-spacing: -.045em; }
+.details-color { color: var(--muted); }
+.details-price { display: block; margin: 1.5rem 0; color: var(--navy-900); font-size: 2rem; }
+.details-measurements { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+.details-measurements div { padding: .8rem; border: 1px solid var(--line); border-radius: .7rem; }
+.details-measurements dt { color: var(--muted); font-size: .72rem; }
+.details-measurements dd { margin: .15rem 0 0; color: var(--ink); font-weight: 800; }
+.details-notice { margin: 1.5rem 0; padding: 1rem; border-left: 3px solid var(--teal-600); background: var(--teal-100); }
+.details-notice p { margin: .35rem 0 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+.details-whatsapp { width: 100%; }
+.details-promotion { margin: 1rem 0 0; color: var(--muted); font-size: .78rem; text-align: center; }
 
 .offer { padding: 0 0 94px; }
 .offer__card { position: relative; overflow: hidden; padding: 42px 48px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 38px; color: #fff; background: linear-gradient(110deg, var(--navy-950), var(--navy-800) 55%, var(--teal-600)); border-radius: 22px; box-shadow: var(--shadow); }
@@ -413,6 +450,9 @@ a { color: inherit; }
 .site-footer__social a { color: #fff; font-weight: 750; text-decoration: none; }
 
 @media (max-width: 991.98px) {
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .frame-details__grid { grid-template-columns: 1fr; }
+  .frame-details__image { min-height: 400px; }
   .site-nav { min-height: 78px; }
   .navbar-collapse { padding: 20px 0 25px; }
   .nav-links { align-items: stretch !important; gap: 4px; }
@@ -433,6 +473,11 @@ a { color: inherit; }
 }
 
 @media (max-width: 767.98px) {
+  .catalog-hero { padding: 3rem 0; }
+  .catalog-layout { grid-template-columns: 1fr; }
+  .catalog-grid { grid-template-columns: 1fr; }
+  .frame-details__image { min-height: 300px; padding: 1.5rem; }
+  .frame-details__content { padding: 2rem 1.5rem; }
   .login-page { min-height: 540px; padding: 2rem 1rem; }
   .login-card { grid-template-columns: 1fr; }
   .login-card__intro, .login-form, .login-card--message { padding: 2rem 1.5rem; }
