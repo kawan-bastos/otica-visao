@@ -41,6 +41,8 @@ As regras e a estratégia de armazenamento das fotos estão em
 [`docs/frame-images.md`](docs/frame-images.md).
 O catálogo público, seus filtros e as regras de disponibilidade estão em
 [`docs/public-catalog.md`](docs/public-catalog.md).
+As páginas de apresentação, contato e localização estão descritas em
+[`docs/store-information.md`](docs/store-information.md).
 
 ## Executar localmente
 
