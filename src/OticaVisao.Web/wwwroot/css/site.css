@@ -137,6 +137,13 @@
   text-decoration: none;
 }
 
+.admin-frame-thumbnail { width: 74px; height: 52px; display: grid; place-items: center; object-fit: cover; border: 1px solid var(--line); border-radius: .55rem; background: #f6f9fb; }
+.admin-frame-thumbnail--empty { color: var(--muted); font-size: .7rem; text-align: center; }
+.admin-current-image { padding: 1.25rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); background: #f6f9fb; }
+.admin-current-image img { width: 130px; height: 90px; object-fit: cover; border-radius: .75rem; }
+.admin-current-image span { color: var(--muted); font-size: .85rem; font-weight: 700; }
+.form-field--file input { padding: .55rem; }
+
 .admin-form {
   overflow: hidden;
   border: 1px solid var(--line);

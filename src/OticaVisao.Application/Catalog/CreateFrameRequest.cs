@@ -12,4 +12,5 @@ public sealed record CreateFrameRequest(
     FrameType Type,
     FrameShape Shape,
     TargetAudience TargetAudience,
-    FrameMeasurements? Measurements = null);
+    FrameMeasurements? Measurements = null,
+    string? ImageFileName = null);

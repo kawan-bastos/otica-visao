@@ -21,6 +21,7 @@ internal sealed class FrameConfiguration : IEntityTypeConfiguration<Frame>
         builder.Property(frame => frame.Color).HasColumnName("color").HasMaxLength(80).IsRequired();
         builder.Property(frame => frame.Price).HasColumnName("price").HasPrecision(10, 2).IsRequired();
         builder.Property(frame => frame.StockQuantity).HasColumnName("stock_quantity").IsRequired();
+        builder.Property(frame => frame.ImageFileName).HasColumnName("image_file_name").HasMaxLength(80);
 
         builder.Property(frame => frame.Type)
             .HasColumnName("type")

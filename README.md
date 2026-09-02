@@ -37,6 +37,8 @@ Os casos de uso e a listagem administrativa estão em
 [`docs/catalog-application.md`](docs/catalog-application.md).
 A proteção do painel e a criação segura do acesso administrativo estão em
 [`docs/authentication.md`](docs/authentication.md).
+As regras e a estratégia de armazenamento das fotos estão em
+[`docs/frame-images.md`](docs/frame-images.md).
 
 ## Executar localmente
 

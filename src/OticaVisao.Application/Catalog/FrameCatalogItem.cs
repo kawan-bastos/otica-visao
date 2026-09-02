@@ -16,6 +16,7 @@ public sealed record FrameCatalogItem(
     int? LensWidthMillimeters,
     int? BridgeWidthMillimeters,
     int? TempleLengthMillimeters,
+    string? ImageFileName,
     bool IsActive,
     bool IsPublished,
     bool IsAvailable);

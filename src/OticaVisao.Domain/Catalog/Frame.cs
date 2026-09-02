@@ -20,7 +20,8 @@ public sealed class Frame
         FrameType type,
         FrameShape shape,
         TargetAudience targetAudience,
-        FrameMeasurements? measurements = null)
+        FrameMeasurements? measurements = null,
+        string? imageFileName = null)
     {
         Id = Guid.NewGuid();
         Code = RequiredText(code, nameof(code), 40);
@@ -33,6 +34,7 @@ public sealed class Frame
         Shape = shape;
         TargetAudience = targetAudience;
         Measurements = measurements;
+        ImageFileName = OptionalText(imageFileName, nameof(imageFileName), 80);
         IsActive = true;
     }
 
@@ -57,6 +59,8 @@ public sealed class Frame
     public TargetAudience TargetAudience { get; private set; }
 
     public FrameMeasurements? Measurements { get; private set; }
+
+    public string? ImageFileName { get; private set; }
 
     public bool IsActive { get; private set; }
 
@@ -113,6 +117,9 @@ public sealed class Frame
 
     public void SetStock(int stockQuantity) => StockQuantity = ValidStock(stockQuantity);
 
+    public void SetImage(string imageFileName) =>
+        ImageFileName = RequiredText(imageFileName, nameof(imageFileName), 80);
+
     public void UpdateCatalogDetails(
         string code,
         string brand,
@@ -145,6 +152,9 @@ public sealed class Frame
 
         return normalized;
     }
+
+    private static string? OptionalText(string? value, string parameterName, int maximumLength) =>
+        string.IsNullOrWhiteSpace(value) ? null : RequiredText(value, parameterName, maximumLength);
 
     private static decimal ValidPrice(decimal price)
     {

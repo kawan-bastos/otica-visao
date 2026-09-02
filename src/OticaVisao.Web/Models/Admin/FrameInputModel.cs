@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using OticaVisao.Application.Catalog;
 using OticaVisao.Domain.Catalog;
 
@@ -64,7 +65,10 @@ public sealed class FrameInputModel : IValidatableObject
     [Display(Name = "Publicado no catálogo")]
     public bool IsPublished { get; set; }
 
-    public CreateFrameRequest ToCreateRequest() => new(
+    [Display(Name = "Foto principal")]
+    public IFormFile? Image { get; set; }
+
+    public CreateFrameRequest ToCreateRequest(string? imageFileName = null) => new(
         Code,
         Brand,
         Model,
@@ -74,7 +78,8 @@ public sealed class FrameInputModel : IValidatableObject
         Type,
         Shape,
         TargetAudience,
-        CreateMeasurements());
+        CreateMeasurements(),
+        imageFileName);
 
     public UpdateFrameRequest ToUpdateRequest() => new(
         Code,
