@@ -6,8 +6,8 @@ um painel administrativo responsivo para manutenção dos produtos.
 ## Estado atual
 
 Home responsiva, domínio, persistência e manutenção administrativa do catálogo
-concluídos. Os produtos exibidos ainda são fictícios e o painel não possui
-autenticação, portanto o projeto não deve ser publicado em produção.
+concluídos. O painel possui autenticação, mas os produtos ainda são fictícios e a
+configuração de produção ainda não foi realizada.
 
 ## Tecnologias
 
@@ -35,6 +35,8 @@ O contexto do banco, a configuração local e os comandos de migration estão em
 [`docs/persistence.md`](docs/persistence.md).
 Os casos de uso e a listagem administrativa estão em
 [`docs/catalog-application.md`](docs/catalog-application.md).
+A proteção do painel e a criação segura dos dois acessos estão em
+[`docs/authentication.md`](docs/authentication.md).
 
 ## Executar localmente
 

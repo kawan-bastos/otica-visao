@@ -1,0 +1,42 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Account.LoginModel
+@{
+    ViewData["Title"] = "Acesso administrativo";
+}
+
+<main class="login-page">
+    <section class="login-card">
+        <div class="login-card__intro">
+            <span class="eyebrow">Área restrita</span>
+            <h1>Painel da Ótica Visão</h1>
+            <p>Entre com seu acesso para administrar as armações e o estoque da loja.</p>
+        </div>
+
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl" class="login-form">
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+
+            <div class="form-field">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" autocomplete="username" />
+                <span asp-validation-for="Input.Email"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Input.Password"></label>
+                <input asp-for="Input.Password" autocomplete="current-password" />
+                <span asp-validation-for="Input.Password"></span>
+            </div>
+
+            <label class="login-remember">
+                <input asp-for="Input.RememberMe" />
+                <span>Continuar conectado neste dispositivo</span>
+            </label>
+
+            <button type="submit" class="button button--primary">Entrar no painel</button>
+        </form>
+    </section>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

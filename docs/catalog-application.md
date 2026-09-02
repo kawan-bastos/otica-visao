@@ -32,6 +32,6 @@ A rota `/Admin/Frames` apresenta a listagem do painel, com código, modelo, tipo
 preço, estoque e disponibilidade. A partir dela é possível cadastrar uma armação e
 editar seus dados, medidas, estoque, ativação e publicação.
 
-O painel ainda não possui autenticação. Por isso, ele deve permanecer apenas no
-ambiente de desenvolvimento até que o acesso do proprietário e de seu filho seja
-protegido na próxima etapa.
+O painel é protegido por autenticação e permite apenas usuários com a função
+administrativa. A configuração dos dois acessos está descrita em
+[`authentication.md`](authentication.md).

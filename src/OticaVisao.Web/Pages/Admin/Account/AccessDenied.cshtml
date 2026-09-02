@@ -1,0 +1,14 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Account.AccessDeniedModel
+@{
+    ViewData["Title"] = "Acesso negado";
+}
+
+<main class="login-page">
+    <section class="login-card login-card--message">
+        <span class="eyebrow">Área restrita</span>
+        <h1>Acesso não autorizado</h1>
+        <p>Este usuário não possui permissão para acessar o painel administrativo.</p>
+        <a class="button button--primary" asp-page="Login">Voltar ao login</a>
+    </section>
+</main>

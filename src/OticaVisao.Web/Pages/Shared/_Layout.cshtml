@@ -30,17 +30,28 @@
                 <div class="navbar-collapse collapse" id="mainNavigation">
                     <ul class="navbar-nav nav-links ms-auto align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#inicio">Início</a>
+                            <a class="nav-link active" asp-page="/Index" asp-fragment="inicio">Início</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#armacoes">Armações</a>
+                            <a class="nav-link" asp-page="/Index" asp-fragment="armacoes">Armações</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#como-funciona">Como funciona</a>
+                            <a class="nav-link" asp-page="/Index" asp-fragment="como-funciona">Como funciona</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#sobre">Sobre nós</a>
+                            <a class="nav-link" asp-page="/Index" asp-fragment="sobre">Sobre nós</a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Frames/Index">Painel</a>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-page="/Admin/Account/Logout">
+                                    <button class="nav-link nav-link--button" type="submit">Sair</button>
+                                </form>
+                            </li>
+                        }
                         <li class="nav-item nav-item--cta">
                             <a class="button button--small button--whatsapp" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20%C3%93tica%20Vis%C3%A3o%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
                         </li>
