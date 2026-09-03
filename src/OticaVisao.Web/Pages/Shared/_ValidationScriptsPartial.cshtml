@@ -6,6 +6,17 @@
     $.validator.methods.number = function (value, element) {
         return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)?(?:,\d+)?$/.test(value);
     };
+    const parseBrazilianNumber = value => {
+        if (typeof value === "number") return value;
+        return Number(String(value).replace(/\./g, "").replace(",", "."));
+    };
+    $.validator.methods.range = function (value, element, parameters) {
+        if (this.optional(element)) return true;
+        const number = parseBrazilianNumber(value);
+        return Number.isFinite(number)
+            && number >= parseBrazilianNumber(parameters[0])
+            && number <= parseBrazilianNumber(parameters[1]);
+    };
     $.extend($.validator.messages, {
         number: "Informe um número válido.",
         range: $.validator.format("Informe um valor entre {0} e {1}.")
