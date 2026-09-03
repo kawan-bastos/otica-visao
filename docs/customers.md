@@ -13,6 +13,7 @@ O cadastro de clientes é a ficha comercial usada no atendimento e nas vendas. E
 - persistência na tabela `customers` do PostgreSQL.
 - vínculo opcional e exclusivo com uma conta do site;
 - identificação da origem da ficha no painel: conta do site ou atendimento presencial.
+- preenchimento assistido de rua, bairro, cidade e UF pela consulta do CEP ao ViaCEP, mantendo todos os campos editáveis e permitindo preenchimento manual se o serviço estiver indisponível.
 
 As observações são destinadas apenas a lembretes comuns de atendimento. Receitas, prescrições e dados médicos não devem ser registrados nesse campo. Esses dados exigirão uma etapa específica de segurança e LGPD.
 

@@ -23,13 +23,13 @@
             <div class="account-form__section">
                 <h2>Endereço</h2>
                 <div class="form-grid">
-                    <div class="form-field"><label asp-for="Input.PostalCode"></label><input asp-for="Input.PostalCode" inputmode="numeric" autocomplete="postal-code" /><span asp-validation-for="Input.PostalCode"></span></div>
-                    <div class="form-field"><label asp-for="Input.Street"></label><input asp-for="Input.Street" autocomplete="address-line1" /><span asp-validation-for="Input.Street"></span></div>
+                    <div class="form-field"><label asp-for="Input.PostalCode"></label><input asp-for="Input.PostalCode" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" data-cep-lookup /><small class="cep-lookup-status" data-cep-status aria-live="polite"></small><span asp-validation-for="Input.PostalCode"></span></div>
+                    <div class="form-field"><label asp-for="Input.Street"></label><input asp-for="Input.Street" autocomplete="address-line1" data-address-field="street" /><span asp-validation-for="Input.Street"></span></div>
                     <div class="form-field"><label asp-for="Input.Number"></label><input asp-for="Input.Number" autocomplete="address-line2" /><span asp-validation-for="Input.Number"></span></div>
                     <div class="form-field"><label asp-for="Input.Complement"></label><input asp-for="Input.Complement" /><span asp-validation-for="Input.Complement"></span></div>
-                    <div class="form-field"><label asp-for="Input.Neighborhood"></label><input asp-for="Input.Neighborhood" /><span asp-validation-for="Input.Neighborhood"></span></div>
-                    <div class="form-field"><label asp-for="Input.City"></label><input asp-for="Input.City" autocomplete="address-level2" /><span asp-validation-for="Input.City"></span></div>
-                    <div class="form-field"><label asp-for="Input.State"></label><input asp-for="Input.State" maxlength="2" autocomplete="address-level1" /><span asp-validation-for="Input.State"></span></div>
+                    <div class="form-field"><label asp-for="Input.Neighborhood"></label><input asp-for="Input.Neighborhood" data-address-field="neighborhood" /><span asp-validation-for="Input.Neighborhood"></span></div>
+                    <div class="form-field"><label asp-for="Input.City"></label><input asp-for="Input.City" autocomplete="address-level2" data-address-field="city" /><span asp-validation-for="Input.City"></span></div>
+                    <div class="form-field"><label asp-for="Input.State"></label><input asp-for="Input.State" maxlength="2" autocomplete="address-level1" data-address-field="state" /><span asp-validation-for="Input.State"></span></div>
                 </div>
             </div>
             <div class="account-form__section">

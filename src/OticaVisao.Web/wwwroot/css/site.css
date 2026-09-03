@@ -417,6 +417,9 @@
 .account-form__aside { margin: .5rem 0 0; color: var(--muted); text-align: center; }
 .account-form__aside a { color: var(--teal-600); font-weight: 800; }
 .form-field small { color: var(--muted); font-size: .78rem; }
+.form-field .cep-lookup-status { min-height: 1em; }
+.form-field .cep-lookup-status[data-state="success"] { color: #147447; }
+.form-field .cep-lookup-status[data-state="error"] { color: #b42318; }
 .account-page { min-height: 560px; padding: 5rem 1rem; background: linear-gradient(145deg, #f6f9fc, #edf5f7); }
 .account-page__shell { max-width: 760px; padding: 2.5rem; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--white); box-shadow: var(--shadow); }
 .account-page h1 { margin: .5rem 0; color: var(--navy-900); font-weight: 900; }
