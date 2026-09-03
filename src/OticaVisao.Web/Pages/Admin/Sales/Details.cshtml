@@ -1,4 +1,5 @@
 @page "{id:guid}"
+@using OticaVisao.Domain.Sales
 @model OticaVisao.Web.Pages.Admin.Sales.DetailsModel
 @{ ViewData["Title"] = "Venda em andamento"; }
 
@@ -12,6 +13,71 @@
         <div><span>Cliente</span><strong>@Model.Sale.CustomerName</strong></div>
         <div><span>Telefone</span><strong>@Model.Sale.CustomerPhone</strong></div>
         <div><span>Iniciada em</span><strong>@Model.Sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
-        <div class="sale-next-step"><span>Próxima etapa</span><strong>Adicionar armações e lentes</strong><p>Essa parte será habilitada na próxima fase do módulo de vendas.</p></div>
+        <div><span>Itens</span><strong>@Model.Sale.Items.Sum(item => item.Quantity)</strong></div>
+        <div><span>Total parcial</span><strong>@Model.Sale.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></div>
     </section>
+
+    @if (TempData["SaleSuccessMessage"] is string successMessage)
+    {
+        <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
+    }
+
+    <section class="sale-items-section">
+        <div class="admin-form__section-heading"><h2>Itens da venda</h2><p>O estoque fica reservado enquanto o item permanecer neste rascunho.</p></div>
+        @if (Model.Sale.Items.Count == 0)
+        {
+            <div class="admin-empty"><h3>Nenhum item adicionado</h3><p>Use o formulário abaixo para incluir a primeira armação.</p></div>
+        }
+        else
+        {
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead><tr><th>Armação</th><th>Qtd.</th><th>Lentes</th><th>Laboratório</th><th>Total</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                    <tbody>
+                    @foreach (var item in Model.Sale.Items)
+                    {
+                        <tr>
+                            <td data-label="Armação"><strong>@item.FrameBrand @item.FrameModel</strong><small>@item.FrameCode · @item.FrameColor · armação @item.FrameUnitPrice.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</small></td>
+                            <td data-label="Qtd.">@item.Quantity</td>
+                            <td data-label="Lentes">@(item.IncludesLenses ? $"{item.LensDescription} · {item.LensUnitPrice.ToString("C", new System.Globalization.CultureInfo("pt-BR"))}" : "Sem lentes")</td>
+                            <td data-label="Laboratório">@LaboratoryName(item.Laboratory)</td>
+                            <td data-label="Total"><strong>@item.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></td>
+                            <td class="admin-table__actions" data-label="Ações"><form method="post" asp-page-handler="RemoveItem"><input type="hidden" name="id" value="@Model.Sale.Id" /><input type="hidden" name="itemId" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Remover</button></form></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <form method="post" asp-page-handler="AddItem" class="admin-form sale-item-form">
+        <input type="hidden" name="id" value="@Model.Sale.Id" />
+        <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+        <section class="admin-form__section">
+            <div class="admin-form__section-heading"><h2>Adicionar armação</h2><p>Óculos completo aplica automaticamente o preço promocional de R$ 39 na armação.</p></div>
+            <div class="form-grid form-grid--three">
+                <div class="form-field form-field--wide"><label asp-for="Input.FrameId"></label><select asp-for="Input.FrameId"><option value="">Selecione</option>@foreach (var frame in Model.AvailableFrames) { <option value="@frame.Id">@frame.Code · @frame.Brand @frame.Model · @frame.Color · estoque @frame.StockQuantity</option> }</select><span asp-validation-for="Input.FrameId"></span></div>
+                <div class="form-field"><label asp-for="Input.Quantity"></label><input asp-for="Input.Quantity" type="number" min="1" /><span asp-validation-for="Input.Quantity"></span></div>
+                <label class="form-checkbox sale-complete-toggle"><input asp-for="Input.IncludesLenses" data-sale-includes-lenses /><span><strong>Óculos completo</strong><small>Inclui lentes e armação promocional por R$ 39</small></span></label>
+            </div>
+            <div class="form-grid form-grid--three" data-sale-lens-fields>
+                <div class="form-field form-field--wide"><label asp-for="Input.LensDescription"></label><input asp-for="Input.LensDescription" placeholder="Ex.: visão simples, antirreflexo" /><span asp-validation-for="Input.LensDescription"></span></div>
+                <div class="form-field"><label asp-for="Input.LensUnitPrice"></label><input asp-for="Input.LensUnitPrice" inputmode="decimal" /><span asp-validation-for="Input.LensUnitPrice"></span></div>
+                <div class="form-field"><label asp-for="Input.Laboratory"></label><select asp-for="Input.Laboratory"><option value="">Selecione</option><option value="StandardOptical">Padrão Optical</option><option value="ImperialLab">Imperial Lab</option></select><span asp-validation-for="Input.Laboratory"></span></div>
+            </div>
+        </section>
+        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.AvailableFrames.Count == 0 ? "disabled" : null)>Adicionar à venda</button></div>
+    </form>
 </main>
+
+@functions {
+    private static string LaboratoryName(OpticalLaboratory? laboratory) => laboratory switch
+    {
+        OpticalLaboratory.StandardOptical => "Padrão Optical",
+        OpticalLaboratory.ImperialLab => "Imperial Lab",
+        _ => "—"
+    };
+}
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

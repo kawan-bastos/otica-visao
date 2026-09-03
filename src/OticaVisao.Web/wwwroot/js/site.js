@@ -67,3 +67,15 @@ document.querySelectorAll("[data-cep-lookup]").forEach((cepInput) => {
     });
     cepInput.addEventListener("blur", lookup);
 });
+
+document.querySelectorAll("[data-sale-includes-lenses]").forEach((toggle) => {
+    const form = toggle.closest("form");
+    const lensFields = form?.querySelector("[data-sale-lens-fields]");
+    const updateLensFields = () => {
+        if (!lensFields) return;
+        lensFields.hidden = !toggle.checked;
+        lensFields.querySelectorAll("input, select").forEach((field) => field.disabled = !toggle.checked);
+    };
+    toggle.addEventListener("change", updateLensFields);
+    updateLensFields();
+});

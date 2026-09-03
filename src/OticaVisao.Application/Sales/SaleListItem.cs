@@ -8,5 +8,7 @@ public sealed record SaleListItem(
     string CustomerName,
     string CustomerPhone,
     SaleStatus Status,
+    IReadOnlyList<SaleItemListItem> Items,
+    decimal Total,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);
