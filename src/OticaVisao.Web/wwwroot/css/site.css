@@ -876,19 +876,22 @@ a { color: inherit; }
 /* Shared chrome: restrained surfaces, clear groups and generous spacing. */
 .hero-highlights > img.highlight-photo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .85s ease; object-fit: cover; }
 .hero-highlights > img.highlight-photo.is-current { opacity: 1; }
-.highlight-controls { position: absolute; z-index: 3; left: 24px; right: 24px; bottom: 24px; padding: 14px; background: rgba(4,27,65,.88); border: 1px solid #748da5; border-radius: 16px; }
+.highlight-controls { position: absolute; z-index: 3; left: 50%; bottom: 24px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); padding: 0; background: rgba(4,27,65,.65); border: 0; border-radius: 24px; overflow: hidden; }
 .highlight-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: .875rem; }
 .highlight-controls button { min-height: 44px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: #fff; font-size: .875rem; padding: 8px 12px; }
 .highlight-toolbar button { min-height: 32px; padding: 4px 8px; color: #aaf0e8; }
-.highlight-navigation { display: flex; gap: 6px; align-items: center; }
-.highlight-tabs { display: flex; flex: 1; gap: 6px; }
-.highlight-tabs button { flex: 1; }
-.highlight-tabs button[aria-pressed="true"] { background: #dff7f7; color: #073783; font-weight: 750; }
+.highlight-navigation { display: flex; gap: 0; align-items: center; padding-inline: 4px; }
+.highlight-tabs { display: flex; gap: 0; }
+.highlight-tabs button { width: 36px; padding: 0; display: grid; place-items: center; }
+.highlight-tabs button span { width: 8px; height: 8px; border-radius: 50%; background: #abb9ca; transition: background .2s ease, transform .2s ease; }
+.highlight-tabs button[aria-pressed="true"] span { background: #8bf0df; transform: scale(1.35); }
+.highlight-progress { height: 3px; background: rgba(255,255,255,.18); margin-inline: 16px; }
+.highlight-progress span { display: block; width: 100%; height: 100%; background: #8bf0df; transform: scaleX(0); transform-origin: left; }
 .highlight-controls button:hover { border-color: #8ae2ce; }
 .highlight-controls button:focus-visible { outline: 3px solid #8ae2ce; outline-offset: 2px; }
 @media (max-width: 575px) {
   .hero .hero__card { grid-template-rows: auto 300px; }
-  .highlight-controls { left: 12px; right: 12px; bottom: 12px; padding: 10px; }
+  .highlight-controls { bottom: 12px; }
   .highlight-navigation { gap: 2px; }
   .highlight-controls button { padding-inline: 7px; }
   .highlight-tabs { gap: 2px; }

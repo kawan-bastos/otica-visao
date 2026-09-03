@@ -92,13 +92,26 @@ document.querySelectorAll("[data-highlights]").forEach(carousel => {
     let hovered = false;
     let focused = false;
     let timer;
+    let elapsed = 0;
+    let lastTime = null;
+    const progress = carousel.querySelector("[data-highlight-progress]");
+    const tick = time => {
+        if (lastTime !== null) elapsed += time - lastTime;
+        lastTime = time;
+        progress.style.transform = `scaleX(${Math.min(elapsed / 6000, 1)})`;
+        if (elapsed >= 6000) { show(current + 1); return; }
+        timer = requestAnimationFrame(tick);
+    };
     const schedule = () => {
-        clearTimeout(timer);
+        cancelAnimationFrame(timer);
+        lastTime = null;
         if (!paused && !hovered && !focused && !document.hidden && !preference.matches)
-            timer = setTimeout(() => show(current + 1), 6000);
+            timer = requestAnimationFrame(tick);
     };
     const show = (index, manual = false) => {
         current = (index + photos.length) % photos.length;
+        elapsed = 0;
+        progress.style.transform = "scaleX(0)";
         photos.forEach((photo, i) => {
             photo.classList.toggle("is-current", i === current);
             photo.setAttribute("aria-hidden", String(i !== current));
@@ -108,7 +121,7 @@ document.querySelectorAll("[data-highlights]").forEach(carousel => {
         schedule();
     };
     const updatePause = () => {
-        pause.textContent = paused ? "Reproduzir" : "Pausar";
+        pause.textContent = paused ? "▶" : "Ⅱ";
         pause.setAttribute("aria-label", paused ? "Iniciar troca automática" : "Pausar troca automática");
         schedule();
     };
