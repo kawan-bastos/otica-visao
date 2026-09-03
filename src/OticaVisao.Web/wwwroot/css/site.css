@@ -859,6 +859,20 @@ a { color: inherit; }
 }
 
 /* Shared chrome: restrained surfaces, clear groups and generous spacing. */
+.whatsapp-icon { width: 19px; height: 19px; flex-shrink: 0; color: #8ae2ce; }
+.hero__offer-label { display: inline-flex; padding: .45rem .8rem; margin-bottom: 1.4rem; border: 1px solid #68d7db; border-radius: 999px; color: #b9f5f2; font-size: .875rem; font-weight: 700; }
+.hero h1.hero__offer-title { font-size: clamp(2.25rem, 3.7vw, 4rem); line-height: 1.12; letter-spacing: -.035em; }
+.hero__offer-title strong { display: block; color: #8bf0df; font-size: clamp(5rem, 8vw, 8rem); line-height: 1.1; letter-spacing: -.065em; margin-top: .3rem; }
+.hero__offer-title strong span { font-size: .38em; letter-spacing: -.03em; }
+.hero__content > p.hero__offer-condition { color: #fff; font-size: clamp(1.125rem, 1.6vw, 1.4rem); font-weight: 700; line-height: 1.5; margin-bottom: .75rem; }
+.hero__content > p.hero__offer-note { font-size: 1rem; line-height: 1.6; margin-bottom: 1.75rem; }
+@media (min-width: 992px) {
+  .hero__visual > img { position: absolute; inset: 0; }
+  .site-footer .footer-grid, .site-footer .footer-bottom { max-width: 1440px; }
+  .site-footer .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .site-footer .footer-column h2 { min-height: 76px; display: flex; align-items: center; margin: 0 0 1rem; }
+  .footer-hours { max-width: 290px; }
+}
 .site-header { position: relative; z-index: 10; box-shadow: 0 4px 22px rgba(4,27,88,.035); }
 .topbar { background: #071e50; }
 .topbar__content { min-height: 40px; gap: 1rem; }
