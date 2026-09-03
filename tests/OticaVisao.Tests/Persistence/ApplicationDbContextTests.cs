@@ -71,5 +71,12 @@ public sealed class ApplicationDbContextTests
         Assert.Equal("customer_id", entity.FindProperty(nameof(Sale.CustomerId))?.GetColumnName(table));
         Assert.Equal("status", entity.FindProperty(nameof(Sale.Status))?.GetColumnName(table));
         Assert.Equal(DeleteBehavior.Restrict, entity.GetForeignKeys().Single().DeleteBehavior);
+
+        var itemEntity = context.Model.FindEntityType(typeof(SaleItem));
+        Assert.NotNull(itemEntity);
+        Assert.Equal("sale_items", itemEntity.GetTableName());
+        var itemTable = StoreObjectIdentifier.Table("sale_items", null);
+        Assert.Equal("frame_unit_price", itemEntity.FindProperty(nameof(SaleItem.FrameUnitPrice))?.GetColumnName(itemTable));
+        Assert.Equal("lens_unit_price", itemEntity.FindProperty(nameof(SaleItem.LensUnitPrice))?.GetColumnName(itemTable));
     }
 }

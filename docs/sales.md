@@ -14,6 +14,17 @@ O módulo de vendas começa com um rascunho persistente ligado obrigatoriamente 
 
 Os estados iniciais são `Draft`, `Completed` e `Cancelled`. Nesta etapa, apenas `Draft` é criado e exibido como “Em andamento”.
 
+## Itens, lentes e estoque
+
+- cada item mantém uma fotografia do código, marca, modelo, cor e preços usados na venda;
+- a venda aceita quantidade e vários modelos de armação;
+- no óculos completo, a armação recebe automaticamente o valor promocional de R$ 39;
+- lentes registram descrição, preço unitário e laboratório Padrão Optical ou Imperial Lab;
+- armações sem lentes mantêm o preço do catálogo;
+- adicionar um item reserva a quantidade no estoque imediatamente;
+- remover o item devolve a quantidade ao estoque;
+- alterações futuras no catálogo não modificam valores de rascunhos existentes.
+
 ## Próxima evolução
 
-O rascunho receberá itens de armação, dados de lentes e laboratório. Depois serão implementados promoção, pagamento, conclusão e baixa automática de estoque.
+Serão implementados pagamento, conclusão e cancelamento. A conclusão revalidará os dados da venda; o cancelamento devolverá ao estoque todos os itens ainda reservados.

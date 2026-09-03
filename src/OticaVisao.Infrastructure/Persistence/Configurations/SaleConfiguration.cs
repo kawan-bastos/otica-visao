@@ -19,5 +19,8 @@ internal sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.HasIndex(sale => new { sale.Status, sale.CreatedAtUtc }).HasDatabaseName("ix_sales_status_created_at");
         builder.HasOne(sale => sale.Customer).WithMany().HasForeignKey(sale => sale.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(sale => sale.Items).WithOne().HasForeignKey(item => item.SaleId).OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(sale => sale.Items).HasField("items").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.Ignore(sale => sale.Total);
     }
 }
