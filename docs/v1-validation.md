@@ -1,5 +1,17 @@
 # Validação de usabilidade da V1
 
+## Validação final — 03/09/2026
+
+- os 90 testes existentes passaram em configuração `Release`;
+- Home, catálogo, filtros, detalhes, páginas institucionais, privacidade, login, cadastro e health check responderam sem erro no sistema local;
+- acesso anônimo ao painel redirecionou corretamente para o login administrativo;
+- Home, catálogo, login do cliente e login administrativo foram revisados no navegador sem erros visuais aparentes;
+- foi adicionada uma bateria permanente de smoke tests para as rotas públicas essenciais e para detalhes de armações existentes e inexistentes;
+- backup e restauração já foram comprovados em banco isolado;
+- configurações inseguras impedem a inicialização em produção.
+
+Esta validação não cria, altera ou exclui dados reais. O teste manual dos fluxos administrativos com o responsável da loja permanece como aceite final, pois envolve decisões comerciais e uso no tablet real.
+
 Esta etapa verifica o caminho principal do site público e do painel em execução
 local com PostgreSQL.
 
