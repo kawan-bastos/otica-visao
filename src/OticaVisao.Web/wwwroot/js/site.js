@@ -80,3 +80,40 @@ document.querySelectorAll("[data-sale-includes-lenses]").forEach((toggle) => {
     toggle.addEventListener("change", updateLensFields);
     updateLensFields();
 });
+
+// Progressive enhancement: content remains visible without JavaScript or animation support.
+(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (preference.matches || !Element.prototype.animate || !("IntersectionObserver" in window)) return;
+
+    const animations = new Set();
+    const reveal = (element, delay = 0) => {
+        if (preference.matches) return;
+        const animation = element.animate([
+            { opacity: 0.35, translate: "0 18px" },
+            { opacity: 1, translate: "0 0" }
+        ], { duration: 550, delay, easing: "cubic-bezier(.2,.65,.3,1)", fill: "backwards" });
+        animations.add(animation);
+        animation.finished.then(() => animations.delete(animation), () => animations.delete(animation));
+    };
+
+    document.querySelectorAll(".hero__content > *").forEach((element, index) => reveal(element, index * 65));
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll(
+        ".catalog-preview .section-heading, .frame-card, .offer__card, .journey__steps > article, .about__grid, .contact__card"
+    ).forEach(element => observer.observe(element));
+
+    preference.addEventListener("change", event => {
+        if (!event.matches) return;
+        observer.disconnect();
+        animations.forEach(animation => animation.cancel());
+        animations.clear();
+    });
+})();
