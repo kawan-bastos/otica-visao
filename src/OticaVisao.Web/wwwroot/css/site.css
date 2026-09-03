@@ -874,6 +874,29 @@ a { color: inherit; }
 }
 
 /* Shared chrome: restrained surfaces, clear groups and generous spacing. */
+.hero-highlights > img.highlight-photo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .85s ease; object-fit: cover; }
+.hero-highlights > img.highlight-photo.is-current { opacity: 1; }
+.highlight-controls { position: absolute; z-index: 3; left: 24px; right: 24px; bottom: 24px; padding: 14px; background: rgba(4,27,65,.88); border: 1px solid #748da5; border-radius: 16px; }
+.highlight-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; font-size: .875rem; }
+.highlight-controls button { min-height: 44px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: #fff; font-size: .875rem; padding: 8px 12px; }
+.highlight-toolbar button { min-height: 32px; padding: 4px 8px; color: #aaf0e8; }
+.highlight-navigation { display: flex; gap: 6px; align-items: center; }
+.highlight-tabs { display: flex; flex: 1; gap: 6px; }
+.highlight-tabs button { flex: 1; }
+.highlight-tabs button[aria-pressed="true"] { background: #dff7f7; color: #073783; font-weight: 750; }
+.highlight-controls button:hover { border-color: #8ae2ce; }
+.highlight-controls button:focus-visible { outline: 3px solid #8ae2ce; outline-offset: 2px; }
+@media (max-width: 575px) {
+  .hero .hero__card { grid-template-rows: auto 300px; }
+  .highlight-controls { left: 12px; right: 12px; bottom: 12px; padding: 10px; }
+  .highlight-navigation { gap: 2px; }
+  .highlight-controls button { padding-inline: 7px; }
+  .highlight-tabs { gap: 2px; }
+}
+@keyframes option-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.035; } }
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nav-link:hover, .nav-action-link:hover, .button:hover, .category-chip:hover, .highlight-controls button:hover { animation: option-pulse .55s ease; }
+}
 .whatsapp-icon { width: 19px; height: 19px; flex-shrink: 0; color: #8ae2ce; }
 .hero__offer-label { display: inline-flex; padding: .45rem .8rem; margin-bottom: 1.4rem; border: 1px solid #68d7db; border-radius: 999px; color: #b9f5f2; font-size: .875rem; font-weight: 700; }
 .hero h1.hero__offer-title { font-size: clamp(2.25rem, 3.7vw, 4rem); line-height: 1.12; letter-spacing: -.035em; }

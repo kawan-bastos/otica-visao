@@ -17,11 +17,22 @@
                     <a class="button button--outline-light" href="#armacoes">Ver armações</a>
                 </div>
             </div>
-            <div class="hero__visual">
-                <img src="~/images/store/interior-vitrine.png" alt="Interior da Ótica Visão de Piabetá visto pela vitrine" />
-                <div class="hero__caption">
-                    <span>Atendimento próximo</span>
-                    <strong>Escolha com confiança</strong>
+            <div class="hero__visual hero-highlights" data-highlights role="region" aria-roledescription="carrossel" aria-label="Conheça a Ótica Visão">
+                <img class="highlight-photo is-current" data-highlight-photo src="~/images/store/interior-vitrine.png" alt="Interior da Ótica Visão visto pela vitrine" />
+                <img class="highlight-photo" data-highlight-photo src="~/images/store/fachada-frontal.png" alt="Fachada da Ótica Visão em Piabetá" aria-hidden="true" />
+                <img class="highlight-photo" data-highlight-photo src="~/images/store/fachada-noturna.png" alt="Fachada iluminada da Ótica Visão à noite" aria-hidden="true" />
+                <div class="highlight-controls" data-highlight-controls hidden>
+                    <div class="highlight-toolbar"><span>Destaques da loja</span><button type="button" data-highlight-pause aria-label="Pausar troca automática">Pausar</button></div>
+                    <div class="highlight-navigation">
+                        <button type="button" data-highlight-prev aria-label="Foto anterior">‹</button>
+                        <div class="highlight-tabs" role="group" aria-label="Escolher destaque">
+                            <button type="button" data-highlight-index="0" aria-pressed="true">Por dentro</button>
+                            <button type="button" data-highlight-index="1" aria-pressed="false">Nossa loja</button>
+                            <button type="button" data-highlight-index="2" aria-pressed="false">À noite</button>
+                        </div>
+                        <button type="button" data-highlight-next aria-label="Próxima foto">›</button>
+                    </div>
+                    <span class="visually-hidden" data-highlight-status aria-live="polite"></span>
                 </div>
             </div>
         </div>

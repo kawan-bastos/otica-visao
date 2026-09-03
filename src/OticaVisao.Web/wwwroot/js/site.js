@@ -82,6 +82,53 @@ document.querySelectorAll("[data-sale-includes-lenses]").forEach((toggle) => {
 });
 
 // Progressive enhancement: content remains visible without JavaScript or animation support.
+document.querySelectorAll("[data-highlights]").forEach(carousel => {
+    const photos = [...carousel.querySelectorAll("[data-highlight-photo]")];
+    const tabs = [...carousel.querySelectorAll("[data-highlight-index]")];
+    const pause = carousel.querySelector("[data-highlight-pause]");
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let current = 0;
+    let paused = preference.matches;
+    let hovered = false;
+    let focused = false;
+    let timer;
+    const schedule = () => {
+        clearTimeout(timer);
+        if (!paused && !hovered && !focused && !document.hidden && !preference.matches)
+            timer = setTimeout(() => show(current + 1), 6000);
+    };
+    const show = (index, manual = false) => {
+        current = (index + photos.length) % photos.length;
+        photos.forEach((photo, i) => {
+            photo.classList.toggle("is-current", i === current);
+            photo.setAttribute("aria-hidden", String(i !== current));
+        });
+        tabs.forEach((tab, i) => tab.setAttribute("aria-pressed", String(i === current)));
+        if (manual) carousel.querySelector("[data-highlight-status]").textContent = `Foto ${current + 1} de ${photos.length}: ${photos[current].alt}`;
+        schedule();
+    };
+    const updatePause = () => {
+        pause.textContent = paused ? "Reproduzir" : "Pausar";
+        pause.setAttribute("aria-label", paused ? "Iniciar troca automática" : "Pausar troca automática");
+        schedule();
+    };
+    tabs.forEach((tab, index) => tab.addEventListener("click", () => show(index, true)));
+    carousel.querySelector("[data-highlight-prev]").addEventListener("click", () => show(current - 1, true));
+    carousel.querySelector("[data-highlight-next]").addEventListener("click", () => show(current + 1, true));
+    pause.addEventListener("click", () => { paused = !paused; updatePause(); });
+    carousel.addEventListener("mouseenter", () => { hovered = true; schedule(); });
+    carousel.addEventListener("mouseleave", () => { hovered = false; schedule(); });
+    carousel.addEventListener("focusin", () => { focused = true; schedule(); });
+    carousel.addEventListener("focusout", event => { focused = carousel.contains(event.relatedTarget); schedule(); });
+    document.addEventListener("visibilitychange", schedule);
+    preference.addEventListener("change", () => { paused = true; updatePause(); });
+    carousel.querySelector("[data-highlight-controls]").hidden = false;
+    pause.hidden = preference.matches;
+    preference.addEventListener("change", () => { pause.hidden = preference.matches; });
+    updatePause();
+});
+
+// One-time entrances on public pages.
 (() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (preference.matches || !Element.prototype.animate || !("IntersectionObserver" in window)) return;
