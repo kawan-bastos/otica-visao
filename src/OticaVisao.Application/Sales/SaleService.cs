@@ -54,11 +54,48 @@ public sealed class SaleService(
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task CompleteAsync(Guid saleId, PaymentMethod paymentMethod, int installments, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        sale.Complete(paymentMethod, installments);
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task CancelAsync(Guid saleId, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        if (sale.Status != SaleStatus.Draft)
+            throw new InvalidOperationException("Somente vendas em andamento podem ser canceladas.");
+
+        foreach (var item in sale.Items)
+        {
+            var frame = await frameRepository.GetByIdAsync(item.FrameId, cancellationToken)
+                ?? throw new InvalidOperationException($"A armação {item.FrameCode} não foi encontrada; a venda não pode ser cancelada automaticamente.");
+            frame.AddToStock(item.Quantity);
+        }
+
+        sale.Cancel();
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteCancelledAsync(Guid saleId, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        if (sale.Status != SaleStatus.Cancelled)
+            throw new InvalidOperationException("Somente vendas canceladas podem ser excluídas do histórico.");
+
+        saleRepository.Remove(sale);
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
     private static SaleListItem ToListItem(Sale sale) => new(
         sale.Id, sale.CustomerId, sale.Customer.Name, sale.Customer.Phone,
-        sale.Status, sale.Items.Select(item => new SaleItemListItem(
+        sale.Status, sale.PaymentMethod, sale.Installments, sale.Items.Select(item => new SaleItemListItem(
             item.Id, item.FrameId, item.FrameCode, item.FrameBrand, item.FrameModel, item.FrameColor,
             item.Quantity, item.IncludesLenses, item.FrameUnitPrice, item.LensDescription,
             item.LensUnitPrice, item.Laboratory, item.Total)).ToArray(),
-        sale.Total, sale.CreatedAtUtc, sale.UpdatedAtUtc);
+        sale.Total, sale.FinalTotal, sale.CompletedAtUtc, sale.CancelledAtUtc, sale.CreatedAtUtc, sale.UpdatedAtUtc);
 }

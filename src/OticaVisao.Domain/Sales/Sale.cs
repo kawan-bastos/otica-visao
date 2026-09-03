@@ -22,6 +22,11 @@ public sealed class Sale
     public Guid CustomerId { get; private set; }
     public Customer Customer { get; private set; } = null!;
     public SaleStatus Status { get; private set; }
+    public PaymentMethod? PaymentMethod { get; private set; }
+    public int? Installments { get; private set; }
+    public decimal? FinalTotal { get; private set; }
+    public DateTimeOffset? CompletedAtUtc { get; private set; }
+    public DateTimeOffset? CancelledAtUtc { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset UpdatedAtUtc { get; private set; }
     public IReadOnlyCollection<SaleItem> Items => items.AsReadOnly();
@@ -47,6 +52,32 @@ public sealed class Sale
         items.Remove(item);
         UpdatedAtUtc = DateTimeOffset.UtcNow;
         return item;
+    }
+
+    public void Complete(PaymentMethod paymentMethod, int installments)
+    {
+        EnsureDraft();
+        if (items.Count == 0) throw new InvalidOperationException("Adicione pelo menos um item antes de concluir a venda.");
+        if (!Enum.IsDefined(paymentMethod)) throw new ArgumentException("Informe uma forma de pagamento válida.", nameof(paymentMethod));
+        if (paymentMethod == OticaVisao.Domain.Sales.PaymentMethod.CreditCard && installments is < 1 or > 10)
+            throw new ArgumentException("O cartão de crédito pode ser parcelado de 1 a 10 vezes sem juros.", nameof(installments));
+        if (paymentMethod != OticaVisao.Domain.Sales.PaymentMethod.CreditCard && installments != 1)
+            throw new ArgumentException("Pix e cartão de débito devem ser pagos em uma única vez.", nameof(installments));
+
+        PaymentMethod = paymentMethod;
+        Installments = installments;
+        FinalTotal = Total;
+        Status = SaleStatus.Completed;
+        CompletedAtUtc = DateTimeOffset.UtcNow;
+        UpdatedAtUtc = CompletedAtUtc.Value;
+    }
+
+    public void Cancel()
+    {
+        EnsureDraft();
+        Status = SaleStatus.Cancelled;
+        CancelledAtUtc = DateTimeOffset.UtcNow;
+        UpdatedAtUtc = CancelledAtUtc.Value;
     }
 
     private void EnsureDraft()

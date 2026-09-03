@@ -10,6 +10,11 @@
         <a class="button button--primary" asp-page="Create">Nova venda</a>
     </header>
 
+    @if (TempData["SaleSuccessMessage"] is string successMessage)
+    {
+        <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
+    }
+
     @if (Model.Sales.Count == 0)
     {
         <div class="admin-empty"><h2>Nenhuma venda iniciada</h2><p>As vendas em andamento e concluídas aparecerão aqui.</p></div>
@@ -18,17 +23,22 @@
     {
         <div class="admin-table-wrapper">
             <table class="admin-table">
-                <thead><tr><th>Cliente</th><th>Itens</th><th>Total parcial</th><th>Iniciada em</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <thead><tr><th>Cliente</th><th>Itens</th><th>Total</th><th>Iniciada em</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
                 <tbody>
                 @foreach (var sale in Model.Sales)
                 {
                     <tr>
                         <td data-label="Cliente"><strong>@sale.CustomerName</strong></td>
                         <td data-label="Itens">@sale.Items.Sum(item => item.Quantity)</td>
-                        <td data-label="Total parcial">@sale.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
+                        <td data-label="Total">@((sale.FinalTotal ?? sale.Total).ToString("C", new System.Globalization.CultureInfo("pt-BR")))</td>
                         <td data-label="Iniciada em">@sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
                         <td data-label="Situação"><span class="sale-status sale-status--@sale.Status.ToString().ToLowerInvariant()">@(sale.Status == SaleStatus.Draft ? "Em andamento" : sale.Status == SaleStatus.Completed ? "Concluída" : "Cancelada")</span></td>
-                        <td class="admin-table__actions" data-label="Ações"><a asp-page="Details" asp-route-id="@sale.Id">Continuar</a></td>
+                        <td class="admin-table__actions" data-label="Ações">
+                            <div class="sale-row-actions">
+                                <a asp-page="Details" asp-route-id="@sale.Id">@(sale.Status == SaleStatus.Draft ? "Continuar" : "Ver detalhes")</a>
+                                @if (sale.Status == SaleStatus.Cancelled) { <a class="sale-delete-link" asp-page="Delete" asp-route-id="@sale.Id">Excluir</a> }
+                            </div>
+                        </td>
                     </tr>
                 }
                 </tbody>

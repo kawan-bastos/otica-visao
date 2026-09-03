@@ -1,0 +1,20 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Sales.CancelModel
+@{ ViewData["Title"] = "Cancelar venda"; }
+
+<main class="admin-page admin-page--narrow">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <section class="admin-form">
+        <div class="admin-form__section">
+            <span class="eyebrow">Confirmação necessária</span>
+            <h1>Cancelar venda?</h1>
+            <p>A venda de <strong>@Model.Sale.CustomerName</strong> será encerrada como cancelada. As @Model.Sale.Items.Sum(item => item.Quantity) unidade(s) reservadas serão devolvidas ao estoque.</p>
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+        </div>
+        <form method="post" class="admin-form__actions">
+            <input type="hidden" name="id" value="@Model.Sale.Id" />
+            <a class="button button--secondary" asp-page="Details" asp-route-id="@Model.Sale.Id">Voltar sem cancelar</a>
+            <button class="button button--danger" type="submit">Sim, cancelar venda</button>
+        </form>
+    </section>
+</main>

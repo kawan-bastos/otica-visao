@@ -51,4 +51,54 @@ public sealed class SaleTests
         Assert.Equal(219m, item.FrameUnitPrice);
         Assert.Equal(219m, sale.Total);
     }
+
+    [Fact]
+    public void CompleteSaleRecordsPaymentAndLocksChanges()
+    {
+        var sale = SaleWithItem();
+
+        sale.Complete(PaymentMethod.CreditCard, 10);
+
+        Assert.Equal(SaleStatus.Completed, sale.Status);
+        Assert.Equal(PaymentMethod.CreditCard, sale.PaymentMethod);
+        Assert.Equal(10, sale.Installments);
+        Assert.Equal(219m, sale.FinalTotal);
+        Assert.NotNull(sale.CompletedAtUtc);
+        Assert.Throws<InvalidOperationException>(() => sale.AddItem(Frame(), 1, false, null, 0, null));
+        Assert.Throws<InvalidOperationException>(sale.Cancel);
+    }
+
+    [Fact]
+    public void CompleteSaleRequiresItemsAndValidInstallments()
+    {
+        var emptySale = new Sale(Guid.NewGuid());
+        Assert.Throws<InvalidOperationException>(() => emptySale.Complete(PaymentMethod.Pix, 1));
+
+        var sale = SaleWithItem();
+        Assert.Throws<ArgumentException>(() => sale.Complete(PaymentMethod.CreditCard, 11));
+        Assert.Throws<ArgumentException>(() => sale.Complete(PaymentMethod.DebitCard, 2));
+    }
+
+    [Fact]
+    public void CancelSaleRecordsStatusAndLocksChanges()
+    {
+        var sale = SaleWithItem();
+
+        sale.Cancel();
+
+        Assert.Equal(SaleStatus.Cancelled, sale.Status);
+        Assert.NotNull(sale.CancelledAtUtc);
+        Assert.Throws<InvalidOperationException>(() => sale.Complete(PaymentMethod.Pix, 1));
+    }
+
+    private static Sale SaleWithItem()
+    {
+        var sale = new Sale(Guid.NewGuid());
+        sale.AddItem(Frame(), 1, false, null, 0, null);
+        return sale;
+    }
+
+    private static Frame Frame() => new(
+        "ARM-TEST", "Marca", "Modelo", "Preta", 219m, 3,
+        FrameType.Prescription, FrameShape.Round, TargetAudience.Adult);
 }

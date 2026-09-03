@@ -256,6 +256,9 @@
 
 .admin-table__button { padding: 0; border: 0; color: var(--teal-600); background: transparent; font: inherit; font-weight: 800; cursor: pointer; }
 .admin-table__button--danger { color: #b42318; }
+.sale-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; white-space: nowrap; }
+.admin-table__actions .sale-delete-link { padding: .35rem .65rem; color: #b42318; border: 1px solid #e6aaa5; border-radius: .55rem; background: #fff; font-size: .78rem; }
+.admin-table__actions .sale-delete-link:hover { color: #fff; border-color: #b42318; background: #b42318; }
 .sale-customer-actions { margin: 1.25rem 0; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #b9e6e9; border-radius: 1rem; background: #eefbfc; }
 .sale-customer-actions p { margin: 0; color: var(--navy-900); font-weight: 700; }
 .sale-status { padding: .35rem .65rem; display: inline-flex; border-radius: 999px; font-size: .78rem; font-weight: 800; }
@@ -269,6 +272,10 @@
 .sale-draft-card .sale-next-step { grid-column: 1 / -1; border: 1px dashed #93d9de; background: #eefbfc; }
 .sale-next-step p { margin: 0; color: var(--muted); }
 .sale-items-section { margin: 2rem 0; display: grid; gap: 1rem; }
+.sale-checkout { margin-top: 2rem; }
+.sale-checkout__total { padding: 1rem; display: grid; align-content: center; gap: .25rem; border-radius: .85rem; background: #eefbfc; }
+.sale-checkout__total span { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+.sale-checkout__total strong { color: var(--navy-900); font-size: 1.5rem; }
 .sale-item-form { margin-top: 2rem; }
 .sale-complete-toggle { align-self: end; min-height: 48px; }
 [data-sale-lens-fields][hidden] { display: none; }

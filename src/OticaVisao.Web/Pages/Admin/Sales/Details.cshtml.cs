@@ -10,6 +10,8 @@ public sealed class DetailsModel(SaleService saleService, FrameCatalogService fr
 {
     [BindProperty]
     public SaleItemInputModel Input { get; set; } = new();
+    [BindProperty]
+    public CompleteSaleInputModel Payment { get; set; } = new();
     public SaleListItem Sale { get; private set; } = null!;
     public IReadOnlyList<FrameCatalogItem> AvailableFrames { get; private set; } = [];
 
@@ -21,7 +23,8 @@ public sealed class DetailsModel(SaleService saleService, FrameCatalogService fr
 
     public async Task<IActionResult> OnPostAddItemAsync(Guid id, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
+        ModelState.Clear();
+        if (!TryValidateModel(Input, nameof(Input)))
         {
             if (!await LoadAsync(id, cancellationToken)) return NotFound();
             return Page();
@@ -52,6 +55,29 @@ public sealed class DetailsModel(SaleService saleService, FrameCatalogService fr
         catch (KeyNotFoundException)
         {
             return NotFound();
+        }
+    }
+
+    public async Task<IActionResult> OnPostCompleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        ModelState.Clear();
+        if (!TryValidateModel(Payment, nameof(Payment)))
+        {
+            if (!await LoadAsync(id, cancellationToken)) return NotFound();
+            return Page();
+        }
+
+        try
+        {
+            await saleService.CompleteAsync(id, Payment.PaymentMethod!.Value, Payment.Installments, cancellationToken);
+            TempData["SaleSuccessMessage"] = "Venda concluída com sucesso.";
+            return RedirectToPage(new { id });
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or KeyNotFoundException)
+        {
+            ModelState.AddModelError(string.Empty, exception.Message);
+            if (!await LoadAsync(id, cancellationToken)) return NotFound();
+            return Page();
         }
     }
 

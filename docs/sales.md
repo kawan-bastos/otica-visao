@@ -12,7 +12,7 @@ O módulo de vendas começa com um rascunho persistente ligado obrigatoriamente 
 - criação transacional da ficha e do rascunho quando o cliente é novo;
 - proteção do vínculo histórico: uma ficha com venda não pode ser apagada pelo banco.
 
-Os estados iniciais são `Draft`, `Completed` e `Cancelled`. Nesta etapa, apenas `Draft` é criado e exibido como “Em andamento”.
+Os estados são `Draft`, `Completed` e `Cancelled`, exibidos como “Em andamento”, “Concluída” e “Cancelada”.
 
 ## Itens, lentes e estoque
 
@@ -25,6 +25,16 @@ Os estados iniciais são `Draft`, `Completed` e `Cancelled`. Nesta etapa, apenas
 - remover o item devolve a quantidade ao estoque;
 - alterações futuras no catálogo não modificam valores de rascunhos existentes.
 
+## Pagamento e encerramento
+
+- a venda pode ser concluída por Pix, cartão de débito ou cartão de crédito;
+- crédito aceita de 1 a 10 parcelas sem juros; Pix e débito são registrados à vista;
+- a conclusão exige pelo menos um item e preserva o valor final como histórico;
+- a conclusão mantém o estoque já reservado, sem realizar uma segunda baixa;
+- o cancelamento possui uma confirmação separada e devolve todas as unidades reservadas;
+- vendas concluídas e canceladas ficam disponíveis somente para consulta, sem alteração de itens ou situação.
+- vendas canceladas podem ser excluídas permanentemente do histórico após uma confirmação; vendas concluídas são preservadas como registro financeiro.
+
 ## Próxima evolução
 
-Serão implementados pagamento, conclusão e cancelamento. A conclusão revalidará os dados da venda; o cancelamento devolverá ao estoque todos os itens ainda reservados.
+O próximo passo é acompanhar o pedido enviado ao laboratório, incluindo laboratório responsável, datas e situação da produção das lentes.

@@ -18,6 +18,8 @@ public sealed class SaleRepository(ApplicationDbContext context) : ISaleReposito
     public Task AddAsync(Sale sale, CancellationToken cancellationToken = default) =>
         context.Sales.AddAsync(sale, cancellationToken).AsTask();
 
+    public void Remove(Sale sale) => context.Sales.Remove(sale);
+
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await context.SaveChangesAsync(cancellationToken);
 }
