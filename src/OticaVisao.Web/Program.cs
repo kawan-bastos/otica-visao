@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using OticaVisao.Web.Configuration;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +86,14 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+var brazilianCulture = CultureInfo.GetCultureInfo("pt-BR");
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(brazilianCulture),
+    SupportedCultures = [brazilianCulture],
+    SupportedUICultures = [brazilianCulture]
+});
 
 if (builder.Configuration.GetValue<bool>("Database:ApplyMigrations"))
 {
