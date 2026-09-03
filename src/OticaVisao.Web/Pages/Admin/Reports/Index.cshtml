@@ -1,0 +1,49 @@
+@page
+@using OticaVisao.Domain.Sales
+@model OticaVisao.Web.Pages.Admin.Reports.IndexModel
+@{ ViewData["Title"] = "Relatórios"; var culture = new System.Globalization.CultureInfo("pt-BR"); var maximumDailyTotal = Model.Report.DailySales.Count == 0 ? 0 : Model.Report.DailySales.Max(item => item.Total); }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header"><div><span class="eyebrow">Visão do negócio</span><h1>Relatórios</h1><p>Acompanhe vendas e estoque dentro do período escolhido.</p></div></header>
+
+    <form method="get" class="report-filters">
+        <div class="form-field"><label asp-for="From">Data inicial</label><input asp-for="From" type="date" /></div>
+        <div class="form-field"><label asp-for="To">Data final</label><input asp-for="To" type="date" /></div>
+        <button class="button button--primary" type="submit">Atualizar relatório</button>
+    </form>
+    <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+
+    <section class="report-summary">
+        <article><span>Faturamento</span><strong>@Model.Report.Revenue.ToString("C", culture)</strong><small>@Model.Report.CompletedSales venda(s) concluída(s)</small></article>
+        <article><span>Ticket médio</span><strong>@Model.Report.AverageTicket.ToString("C", culture)</strong><small>Média por venda</small></article>
+        <article><span>Unidades vendidas</span><strong>@Model.Report.SoldUnits</strong><small>@Model.Report.CompleteGlasses óculos completo(s)</small></article>
+        <article><span>Clientes atendidos</span><strong>@Model.Report.UniqueCustomers</strong><small>@Model.Report.CancelledSales cancelamento(s)</small></article>
+    </section>
+
+    <div class="report-grid">
+        <section class="report-card">
+            <div class="admin-form__section-heading"><h2>Vendas por dia</h2><p>Movimento financeiro no período.</p></div>
+            @if (Model.Report.DailySales.Count == 0) { <p class="report-empty">Nenhuma venda concluída no período.</p> }
+            else { <div class="report-bars">@foreach (var day in Model.Report.DailySales) { var width = maximumDailyTotal == 0 ? 0 : day.Total / maximumDailyTotal * 100; <div class="report-bar"><div><strong>@day.Date.ToString("dd/MM")</strong><span>@day.Sales venda(s) · @day.Total.ToString("C", culture)</span></div><div class="report-bar__track"><span style="width: @width.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"></span></div></div> }</div> }
+        </section>
+        <section class="report-card">
+            <div class="admin-form__section-heading"><h2>Formas de pagamento</h2><p>Distribuição do faturamento.</p></div>
+            @if (Model.Report.Payments.Count == 0) { <p class="report-empty">Nenhum pagamento no período.</p> }
+            else { <ul class="report-list">@foreach (var payment in Model.Report.Payments) { <li><div><strong>@PaymentName(payment.Method)</strong><span>@payment.Sales venda(s)</span></div><strong>@payment.Total.ToString("C", culture)</strong></li> }</ul> }
+        </section>
+        <section class="report-card">
+            <div class="admin-form__section-heading"><h2>Armações mais vendidas</h2><p>Ranking por quantidade.</p></div>
+            @if (Model.Report.TopFrames.Count == 0) { <p class="report-empty">Nenhuma armação vendida no período.</p> }
+            else { <ol class="report-ranking">@foreach (var frame in Model.Report.TopFrames) { <li><span>@frame.Code</span><div><strong>@frame.Description</strong><small>@frame.Quantity unidade(s) · @frame.Total.ToString("C", culture)</small></div></li> }</ol> }
+        </section>
+        <section class="report-card">
+            <div class="admin-form__section-heading"><h2>Estoque baixo</h2><p>Armações ativas com até 2 unidades.</p></div>
+            @if (Model.Report.LowStock.Count == 0) { <p class="report-empty">Nenhum alerta de estoque.</p> }
+            else { <ul class="report-list">@foreach (var frame in Model.Report.LowStock) { <li><div><strong>@frame.Description</strong><span>@frame.Code</span></div><a asp-page="/Admin/Frames/Edit" asp-route-id="@frame.FrameId">@frame.StockQuantity unidade(s)</a></li> }</ul> }
+        </section>
+    </div>
+    @if (Model.Report.DraftSales > 0) { <div class="admin-alert admin-alert--error report-drafts"><strong>@Model.Report.DraftSales venda(s) ainda em andamento.</strong> Confira se algum atendimento antigo deve ser concluído ou cancelado.</div> }
+</main>
+
+@functions { private static string PaymentName(PaymentMethod method) => method switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", _ => "Cartão de crédito" }; }
