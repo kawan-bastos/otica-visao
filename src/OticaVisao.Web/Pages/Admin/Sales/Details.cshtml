@@ -78,7 +78,7 @@
     {
     <form method="post" asp-page-handler="AddItem" class="admin-form sale-item-form">
         <input type="hidden" name="id" value="@Model.Sale.Id" />
-        <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+        <div asp-validation-summary="All" class="form-validation" role="alert"></div>
         <section class="admin-form__section">
             <div class="admin-form__section-heading"><h2>Adicionar armação</h2><p>Óculos completo aplica automaticamente o preço promocional de R$ 39 na armação.</p></div>
             <div class="form-grid form-grid--three">

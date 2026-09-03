@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using OticaVisao.Web.Configuration;
+using OticaVisao.Web.Models;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,7 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/Admin", AdminAuthorization.Policy);
     options.Conventions.AllowAnonymousToPage("/Admin/Account/Login");
     options.Conventions.AllowAnonymousToPage("/Admin/Account/AccessDenied");
-});
+}).AddMvcOptions(options => options.ModelBinderProviders.Insert(0, new FlexibleDecimalModelBinderProvider()));
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("A conexão 'DefaultConnection' não foi configurada.");
