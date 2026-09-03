@@ -1017,7 +1017,7 @@ button, input, select, textarea { font-family: inherit; }
 .catalog-preview { background: #fff; }
 .journey { background: #eaf4f7; }
 .journey__steps article + article::before { background: #eaf4f7; }
-.about { background: #edf1f8; }
+.about { background: #dce5f2; }
 .about > .site-container, .contact > .site-container {
   width: min(1240px, calc(100% - clamp(32px, 6vw, 96px)));
 }
@@ -1049,7 +1049,7 @@ button, input, select, textarea { font-family: inherit; }
   padding-block: clamp(2.5rem, 4vw, 4rem);
   background: var(--navy-900);
 }
-.contact { background: #e0f2f3; }
+.contact { background: #c6e8e9; }
 .offer__card, .contact__card, .institutional-cta__card {
   padding: 0;
   border: 0;
