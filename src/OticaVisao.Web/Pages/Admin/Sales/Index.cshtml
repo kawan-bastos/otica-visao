@@ -34,8 +34,10 @@
                         <td data-label="Iniciada em">@sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
                         <td data-label="Situação"><span class="sale-status sale-status--@sale.Status.ToString().ToLowerInvariant()">@(sale.Status == SaleStatus.Draft ? "Em andamento" : sale.Status == SaleStatus.Completed ? "Concluída" : "Cancelada")</span></td>
                         <td class="admin-table__actions" data-label="Ações">
-                            <a asp-page="Details" asp-route-id="@sale.Id">@(sale.Status == SaleStatus.Draft ? "Continuar" : "Ver detalhes")</a>
-                            @if (sale.Status == SaleStatus.Cancelled) { <a class="admin-table__button--danger" asp-page="Delete" asp-route-id="@sale.Id">Excluir</a> }
+                            <div class="sale-row-actions">
+                                <a asp-page="Details" asp-route-id="@sale.Id">@(sale.Status == SaleStatus.Draft ? "Continuar" : "Ver detalhes")</a>
+                                @if (sale.Status == SaleStatus.Cancelled) { <a class="sale-delete-link" asp-page="Delete" asp-route-id="@sale.Id">Excluir</a> }
+                            </div>
                         </td>
                     </tr>
                 }
