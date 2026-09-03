@@ -16,4 +16,5 @@ public sealed record SaleItemListItem(
     decimal LensUnitPrice,
     OpticalLaboratory? Laboratory,
     LensPrescription Prescription,
+    DateOnly? ExpectedDeliveryDate,
     decimal Total);

@@ -28,12 +28,17 @@ public sealed class SaleItemInputModel : IValidatableObject
     [Display(Name = "Laboratório")]
     public OpticalLaboratory? Laboratory { get; set; }
 
+    [Display(Name = "Previsão de entrega")]
+    [DataType(DataType.Date)]
+    public DateOnly? ExpectedDeliveryDate { get; set; }
+
     public PrescriptionInputModel Prescription { get; set; } = new();
 
     public AddSaleItemRequest ToRequest() => new(
         FrameId!.Value, Quantity, IncludesLenses, IncludesLenses ? LensDescription : null,
         IncludesLenses ? LensUnitPrice : 0, IncludesLenses ? Laboratory : null,
-        IncludesLenses ? Prescription.ToDomain() : null);
+        IncludesLenses ? Prescription.ToDomain() : null,
+        IncludesLenses ? ExpectedDeliveryDate : null);
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

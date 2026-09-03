@@ -19,6 +19,7 @@ public sealed class LaboratoryOrder
         SaleItemId = item.Id;
         Laboratory = item.Laboratory.Value;
         Status = LaboratoryOrderStatus.AwaitingShipment;
+        ExpectedDeliveryDate = item.ExpectedDeliveryDate;
         CreatedAtUtc = DateTimeOffset.UtcNow;
         UpdatedAtUtc = CreatedAtUtc;
         history.Add(new LaboratoryOrderHistory(Status));

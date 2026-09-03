@@ -17,6 +17,9 @@ public sealed class EditSaleItemLensInputModel
     [Display(Name = "Laboratório")]
     public OpticalLaboratory? Laboratory { get; set; }
     public PrescriptionInputModel Prescription { get; set; } = new();
+    [Display(Name = "Previsão de entrega")]
+    [DataType(DataType.Date)]
+    public DateOnly? ExpectedDeliveryDate { get; set; }
 
-    public UpdateSaleItemLensRequest ToRequest() => new(LensDescription!, LensUnitPrice, Laboratory!.Value, Prescription.ToDomain());
+    public UpdateSaleItemLensRequest ToRequest() => new(LensDescription!, LensUnitPrice, Laboratory!.Value, Prescription.ToDomain(), ExpectedDeliveryDate);
 }

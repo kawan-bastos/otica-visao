@@ -23,6 +23,7 @@ internal sealed class SaleItemConfiguration : IEntityTypeConfiguration<SaleItem>
         builder.Property(item => item.LensDescription).HasColumnName("lens_description").HasMaxLength(500);
         builder.Property(item => item.LensUnitPrice).HasColumnName("lens_unit_price").HasPrecision(10, 2).IsRequired();
         builder.Property(item => item.Laboratory).HasColumnName("laboratory").HasConversion<string>().HasMaxLength(30);
+        builder.Property(item => item.ExpectedDeliveryDate).HasColumnName("expected_delivery_date");
         builder.Property(item => item.FarRightSphere).HasColumnName("far_right_sphere").HasPrecision(5, 2);
         builder.Property(item => item.FarRightCylinder).HasColumnName("far_right_cylinder").HasPrecision(5, 2);
         builder.Property(item => item.FarRightAxis).HasColumnName("far_right_axis");

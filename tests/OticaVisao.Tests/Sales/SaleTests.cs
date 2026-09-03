@@ -47,11 +47,13 @@ public sealed class SaleTests
         sale.Complete(PaymentMethod.Pix, 1);
 
         var corrected = new LensPrescription(new(-2.25m,-0.5m,90,31m,18m,null), PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty);
-        sale.UpdateItemLensDetails(item.Id, "Visão simples", 310m, OpticalLaboratory.StandardOptical, corrected);
+        var expectedDate = DateOnly.FromDateTime(DateTime.Today.AddDays(7));
+        sale.UpdateItemLensDetails(item.Id, "Visão simples", 310m, OpticalLaboratory.StandardOptical, corrected, expectedDate);
 
         Assert.Equal(-2.25m, item.Prescription.FarRight.Sphere);
         Assert.Equal(OpticalLaboratory.StandardOptical, item.Laboratory);
         Assert.Equal(349m, sale.FinalTotal);
+        Assert.Equal(expectedDate, item.ExpectedDeliveryDate);
     }
 
     [Fact]

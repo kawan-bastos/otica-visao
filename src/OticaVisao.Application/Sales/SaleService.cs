@@ -41,7 +41,7 @@ public sealed class SaleService(
         if (!frame.IsActive) throw new InvalidOperationException("Esta armação está desativada.");
 
         frame.RemoveFromStock(request.Quantity);
-        sale.AddItem(frame, request.Quantity, request.IncludesLenses, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription);
+        sale.AddItem(frame, request.Quantity, request.IncludesLenses, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription, request.ExpectedDeliveryDate);
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 
@@ -50,10 +50,11 @@ public sealed class SaleService(
         ArgumentNullException.ThrowIfNull(request);
         var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
             ?? throw new KeyNotFoundException("Venda não encontrada.");
-        var item = sale.UpdateItemLensDetails(itemId, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription);
+        var item = sale.UpdateItemLensDetails(itemId, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription, request.ExpectedDeliveryDate);
         var order = (await laboratoryOrderRepository.ListBySaleIdAsync(saleId, cancellationToken))
             .SingleOrDefault(current => current.SaleItemId == itemId);
-        order?.ChangeLaboratory(request.Laboratory);
+        if (order is not null && order.Laboratory != request.Laboratory) order.ChangeLaboratory(request.Laboratory);
+        if (order is not null) order.Update(order.Status, request.ExpectedDeliveryDate, order.Notes);
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 
@@ -143,6 +144,6 @@ public sealed class SaleService(
         sale.Status, sale.PaymentMethod, sale.Installments, sale.Items.Select(item => new SaleItemListItem(
             item.Id, item.FrameId, item.FrameCode, item.FrameBrand, item.FrameModel, item.FrameColor,
             item.Quantity, item.IncludesLenses, item.FrameUnitPrice, item.LensDescription,
-            item.LensUnitPrice, item.Laboratory, item.Prescription, item.Total)).ToArray(),
+            item.LensUnitPrice, item.Laboratory, item.Prescription, item.ExpectedDeliveryDate, item.Total)).ToArray(),
         sale.Total, sale.FinalTotal, sale.CompletedAtUtc, sale.CancelledAtUtc, sale.ReversedAtUtc, sale.ReversalReason, sale.ReversedBy, sale.CreatedAtUtc, sale.UpdatedAtUtc);
 }

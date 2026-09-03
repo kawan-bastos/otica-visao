@@ -9,4 +9,5 @@ public sealed record AddSaleItemRequest(
     string? LensDescription,
     decimal LensUnitPrice,
     OpticalLaboratory? Laboratory,
-    LensPrescription? Prescription = null);
+    LensPrescription? Prescription = null,
+    DateOnly? ExpectedDeliveryDate = null);

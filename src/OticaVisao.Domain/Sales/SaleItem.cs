@@ -8,7 +8,7 @@ public sealed class SaleItem
 
     private SaleItem() { }
 
-    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null)
+    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "A quantidade deve ser maior que zero.");
@@ -30,6 +30,7 @@ public sealed class SaleItem
         LensDescription = NormalizeOptional(lensDescription, 500);
         LensUnitPrice = lensUnitPrice;
         Laboratory = laboratory;
+        ExpectedDeliveryDate = includesLenses ? expectedDeliveryDate : null;
         SetPrescription(includesLenses ? prescription ?? LensPrescription.Empty : LensPrescription.Empty);
     }
 
@@ -47,6 +48,7 @@ public sealed class SaleItem
     public string? LensDescription { get; private set; }
     public decimal LensUnitPrice { get; private set; }
     public OpticalLaboratory? Laboratory { get; private set; }
+    public DateOnly? ExpectedDeliveryDate { get; private set; }
     public decimal? FarRightSphere { get; private set; }
     public decimal? FarRightCylinder { get; private set; }
     public int? FarRightAxis { get; private set; }
@@ -79,7 +81,7 @@ public sealed class SaleItem
     public decimal UnitTotal => FrameUnitPrice + LensUnitPrice;
     public decimal Total => UnitTotal * Quantity;
 
-    internal void UpdateLensDetails(string lensDescription, decimal lensUnitPrice, OpticalLaboratory laboratory, LensPrescription prescription)
+    internal void UpdateLensDetails(string lensDescription, decimal lensUnitPrice, OpticalLaboratory laboratory, LensPrescription prescription, DateOnly? expectedDeliveryDate)
     {
         if (!IncludesLenses) throw new InvalidOperationException("Este item não possui lentes.");
         if (lensUnitPrice < 0) throw new ArgumentOutOfRangeException(nameof(lensUnitPrice), "O preço das lentes não pode ser negativo.");
@@ -87,6 +89,7 @@ public sealed class SaleItem
             ?? throw new ArgumentException("Descreva as lentes.", nameof(lensDescription));
         LensUnitPrice = lensUnitPrice;
         Laboratory = laboratory;
+        ExpectedDeliveryDate = expectedDeliveryDate;
         SetPrescription(prescription);
     }
 

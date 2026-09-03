@@ -6,4 +6,5 @@ public sealed record UpdateSaleItemLensRequest(
     string LensDescription,
     decimal LensUnitPrice,
     OpticalLaboratory Laboratory,
-    LensPrescription Prescription);
+    LensPrescription Prescription,
+    DateOnly? ExpectedDeliveryDate);

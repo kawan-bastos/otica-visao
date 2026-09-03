@@ -35,13 +35,13 @@ public sealed class Sale
     public IReadOnlyCollection<SaleItem> Items => items.AsReadOnly();
     public decimal Total => items.Sum(item => item.Total);
 
-    public SaleItem AddItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null)
+    public SaleItem AddItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null)
     {
         EnsureDraft();
         if (items.Any(item => item.FrameId == frame.Id))
             throw new InvalidOperationException("Esta armação já foi adicionada à venda. Remova o item para alterar seus dados.");
 
-        var item = new SaleItem(frame, quantity, includesLenses, lensDescription, lensUnitPrice, laboratory, prescription);
+        var item = new SaleItem(frame, quantity, includesLenses, lensDescription, lensUnitPrice, laboratory, prescription, expectedDeliveryDate);
         items.Add(item);
         UpdatedAtUtc = DateTimeOffset.UtcNow;
         return item;
@@ -57,13 +57,13 @@ public sealed class Sale
         return item;
     }
 
-    public SaleItem UpdateItemLensDetails(Guid itemId, string lensDescription, decimal lensUnitPrice, OpticalLaboratory laboratory, LensPrescription prescription)
+    public SaleItem UpdateItemLensDetails(Guid itemId, string lensDescription, decimal lensUnitPrice, OpticalLaboratory laboratory, LensPrescription prescription, DateOnly? expectedDeliveryDate)
     {
         if (Status is SaleStatus.Cancelled or SaleStatus.Reversed)
             throw new InvalidOperationException("Não é possível alterar uma venda cancelada ou estornada.");
         var item = items.SingleOrDefault(current => current.Id == itemId)
             ?? throw new KeyNotFoundException("Item da venda não encontrado.");
-        item.UpdateLensDetails(lensDescription, lensUnitPrice, laboratory, prescription);
+        item.UpdateLensDetails(lensDescription, lensUnitPrice, laboratory, prescription, expectedDeliveryDate);
         if (Status == SaleStatus.Completed) FinalTotal = Total;
         UpdatedAtUtc = DateTimeOffset.UtcNow;
         return item;
