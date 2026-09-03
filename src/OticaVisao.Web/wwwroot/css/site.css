@@ -424,6 +424,15 @@
 .account-page__shell { max-width: 760px; padding: 2.5rem; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--white); box-shadow: var(--shadow); }
 .account-page h1 { margin: .5rem 0; color: var(--navy-900); font-weight: 900; }
 .account-page__shell > p { color: var(--muted); }
+.account-danger-zone { margin-top: 2rem; padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; border-top: 1px solid var(--line); }
+.account-danger-zone h2 { margin: 0 0 .35rem; color: #8f1d18; font-size: 1.05rem; }
+.account-danger-zone p { margin: 0; color: var(--muted); font-size: .9rem; }
+.button--danger, .button--danger:hover { color: #fff; border-color: #b42318; background: #b42318; }
+.button--danger-outline { color: #b42318; border-color: #e6aaa5; background: #fff; }
+.button--danger-outline:hover { color: #fff; border-color: #b42318; background: #b42318; }
+.account-delete-card { text-align: left; }
+.account-delete-form { padding: 1.5rem 0 0; }
+.account-delete-actions { display: flex; justify-content: flex-end; gap: .75rem; }
 .account-details { margin: 2rem 0; display: grid; gap: .75rem; }
 .account-details div { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .8rem; background: #f8fbfc; }
 .account-details dt { color: var(--muted); font-size: .78rem; }
@@ -715,6 +724,8 @@ a { color: inherit; }
   .login-page { min-height: 540px; padding: 2rem 1rem; }
   .login-card { grid-template-columns: 1fr; }
   .login-card__intro, .login-form, .login-card--message { padding: 2rem 1.5rem; }
+  .account-danger-zone, .account-delete-actions { align-items: stretch; flex-direction: column; }
+  .account-danger-zone .button, .account-delete-actions .button { width: 100%; }
   .admin-page { width: min(100% - 28px, 1180px); margin-top: 2rem; }
   .admin-page__header { align-items: stretch; flex-direction: column; }
   .admin-page__header > .button { align-self: stretch; }

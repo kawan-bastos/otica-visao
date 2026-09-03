@@ -16,6 +16,7 @@ public sealed class IndexModel(UserManager<ApplicationUser> userManager, Applica
     public string Cpf { get; private set; } = string.Empty;
     public DateOnly? BirthDate { get; private set; }
     public string Address { get; private set; } = string.Empty;
+    public bool CanDeleteAccount { get; private set; }
 
     public async Task OnGetAsync()
     {
@@ -23,6 +24,7 @@ public sealed class IndexModel(UserManager<ApplicationUser> userManager, Applica
         DisplayName = user.DisplayName;
         Email = user.Email ?? string.Empty;
         PhoneNumber = user.PhoneNumber;
+        CanDeleteAccount = !await userManager.IsInRoleAsync(user, AdminAuthorization.Role);
         var customer = await context.Customers.AsNoTracking()
             .SingleOrDefaultAsync(item => item.AccountUserId == user.Id);
         if (customer is null) return;

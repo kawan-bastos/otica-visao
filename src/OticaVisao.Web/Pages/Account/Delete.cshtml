@@ -1,0 +1,26 @@
+@page
+@model OticaVisao.Web.Pages.Account.DeleteModel
+@{ ViewData["Title"] = "Excluir minha conta"; }
+
+<section class="login-page">
+    <div class="login-card login-card--message account-delete-card">
+        <span class="eyebrow">Confirmação de segurança</span>
+        <h1>Excluir minha conta?</h1>
+        <p>Você perderá o acesso ao site e será desconectado. Sua ficha de atendimento permanecerá no sistema da loja para preservar o histórico comercial e de garantias.</p>
+        <p>Para confirmar que é você, informe sua senha atual.</p>
+        <form method="post" class="login-form account-delete-form">
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+            <div class="form-field">
+                <label asp-for="Input.Password"></label>
+                <input asp-for="Input.Password" autocomplete="current-password" />
+                <span asp-validation-for="Input.Password"></span>
+            </div>
+            <div class="account-delete-actions">
+                <a class="button button--secondary" asp-page="Index">Cancelar</a>
+                <button class="button button--danger" type="submit">Excluir conta definitivamente</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

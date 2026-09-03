@@ -52,5 +52,7 @@ public sealed class ApplicationDbContextTests
         Assert.True(entity.GetIndexes().Single(index => index.Properties.Single().Name == nameof(Customer.Cpf)).IsUnique);
         Assert.Equal("account_user_id", entity.FindProperty(nameof(Customer.AccountUserId))?.GetColumnName(table));
         Assert.True(entity.GetIndexes().Single(index => index.Properties.Single().Name == nameof(Customer.AccountUserId)).IsUnique);
+        Assert.Equal(DeleteBehavior.SetNull, entity.GetForeignKeys().Single(key =>
+            key.Properties.Single().Name == nameof(Customer.AccountUserId)).DeleteBehavior);
     }
 }

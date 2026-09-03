@@ -16,5 +16,15 @@
             <div><dt>Endereço</dt><dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "Não informado" : Model.Address)</dd></div>
         </dl>
         <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
+        @if (Model.CanDeleteAccount)
+        {
+            <section class="account-danger-zone">
+                <div>
+                    <h2>Excluir minha conta</h2>
+                    <p>Remove seu acesso ao site. Sua ficha de atendimento continuará protegida no sistema da loja.</p>
+                </div>
+                <a class="button button--danger-outline" asp-page="Delete">Excluir minha conta</a>
+            </section>
+        }
     </div>
 </section>
