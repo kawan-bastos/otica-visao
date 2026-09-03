@@ -1061,7 +1061,7 @@ button, input, select, textarea { font-family: inherit; }
 .contact__card > div:first-child { max-width: none; }
 .contact__actions {
   width: auto;
-  justify-self: start;
+  justify-self: end;
   align-items: stretch;
   flex-direction: column;
   gap: .75rem;
@@ -1084,6 +1084,6 @@ button, input, select, textarea { font-family: inherit; }
   .about__visual { min-height: 0; }
   .about__visual > img { width: min(100%, 300px); }
   .about__grid, .contact__card { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
-  .contact__actions { width: 100%; justify-self: stretch; }
+  .contact__actions { width: min(100%, 260px); justify-self: end; }
   .contact__actions .button { min-width: 0; }
 }
