@@ -3,7 +3,7 @@ using OticaVisao.Domain.Sales;
 namespace OticaVisao.Application.Reports;
 
 public sealed record SalesReport(
-    DateOnly From, DateOnly To, int CompletedSales, int CancelledSales,
+    DateOnly From, DateOnly To, int CompletedSales, int CancelledSales, int ReversedSales,
     decimal Revenue, decimal AverageTicket, int SoldUnits, int CompleteGlasses,
     int UniqueCustomers, int DraftSales,
     IReadOnlyList<PaymentReportItem> Payments,

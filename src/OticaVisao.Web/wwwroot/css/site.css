@@ -292,7 +292,7 @@
 .lab-history span { color: var(--muted); }
 .report-filters { margin-bottom: 1.5rem; padding: 1rem; display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
 .report-filters .button { min-height: 48px; }
-.report-summary { margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.report-summary { margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
 .report-summary article { padding: 1.35rem; display: grid; gap: .3rem; border: 1px solid var(--line); border-radius: 1rem; background: linear-gradient(145deg, #fff, #f6f9fc); box-shadow: 0 10px 30px rgba(7,39,102,.05); }
 .report-summary span, .report-summary small { color: var(--muted); }
 .report-summary span { font-size: .78rem; font-weight: 800; text-transform: uppercase; }
