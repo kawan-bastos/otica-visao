@@ -24,7 +24,7 @@
                         <td data-label="Data e hora">@StoreTime(log.OccurredAtUtc).ToString("dd/MM/yyyy HH:mm")</td>
                         <td data-label="Ação"><strong>@log.Action</strong></td>
                         <td data-label="Registro"><span>@log.EntityType</span><br /><small>@log.Description</small></td>
-                        <td data-label="Responsável">@log.PerformedBy</td>
+                        <td data-label="Responsável">@Model.ResponsibleName(log.PerformedBy)</td>
                     </tr>
                 }
                 </tbody>
