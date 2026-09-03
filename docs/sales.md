@@ -33,6 +33,7 @@ Os estados são `Draft`, `Completed` e `Cancelled`, exibidos como “Em andament
 - a conclusão mantém o estoque já reservado, sem realizar uma segunda baixa;
 - o cancelamento possui uma confirmação separada e devolve todas as unidades reservadas;
 - vendas concluídas e canceladas ficam disponíveis somente para consulta, sem alteração de itens ou situação.
+- vendas canceladas podem ser excluídas permanentemente do histórico após uma confirmação; vendas concluídas são preservadas como registro financeiro.
 
 ## Próxima evolução
 

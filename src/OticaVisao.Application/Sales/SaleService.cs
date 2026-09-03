@@ -80,6 +80,17 @@ public sealed class SaleService(
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task DeleteCancelledAsync(Guid saleId, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        if (sale.Status != SaleStatus.Cancelled)
+            throw new InvalidOperationException("Somente vendas canceladas podem ser excluídas do histórico.");
+
+        saleRepository.Remove(sale);
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
     private static SaleListItem ToListItem(Sale sale) => new(
         sale.Id, sale.CustomerId, sale.Customer.Name, sale.Customer.Phone,
         sale.Status, sale.PaymentMethod, sale.Installments, sale.Items.Select(item => new SaleItemListItem(

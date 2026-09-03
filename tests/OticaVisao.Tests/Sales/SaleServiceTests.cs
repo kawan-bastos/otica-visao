@@ -92,6 +92,33 @@ public sealed class SaleServiceTests
         Assert.Equal(3, sales.SaveCount);
     }
 
+    [Fact]
+    public async Task DeleteCancelledSaleRemovesItFromHistory()
+    {
+        var customer = Customer();
+        var sale = new Sale(customer.Id);
+        sale.Cancel();
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository());
+
+        await service.DeleteCancelledAsync(sale.Id);
+
+        Assert.Empty(sales.Sales);
+        Assert.Equal(1, sales.SaveCount);
+    }
+
+    [Fact]
+    public async Task DeleteSaleRejectsCompletedAndDraftSales()
+    {
+        var customer = Customer();
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.DeleteCancelledAsync(sale.Id));
+        Assert.Single(sales.Sales);
+    }
+
     private static Customer Customer() => new(
         "Maria", "21999990000", "52998224725", new DateOnly(1990, 1, 1),
         new CustomerAddress("25931-770", "Rua A", "10", null, "Piabetá", "Magé", "RJ"));
@@ -107,6 +134,7 @@ public sealed class SaleServiceTests
         public Task<IReadOnlyList<Sale>> ListAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Sale>>(Sales);
         public Task<Sale?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(Sales.SingleOrDefault(sale => sale.Id == id));
         public Task AddAsync(Sale sale, CancellationToken cancellationToken = default) { Sales.Add(sale); return Task.CompletedTask; }
+        public void Remove(Sale sale) => Sales.Remove(sale);
         public Task SaveChangesAsync(CancellationToken cancellationToken = default) { SaveCount++; return Task.CompletedTask; }
     }
 
