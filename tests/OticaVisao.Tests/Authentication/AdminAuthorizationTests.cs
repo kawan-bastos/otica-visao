@@ -87,6 +87,37 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
         Assert.Equal("/Admin/Account/Login", response.Headers.Location?.AbsolutePath);
     }
 
+    [Fact]
+    public async Task AccountPagesPreventBrowserCaching()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
+
+        var response = await client.GetAsync("/Account/Login");
+
+        Assert.Contains("no-store", response.Headers.CacheControl?.ToString());
+        Assert.True(response.Headers.TryGetValues("X-Content-Type-Options", out var values));
+        Assert.Contains("nosniff", values);
+    }
+
+    [Fact]
+    public async Task AuthenticationSubmissionsAreRateLimited()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        HttpResponseMessage? response = null;
+        for (var attempt = 0; attempt < 11; attempt++)
+        {
+            response = await client.PostAsync("/Admin/Account/Login", new FormUrlEncodedContent([]));
+        }
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, response!.StatusCode);
+        Assert.Contains("Muitas tentativas", await response.Content.ReadAsStringAsync());
+    }
+
     [Theory]
     [InlineData("/Account/Login")]
     [InlineData("/Account/Register")]

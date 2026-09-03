@@ -5,8 +5,16 @@ using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Infrastructure.Images;
 using OticaVisao.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using OticaVisao.Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsProduction())
+{
+    ProductionConfigurationValidator.Validate(builder.Configuration);
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages(options =>
@@ -46,6 +54,33 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 6 * 1024 * 1024);
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+    {
+        var isProtectedSubmission = HttpMethods.IsPost(context.Request.Method)
+            && (context.Request.Path.Equals("/Account/Login", StringComparison.OrdinalIgnoreCase)
+                || context.Request.Path.Equals("/Account/Register", StringComparison.OrdinalIgnoreCase)
+                || context.Request.Path.Equals("/Admin/Account/Login", StringComparison.OrdinalIgnoreCase));
+        if (!isProtectedSubmission) return RateLimitPartition.GetNoLimiter("unrestricted");
+
+        var client = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(client, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromMinutes(5),
+            QueueLimit = 0,
+            AutoReplenishment = true
+        });
+    });
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
+        await context.HttpContext.Response.WriteAsync(
+            "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.", cancellationToken);
+    };
+});
 
 var app = builder.Build();
 
@@ -84,6 +119,19 @@ app.Use(async (context, next) =>
 });
 
 app.UseRouting();
+
+app.UseRateLimiter();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/Admin")
+        || context.Request.Path.StartsWithSegments("/Account"))
+    {
+        context.Response.Headers.CacheControl = "no-store, no-cache";
+        context.Response.Headers.Pragma = "no-cache";
+    }
+    await next();
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
