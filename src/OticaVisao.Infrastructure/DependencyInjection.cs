@@ -10,6 +10,8 @@ using OticaVisao.Application.Customers;
 using OticaVisao.Infrastructure.Customers;
 using OticaVisao.Application.Sales;
 using OticaVisao.Infrastructure.Sales;
+using OticaVisao.Application.LaboratoryOrders;
+using OticaVisao.Infrastructure.LaboratoryOrders;
 
 namespace OticaVisao.Infrastructure;
 
@@ -61,6 +63,8 @@ public static class DependencyInjection
         services.AddScoped<CustomerService>();
         services.AddScoped<ISaleRepository, SaleRepository>();
         services.AddScoped<SaleService>();
+        services.AddScoped<ILaboratoryOrderRepository, LaboratoryOrderRepository>();
+        services.AddScoped<LaboratoryOrderService>();
 
         return services;
     }

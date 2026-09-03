@@ -1,0 +1,49 @@
+@page
+@using OticaVisao.Domain.LaboratoryOrders
+@using OticaVisao.Domain.Sales
+@model OticaVisao.Web.Pages.Admin.LaboratoryOrders.IndexModel
+@{ ViewData["Title"] = "Pedidos de lentes"; }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Acompanhamento</span><h1>Pedidos de lentes</h1><p>Acompanhe os pedidos desde o envio ao laboratório até a entrega ao cliente.</p></div>
+    </header>
+
+    @if (Model.Orders.Count == 0)
+    {
+        <div class="admin-empty"><h2>Nenhum pedido de lentes</h2><p>Os pedidos são criados automaticamente quando uma venda com lentes é concluída.</p></div>
+    }
+    else
+    {
+        <div class="admin-summary">
+            <article><span>Aguardando envio</span><strong>@Model.Orders.Count(order => order.Status == LaboratoryOrderStatus.AwaitingShipment)</strong></article>
+            <article><span>No laboratório</span><strong>@Model.Orders.Count(order => order.Status is LaboratoryOrderStatus.Sent or LaboratoryOrderStatus.InProduction)</strong></article>
+            <article class="admin-summary__warning"><span>Prontos para retirada</span><strong>@Model.Orders.Count(order => order.Status == LaboratoryOrderStatus.Ready)</strong></article>
+            <article><span>Entregues</span><strong>@Model.Orders.Count(order => order.Status == LaboratoryOrderStatus.Delivered)</strong></article>
+        </div>
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead><tr><th>Cliente</th><th>Armação e lentes</th><th>Laboratório</th><th>Previsão</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <tbody>
+                @foreach (var order in Model.Orders)
+                {
+                    <tr>
+                        <td data-label="Cliente"><strong>@order.CustomerName</strong><small>@order.CustomerPhone</small></td>
+                        <td data-label="Armação e lentes"><strong>@order.FrameDescription</strong><small>@order.Quantity× · @order.LensDescription</small></td>
+                        <td data-label="Laboratório">@LaboratoryName(order.Laboratory)</td>
+                        <td data-label="Previsão">@(order.ExpectedDeliveryDate?.ToString("dd/MM/yyyy") ?? "Não informada")</td>
+                        <td data-label="Situação"><span class="lab-status lab-status--@order.Status.ToString().ToLowerInvariant()">@StatusName(order.Status)</span></td>
+                        <td class="admin-table__actions" data-label="Ações"><a asp-page="Details" asp-route-id="@order.Id">Acompanhar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@functions {
+    private static string LaboratoryName(OpticalLaboratory laboratory) => laboratory == OpticalLaboratory.StandardOptical ? "Padrão Optical" : "Imperial Lab";
+    private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", _ => "Entregue" };
+}

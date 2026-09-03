@@ -1,13 +1,15 @@
 using OticaVisao.Application.Customers;
 using OticaVisao.Application.Catalog;
 using OticaVisao.Domain.Sales;
+using OticaVisao.Application.LaboratoryOrders;
 
 namespace OticaVisao.Application.Sales;
 
 public sealed class SaleService(
     ISaleRepository saleRepository,
     ICustomerRepository customerRepository,
-    IFrameRepository frameRepository)
+    IFrameRepository frameRepository,
+    ILaboratoryOrderRepository laboratoryOrderRepository)
 {
     public async Task<IReadOnlyList<SaleListItem>> ListAsync(CancellationToken cancellationToken = default) =>
         (await saleRepository.ListAsync(cancellationToken)).Select(ToListItem).ToArray();
@@ -59,6 +61,8 @@ public sealed class SaleService(
         var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
             ?? throw new KeyNotFoundException("Venda não encontrada.");
         sale.Complete(paymentMethod, installments);
+        foreach (var item in sale.Items.Where(item => item.IncludesLenses))
+            await laboratoryOrderRepository.AddAsync(new OticaVisao.Domain.LaboratoryOrders.LaboratoryOrder(sale, item), cancellationToken);
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 

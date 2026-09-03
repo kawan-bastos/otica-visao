@@ -1,0 +1,42 @@
+@page "{id:guid}"
+@using OticaVisao.Domain.LaboratoryOrders
+@using OticaVisao.Domain.Sales
+@model OticaVisao.Web.Pages.Admin.LaboratoryOrders.DetailsModel
+@{ ViewData["Title"] = "Acompanhar pedido"; }
+
+<main class="admin-page admin-page--form">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Pedido de lentes</span><h1>@Model.Order.CustomerName</h1><p>@Model.Order.FrameDescription · @Model.Order.LensDescription</p></div>
+        <a class="button button--secondary" asp-page="Index">Voltar aos pedidos</a>
+    </header>
+    @if (TempData["LaboratorySuccessMessage"] is string message) { <div class="admin-alert admin-alert--success" role="status">@message</div> }
+
+    <section class="sale-draft-card">
+        <div><span>Laboratório</span><strong>@(Model.Order.Laboratory == OpticalLaboratory.StandardOptical ? "Padrão Optical" : "Imperial Lab")</strong></div>
+        <div><span>Quantidade</span><strong>@Model.Order.Quantity</strong></div>
+        <div><span>Telefone</span><strong>@Model.Order.CustomerPhone</strong></div>
+        <div><span>Pedido criado</span><strong>@Model.Order.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
+        <div><span>Enviado em</span><strong>@(Model.Order.SentAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")</strong></div>
+        <div><span>Entregue em</span><strong>@(Model.Order.DeliveredAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")</strong></div>
+    </section>
+
+    <form method="post" class="admin-form lab-order-form">
+        <input type="hidden" name="id" value="@Model.Order.Id" />
+        <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+        <section class="admin-form__section">
+            <div class="admin-form__section-heading"><h2>Atualizar acompanhamento</h2><p>A mudança de situação será registrada automaticamente no histórico.</p></div>
+            <div class="form-grid">
+                <div class="form-field"><label asp-for="Input.Status"></label><select asp-for="Input.Status"><option value="AwaitingShipment">Aguardando envio</option><option value="Sent">Enviado</option><option value="InProduction">Em produção</option><option value="Ready">Pronto</option><option value="Delivered">Entregue ao cliente</option></select><span asp-validation-for="Input.Status"></span></div>
+                <div class="form-field"><label asp-for="Input.ExpectedDeliveryDate"></label><input asp-for="Input.ExpectedDeliveryDate" type="date" /><span asp-validation-for="Input.ExpectedDeliveryDate"></span></div>
+                <div class="form-field form-field--wide"><label asp-for="Input.Notes"></label><textarea asp-for="Input.Notes" rows="4" placeholder="Ex.: pedido 123 do laboratório, detalhes combinados com o cliente"></textarea><span asp-validation-for="Input.Notes"></span></div>
+            </div>
+        </section>
+        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.Order.Status == LaboratoryOrderStatus.Delivered ? "disabled" : null)>Salvar acompanhamento</button></div>
+    </form>
+
+    <section class="lab-history"><div class="admin-form__section-heading"><h2>Histórico</h2><p>Registro das etapas já informadas.</p></div><ol>@foreach (var entry in Model.Order.History) { <li><strong>@StatusName(entry.Status)</strong><span>@entry.ChangedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span></li> }</ol></section>
+</main>
+
+@functions { private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", _ => "Entregue ao cliente" }; }
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
