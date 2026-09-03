@@ -5,6 +5,7 @@ using OticaVisao.Domain.Catalog;
 using OticaVisao.Domain.Customers;
 using OticaVisao.Domain.Sales;
 using OticaVisao.Infrastructure.Authentication;
+using OticaVisao.Domain.LaboratoryOrders;
 
 namespace OticaVisao.Infrastructure.Persistence;
 
@@ -15,6 +16,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+    public DbSet<LaboratoryOrder> LaboratoryOrders => Set<LaboratoryOrder>();
+    public DbSet<LaboratoryOrderHistory> LaboratoryOrderHistory => Set<LaboratoryOrderHistory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

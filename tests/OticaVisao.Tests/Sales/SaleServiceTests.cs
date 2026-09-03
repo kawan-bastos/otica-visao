@@ -4,6 +4,8 @@ using OticaVisao.Application.Catalog;
 using OticaVisao.Domain.Catalog;
 using OticaVisao.Domain.Customers;
 using OticaVisao.Domain.Sales;
+using OticaVisao.Application.LaboratoryOrders;
+using OticaVisao.Domain.LaboratoryOrders;
 
 namespace OticaVisao.Tests.Sales;
 
@@ -14,7 +16,7 @@ public sealed class SaleServiceTests
     {
         var customer = Customer();
         var sales = new FakeSaleRepository();
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository());
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(), new FakeLaboratoryOrderRepository());
 
         var id = await service.CreateDraftAsync(customer.Id);
 
@@ -26,7 +28,7 @@ public sealed class SaleServiceTests
     [Fact]
     public async Task CreateDraftRejectsUnknownCustomer()
     {
-        var service = new SaleService(new FakeSaleRepository(), new FakeCustomerRepository(), new FakeFrameRepository());
+        var service = new SaleService(new FakeSaleRepository(), new FakeCustomerRepository(), new FakeFrameRepository(), new FakeLaboratoryOrderRepository());
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.CreateDraftAsync(Guid.NewGuid()));
     }
@@ -38,7 +40,7 @@ public sealed class SaleServiceTests
         var frame = Frame();
         var sale = new Sale(customer.Id);
         var sales = new FakeSaleRepository { Sales = { sale } };
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame));
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame), new FakeLaboratoryOrderRepository());
 
         await service.AddItemAsync(sale.Id, new AddSaleItemRequest(
             frame.Id, 2, true, "Visão simples com antirreflexo", 300m, OpticalLaboratory.StandardOptical));
@@ -60,7 +62,7 @@ public sealed class SaleServiceTests
         var frame = Frame();
         var sale = new Sale(customer.Id);
         var sales = new FakeSaleRepository { Sales = { sale } };
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame));
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame), new FakeLaboratoryOrderRepository());
         await service.AddItemAsync(sale.Id, new AddSaleItemRequest(frame.Id, 1, false, null, 0, null));
 
         await service.CompleteAsync(sale.Id, PaymentMethod.Pix, 1);
@@ -68,6 +70,24 @@ public sealed class SaleServiceTests
         Assert.Equal(SaleStatus.Completed, sale.Status);
         Assert.Equal(2, frame.StockQuantity);
         Assert.Equal(219m, sale.FinalTotal);
+    }
+
+    [Fact]
+    public async Task CompleteSaleCreatesLaboratoryOrderForLensItem()
+    {
+        var customer = Customer();
+        var frame = Frame();
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var laboratoryOrders = new FakeLaboratoryOrderRepository();
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame), laboratoryOrders);
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(frame.Id, 1, true, "Visão simples", 300m, OpticalLaboratory.StandardOptical));
+
+        await service.CompleteAsync(sale.Id, PaymentMethod.Pix, 1);
+
+        var order = Assert.Single(laboratoryOrders.Orders);
+        Assert.Equal(Assert.Single(sale.Items).Id, order.SaleItemId);
+        Assert.Equal(LaboratoryOrderStatus.AwaitingShipment, order.Status);
     }
 
     [Fact]
@@ -80,7 +100,7 @@ public sealed class SaleServiceTests
             FrameType.Prescription, FrameShape.Square, TargetAudience.Adult);
         var sale = new Sale(customer.Id);
         var sales = new FakeSaleRepository { Sales = { sale } };
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(firstFrame, secondFrame));
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(firstFrame, secondFrame), new FakeLaboratoryOrderRepository());
         await service.AddItemAsync(sale.Id, new AddSaleItemRequest(firstFrame.Id, 2, false, null, 0, null));
         await service.AddItemAsync(sale.Id, new AddSaleItemRequest(secondFrame.Id, 3, false, null, 0, null));
 
@@ -99,7 +119,7 @@ public sealed class SaleServiceTests
         var sale = new Sale(customer.Id);
         sale.Cancel();
         var sales = new FakeSaleRepository { Sales = { sale } };
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository());
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(), new FakeLaboratoryOrderRepository());
 
         await service.DeleteCancelledAsync(sale.Id);
 
@@ -113,7 +133,7 @@ public sealed class SaleServiceTests
         var customer = Customer();
         var sale = new Sale(customer.Id);
         var sales = new FakeSaleRepository { Sales = { sale } };
-        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository());
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(), new FakeLaboratoryOrderRepository());
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.DeleteCancelledAsync(sale.Id));
         Assert.Single(sales.Sales);
@@ -146,6 +166,16 @@ public sealed class SaleServiceTests
         public Task<Frame?> GetPublicByIdAsync(Guid id, CancellationToken cancellationToken = default) => GetByIdAsync(id, cancellationToken);
         public Task<bool> CodeExistsAsync(string code, Guid? excludingId = null, CancellationToken cancellationToken = default) => Task.FromResult(false);
         public Task AddAsync(Frame frame, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task SaveChangesAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+
+    private sealed class FakeLaboratoryOrderRepository : ILaboratoryOrderRepository
+    {
+        public List<LaboratoryOrder> Orders { get; } = [];
+        public Task<IReadOnlyList<LaboratoryOrder>> ListAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<LaboratoryOrder>>(Orders);
+        public Task<LaboratoryOrder?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(Orders.SingleOrDefault(order => order.Id == id));
+        public Task<bool> ExistsForSaleItemAsync(Guid saleItemId, CancellationToken cancellationToken = default) => Task.FromResult(Orders.Any(order => order.SaleItemId == saleItemId));
+        public Task AddAsync(LaboratoryOrder order, CancellationToken cancellationToken = default) { Orders.Add(order); return Task.CompletedTask; }
         public Task SaveChangesAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 
