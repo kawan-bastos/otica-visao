@@ -50,5 +50,7 @@ public sealed class ApplicationDbContextTests
         Assert.Equal("phone", entity.FindProperty(nameof(Customer.Phone))?.GetColumnName(table));
         Assert.Equal("cpf", entity.FindProperty(nameof(Customer.Cpf))?.GetColumnName(table));
         Assert.True(entity.GetIndexes().Single(index => index.Properties.Single().Name == nameof(Customer.Cpf)).IsUnique);
+        Assert.Equal("account_user_id", entity.FindProperty(nameof(Customer.AccountUserId))?.GetColumnName(table));
+        Assert.True(entity.GetIndexes().Single(index => index.Properties.Single().Name == nameof(Customer.AccountUserId)).IsUnique);
     }
 }

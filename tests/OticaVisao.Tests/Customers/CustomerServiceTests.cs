@@ -50,6 +50,8 @@ public sealed class CustomerServiceTests
             Task.FromResult<IReadOnlyList<Customer>>(Customers);
         public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
             Task.FromResult(Customers.SingleOrDefault(customer => customer.Id == id));
+        public Task<Customer?> GetByCpfAsync(string cpf, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Customers.SingleOrDefault(customer => customer.Cpf == cpf));
         public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) =>
             Task.FromResult(Customers.Any(customer => customer.Cpf == cpf && customer.Id != excludingId));
         public Task AddAsync(Customer customer, CancellationToken cancellationToken = default)

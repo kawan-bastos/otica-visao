@@ -28,6 +28,7 @@ public sealed class Customer
     public string? Cpf { get; private set; }
     public DateOnly? BirthDate { get; private set; }
     public CustomerAddress? Address { get; private set; }
+    public Guid? AccountUserId { get; private set; }
     public string? Email { get; private set; }
     public string? Notes { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; private set; }
@@ -42,6 +43,15 @@ public sealed class Customer
         Address = address ?? throw new ArgumentNullException(nameof(address));
         Email = OptionalText(email, nameof(email), 160);
         Notes = OptionalText(notes, nameof(notes), 1000);
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
+    }
+
+    public void LinkToAccount(Guid accountUserId)
+    {
+        if (accountUserId == Guid.Empty) throw new ArgumentException("Informe uma conta válida.", nameof(accountUserId));
+        if (AccountUserId.HasValue && AccountUserId != accountUserId)
+            throw new InvalidOperationException("Esta ficha já está vinculada a outra conta.");
+        AccountUserId = accountUserId;
         UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 

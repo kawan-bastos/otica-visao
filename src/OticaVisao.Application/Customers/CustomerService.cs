@@ -54,7 +54,7 @@ public sealed class CustomerService(ICustomerRepository repository)
         customer.Id, customer.Name, customer.Phone, customer.Cpf, customer.BirthDate,
         customer.Address?.PostalCode, customer.Address?.Street, customer.Address?.Number,
         customer.Address?.Complement, customer.Address?.Neighborhood, customer.Address?.City, customer.Address?.State,
-        customer.Email, customer.Notes,
+        customer.Email, customer.Notes, customer.AccountUserId,
         customer.CreatedAtUtc, customer.UpdatedAtUtc);
 
     private static CustomerAddress CreateAddress(CreateCustomerRequest request) => new(

@@ -11,6 +11,9 @@
             <div><dt>Nome</dt><dd>@Model.DisplayName</dd></div>
             <div><dt>E-mail</dt><dd>@Model.Email</dd></div>
             <div><dt>Telefone</dt><dd>@(Model.PhoneNumber ?? "Não informado")</dd></div>
+            <div><dt>CPF</dt><dd>@(string.IsNullOrWhiteSpace(Model.Cpf) ? "Não informado" : Model.Cpf)</dd></div>
+            <div><dt>Data de nascimento</dt><dd>@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informada")</dd></div>
+            <div><dt>Endereço</dt><dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "Não informado" : Model.Address)</dd></div>
         </dl>
         <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
     </div>

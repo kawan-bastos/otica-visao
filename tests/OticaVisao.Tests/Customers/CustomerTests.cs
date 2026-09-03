@@ -48,6 +48,19 @@ public sealed class CustomerTests
         Assert.Throws<ArgumentException>(() => new Customer("Maria", "21999990000", cpf, new DateOnly(1990, 5, 10), Address()));
     }
 
+    [Fact]
+    public void CustomerCanBeLinkedToOnlyOneAccount()
+    {
+        var customer = CreateCustomer("Maria", "(21) 99999-0000");
+        var accountId = Guid.NewGuid();
+
+        customer.LinkToAccount(accountId);
+        customer.LinkToAccount(accountId);
+
+        Assert.Equal(accountId, customer.AccountUserId);
+        Assert.Throws<InvalidOperationException>(() => customer.LinkToAccount(Guid.NewGuid()));
+    }
+
     private static Customer CreateCustomer(string name, string phone, string? email = null, string? notes = null) =>
         new(name, phone, "529.982.247-25", new DateOnly(1990, 5, 10), Address(), email, notes);
 

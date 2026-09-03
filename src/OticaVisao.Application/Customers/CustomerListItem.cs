@@ -15,5 +15,6 @@ public sealed record CustomerListItem(
     string? State,
     string? Email,
     string? Notes,
+    Guid? AccountUserId,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);

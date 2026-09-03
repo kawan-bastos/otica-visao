@@ -38,3 +38,7 @@ dotnet run --project src/OticaVisao.Web
 
 Em produção, use variáveis de ambiente ou o gerenciador de segredos da hospedagem,
 nunca o arquivo de configuração versionado.
+
+## Cadastro de clientes no site
+
+O cadastro público cria uma conta comum e uma ficha comercial vinculada. Não é solicitada foto. CPF, telefone e data de nascimento também servem para associar com segurança uma ficha presencial existente, evitando duplicidade. Os dados comerciais continuam separados das credenciais, e a senha permanece sob responsabilidade do ASP.NET Core Identity.

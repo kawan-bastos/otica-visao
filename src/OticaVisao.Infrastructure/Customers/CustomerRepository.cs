@@ -26,6 +26,9 @@ public sealed class CustomerRepository(ApplicationDbContext context) : ICustomer
     public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         context.Customers.SingleOrDefaultAsync(customer => customer.Id == id, cancellationToken);
 
+    public Task<Customer?> GetByCpfAsync(string cpf, CancellationToken cancellationToken = default) =>
+        context.Customers.SingleOrDefaultAsync(customer => customer.Cpf == cpf, cancellationToken);
+
     public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) =>
         context.Customers.AnyAsync(customer => customer.Cpf == cpf && (!excludingId.HasValue || customer.Id != excludingId), cancellationToken);
 

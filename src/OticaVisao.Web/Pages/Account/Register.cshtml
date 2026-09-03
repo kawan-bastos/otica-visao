@@ -3,17 +3,39 @@
 @{ ViewData["Title"] = "Criar conta"; }
 
 <section class="login-page">
-    <div class="login-card">
+    <div class="login-card login-card--register">
         <div class="login-card__intro">
             <span class="eyebrow">Cadastro gratuito</span>
             <h1>Crie sua conta</h1>
-            <p>Seus dados ficam protegidos e a foto de perfil não é necessária.</p>
+            <p>Ao criar a conta, sua ficha de cliente também será criada para facilitar seus próximos atendimentos. Não é necessário enviar foto.</p>
         </div>
         <form method="post" class="login-form account-form">
             <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
-            <div class="form-field"><label asp-for="Input.DisplayName"></label><input asp-for="Input.DisplayName" autocomplete="name" /><span asp-validation-for="Input.DisplayName"></span></div>
-            <div class="form-field"><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="email" /><span asp-validation-for="Input.Email"></span></div>
-            <div class="form-field"><label asp-for="Input.PhoneNumber"></label><input asp-for="Input.PhoneNumber" autocomplete="tel" /><span asp-validation-for="Input.PhoneNumber"></span></div>
+            <div class="account-form__section">
+                <h2>Dados pessoais</h2>
+                <div class="form-grid">
+                    <div class="form-field"><label asp-for="Input.DisplayName"></label><input asp-for="Input.DisplayName" autocomplete="name" /><span asp-validation-for="Input.DisplayName"></span></div>
+                    <div class="form-field"><label asp-for="Input.Cpf"></label><input asp-for="Input.Cpf" inputmode="numeric" autocomplete="off" /><span asp-validation-for="Input.Cpf"></span></div>
+                    <div class="form-field"><label asp-for="Input.BirthDate"></label><input asp-for="Input.BirthDate" autocomplete="bday" /><span asp-validation-for="Input.BirthDate"></span></div>
+                    <div class="form-field"><label asp-for="Input.PhoneNumber"></label><input asp-for="Input.PhoneNumber" autocomplete="tel" /><span asp-validation-for="Input.PhoneNumber"></span></div>
+                </div>
+            </div>
+            <div class="account-form__section">
+                <h2>Endereço</h2>
+                <div class="form-grid">
+                    <div class="form-field"><label asp-for="Input.PostalCode"></label><input asp-for="Input.PostalCode" inputmode="numeric" autocomplete="postal-code" /><span asp-validation-for="Input.PostalCode"></span></div>
+                    <div class="form-field"><label asp-for="Input.Street"></label><input asp-for="Input.Street" autocomplete="address-line1" /><span asp-validation-for="Input.Street"></span></div>
+                    <div class="form-field"><label asp-for="Input.Number"></label><input asp-for="Input.Number" autocomplete="address-line2" /><span asp-validation-for="Input.Number"></span></div>
+                    <div class="form-field"><label asp-for="Input.Complement"></label><input asp-for="Input.Complement" /><span asp-validation-for="Input.Complement"></span></div>
+                    <div class="form-field"><label asp-for="Input.Neighborhood"></label><input asp-for="Input.Neighborhood" /><span asp-validation-for="Input.Neighborhood"></span></div>
+                    <div class="form-field"><label asp-for="Input.City"></label><input asp-for="Input.City" autocomplete="address-level2" /><span asp-validation-for="Input.City"></span></div>
+                    <div class="form-field"><label asp-for="Input.State"></label><input asp-for="Input.State" maxlength="2" autocomplete="address-level1" /><span asp-validation-for="Input.State"></span></div>
+                </div>
+            </div>
+            <div class="account-form__section">
+                <h2>Acesso ao site</h2>
+                <div class="form-field"><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="email" /><span asp-validation-for="Input.Email"></span></div>
+            </div>
             <div class="form-field"><label asp-for="Input.Password"></label><input asp-for="Input.Password" autocomplete="new-password" /><small>Use 8 caracteres com letra maiúscula, minúscula, número e símbolo.</small><span asp-validation-for="Input.Password"></span></div>
             <div class="form-field"><label asp-for="Input.ConfirmPassword"></label><input asp-for="Input.ConfirmPassword" autocomplete="new-password" /><span asp-validation-for="Input.ConfirmPassword"></span></div>
             <button type="submit" class="button button--primary">Criar minha conta</button>

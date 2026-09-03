@@ -410,6 +410,10 @@
 .login-card--message { max-width: 600px; padding: 3.5rem; display: block; text-align: center; }
 .login-card--message p { margin-bottom: 1.5rem; color: var(--muted); }
 .account-form { padding-top: 2rem; padding-bottom: 2rem; }
+.login-card--register { width: min(100%, 1180px); grid-template-columns: minmax(280px, .7fr) minmax(0, 1.5fr); }
+.login-card--register .login-card__intro { display: flex; flex-direction: column; justify-content: center; }
+.account-form__section { display: grid; gap: .85rem; }
+.account-form__section h2 { margin: 0; color: var(--navy-900); font-size: 1rem; font-weight: 900; }
 .account-form__aside { margin: .5rem 0 0; color: var(--muted); text-align: center; }
 .account-form__aside a { color: var(--teal-600); font-weight: 800; }
 .form-field small { color: var(--muted); font-size: .78rem; }

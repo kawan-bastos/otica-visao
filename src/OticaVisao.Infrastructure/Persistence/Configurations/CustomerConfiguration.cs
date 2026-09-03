@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OticaVisao.Domain.Customers;
+using OticaVisao.Infrastructure.Authentication;
 
 namespace OticaVisao.Infrastructure.Persistence.Configurations;
 
@@ -15,6 +16,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(customer => customer.Phone).HasColumnName("phone").HasMaxLength(20).IsRequired();
         builder.Property(customer => customer.Cpf).HasColumnName("cpf").HasMaxLength(11);
         builder.Property(customer => customer.BirthDate).HasColumnName("birth_date").HasColumnType("date");
+        builder.Property(customer => customer.AccountUserId).HasColumnName("account_user_id");
         builder.Property(customer => customer.Email).HasColumnName("email").HasMaxLength(160);
         builder.Property(customer => customer.Notes).HasColumnName("notes").HasMaxLength(1000);
         builder.Property(customer => customer.CreatedAtUtc).HasColumnName("created_at_utc").IsRequired();
@@ -22,6 +24,11 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasIndex(customer => customer.Name).HasDatabaseName("ix_customers_name");
         builder.HasIndex(customer => customer.Phone).HasDatabaseName("ix_customers_phone");
         builder.HasIndex(customer => customer.Cpf).IsUnique().HasDatabaseName("ix_customers_cpf");
+        builder.HasIndex(customer => customer.AccountUserId).IsUnique().HasDatabaseName("ix_customers_account_user_id");
+        builder.HasOne<ApplicationUser>()
+            .WithOne()
+            .HasForeignKey<Customer>(customer => customer.AccountUserId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.OwnsOne(customer => customer.Address, address =>
         {
