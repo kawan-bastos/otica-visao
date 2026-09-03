@@ -63,3 +63,6 @@ artifacts/
 
 # Imagens enviadas no desenvolvimento
 App_Data/
+# Backups contêm dados pessoais e nunca devem ser versionados.
+backups/
+*.dump
