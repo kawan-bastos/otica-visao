@@ -95,11 +95,42 @@ public sealed class SaleService(
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task ReverseAsync(Guid saleId, string reason, string reversedBy, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        if (sale.Status != SaleStatus.Completed) throw new InvalidOperationException("Somente vendas concluídas podem ser estornadas.");
+
+        var frames = new List<(OticaVisao.Domain.Catalog.Frame Frame, int Quantity)>();
+        foreach (var item in sale.Items)
+        {
+            var frame = await frameRepository.GetByIdAsync(item.FrameId, cancellationToken)
+                ?? throw new InvalidOperationException($"A armação {item.FrameCode} não foi encontrada; o estorno não pode ser concluído automaticamente.");
+            frames.Add((frame, item.Quantity));
+        }
+
+        sale.Reverse(reason, reversedBy);
+        foreach (var entry in frames) entry.Frame.AddToStock(entry.Quantity);
+        foreach (var order in await laboratoryOrderRepository.ListBySaleIdAsync(saleId, cancellationToken)) order.Cancel();
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteReversedAsync(Guid saleId, CancellationToken cancellationToken = default)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId, cancellationToken)
+            ?? throw new KeyNotFoundException("Venda não encontrada.");
+        if (sale.Status != SaleStatus.Reversed) throw new InvalidOperationException("Somente vendas estornadas podem ser excluídas permanentemente.");
+
+        laboratoryOrderRepository.RemoveRange(await laboratoryOrderRepository.ListBySaleIdAsync(saleId, cancellationToken));
+        saleRepository.Remove(sale);
+        await saleRepository.SaveChangesAsync(cancellationToken);
+    }
+
     private static SaleListItem ToListItem(Sale sale) => new(
         sale.Id, sale.CustomerId, sale.Customer.Name, sale.Customer.Phone,
         sale.Status, sale.PaymentMethod, sale.Installments, sale.Items.Select(item => new SaleItemListItem(
             item.Id, item.FrameId, item.FrameCode, item.FrameBrand, item.FrameModel, item.FrameColor,
             item.Quantity, item.IncludesLenses, item.FrameUnitPrice, item.LensDescription,
             item.LensUnitPrice, item.Laboratory, item.Total)).ToArray(),
-        sale.Total, sale.FinalTotal, sale.CompletedAtUtc, sale.CancelledAtUtc, sale.CreatedAtUtc, sale.UpdatedAtUtc);
+        sale.Total, sale.FinalTotal, sale.CompletedAtUtc, sale.CancelledAtUtc, sale.ReversedAtUtc, sale.ReversalReason, sale.ReversedBy, sale.CreatedAtUtc, sale.UpdatedAtUtc);
 }

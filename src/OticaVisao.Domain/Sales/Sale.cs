@@ -27,6 +27,9 @@ public sealed class Sale
     public decimal? FinalTotal { get; private set; }
     public DateTimeOffset? CompletedAtUtc { get; private set; }
     public DateTimeOffset? CancelledAtUtc { get; private set; }
+    public DateTimeOffset? ReversedAtUtc { get; private set; }
+    public string? ReversalReason { get; private set; }
+    public string? ReversedBy { get; private set; }
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset UpdatedAtUtc { get; private set; }
     public IReadOnlyCollection<SaleItem> Items => items.AsReadOnly();
@@ -78,6 +81,21 @@ public sealed class Sale
         Status = SaleStatus.Cancelled;
         CancelledAtUtc = DateTimeOffset.UtcNow;
         UpdatedAtUtc = CancelledAtUtc.Value;
+    }
+
+    public void Reverse(string reason, string reversedBy)
+    {
+        if (Status != SaleStatus.Completed) throw new InvalidOperationException("Somente vendas concluídas podem ser estornadas.");
+        if (string.IsNullOrWhiteSpace(reason)) throw new ArgumentException("Informe o motivo do estorno.", nameof(reason));
+        if (string.IsNullOrWhiteSpace(reversedBy)) throw new ArgumentException("Não foi possível identificar o responsável pelo estorno.", nameof(reversedBy));
+        var normalizedReason = reason.Trim();
+        if (normalizedReason.Length > 500) throw new ArgumentException("O motivo deve possuir no máximo 500 caracteres.", nameof(reason));
+
+        Status = SaleStatus.Reversed;
+        ReversalReason = normalizedReason;
+        ReversedBy = reversedBy.Trim().Length <= 200 ? reversedBy.Trim() : reversedBy.Trim()[..200];
+        ReversedAtUtc = DateTimeOffset.UtcNow;
+        UpdatedAtUtc = ReversedAtUtc.Value;
     }
 
     private void EnsureDraft()

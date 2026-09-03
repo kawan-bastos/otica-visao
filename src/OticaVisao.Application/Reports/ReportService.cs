@@ -18,6 +18,8 @@ public sealed class ReportService(ISaleRepository saleRepository, IFrameReposito
             .Where(sale => IsInPeriod(sale.CompletedAtUtc!.Value, from, to)).ToArray();
         var cancelled = allSales.Count(sale => sale.Status == SaleStatus.Cancelled && sale.CancelledAtUtc.HasValue
             && IsInPeriod(sale.CancelledAtUtc.Value, from, to));
+        var reversed = allSales.Count(sale => sale.Status == SaleStatus.Reversed && sale.ReversedAtUtc.HasValue
+            && IsInPeriod(sale.ReversedAtUtc.Value, from, to));
         var revenue = completed.Sum(sale => sale.FinalTotal ?? sale.Total);
 
         var payments = completed.Where(sale => sale.PaymentMethod.HasValue)
@@ -40,7 +42,7 @@ public sealed class ReportService(ISaleRepository saleRepository, IFrameReposito
             .OrderBy(frame => frame.StockQuantity).ThenBy(frame => frame.Code)
             .Select(frame => new LowStockReportItem(frame.Id, frame.Code, $"{frame.Brand} {frame.Model}", frame.StockQuantity)).ToArray();
 
-        return new SalesReport(from, to, completed.Length, cancelled, revenue,
+        return new SalesReport(from, to, completed.Length, cancelled, reversed, revenue,
             completed.Length == 0 ? 0 : revenue / completed.Length,
             completed.SelectMany(sale => sale.Items).Sum(item => item.Quantity),
             completed.SelectMany(sale => sale.Items).Where(item => item.IncludesLenses).Sum(item => item.Quantity),

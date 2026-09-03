@@ -13,7 +13,7 @@ public sealed class DeleteModel(SaleService saleService) : PageModel
     {
         var sale = await saleService.GetAsync(id, cancellationToken);
         if (sale is null) return NotFound();
-        if (sale.Status != SaleStatus.Cancelled) return RedirectToPage("Details", new { id });
+        if (sale.Status is not (SaleStatus.Cancelled or SaleStatus.Reversed)) return RedirectToPage("Details", new { id });
         Sale = sale;
         return Page();
     }
@@ -22,8 +22,11 @@ public sealed class DeleteModel(SaleService saleService) : PageModel
     {
         try
         {
-            await saleService.DeleteCancelledAsync(id, cancellationToken);
-            TempData["SaleSuccessMessage"] = "Venda cancelada excluída do histórico.";
+            var sale = await saleService.GetAsync(id, cancellationToken);
+            if (sale is null) return NotFound();
+            if (sale.Status == SaleStatus.Reversed) await saleService.DeleteReversedAsync(id, cancellationToken);
+            else await saleService.DeleteCancelledAsync(id, cancellationToken);
+            TempData["SaleSuccessMessage"] = "Venda excluída permanentemente do histórico.";
             return RedirectToPage("Index");
         }
         catch (KeyNotFoundException) { return NotFound(); }

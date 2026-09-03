@@ -43,6 +43,8 @@ public sealed class LaboratoryOrder
     public void Update(LaboratoryOrderStatus status, DateOnly? expectedDeliveryDate, string? notes)
     {
         if (!Enum.IsDefined(status)) throw new ArgumentException("Informe uma situação válida.", nameof(status));
+        if (status == LaboratoryOrderStatus.Cancelled) throw new InvalidOperationException("O cancelamento do pedido é realizado pelo estorno da venda.");
+        if (Status == LaboratoryOrderStatus.Cancelled) throw new InvalidOperationException("Um pedido cancelado não pode ser alterado.");
         if (Status == LaboratoryOrderStatus.Delivered && status != Status)
             throw new InvalidOperationException("Um pedido entregue não pode voltar para uma etapa anterior.");
 
@@ -58,6 +60,14 @@ public sealed class LaboratoryOrder
             if (status == LaboratoryOrderStatus.Delivered) DeliveredAtUtc = now;
         }
         UpdatedAtUtc = now;
+    }
+
+    public void Cancel()
+    {
+        if (Status == LaboratoryOrderStatus.Cancelled) return;
+        Status = LaboratoryOrderStatus.Cancelled;
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
+        history.Add(new LaboratoryOrderHistory(Status));
     }
 
     private static string? NormalizeNotes(string? notes)

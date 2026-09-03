@@ -45,6 +45,26 @@ public sealed class ReportServiceTests
     }
 
     [Fact]
+    public async Task ReportCountsReversedSalesWithoutAddingThemToRevenue()
+    {
+        var frame = Frame("ARM-2", 1);
+        var reversedSale = new Sale(Guid.NewGuid());
+        reversedSale.AddItem(frame, 1, false, null, 0m, null);
+        reversedSale.Complete(PaymentMethod.Pix, 1);
+        reversedSale.Reverse("Venda de teste", "Administrador");
+        var service = new ReportService(new FakeSaleRepository(reversedSale), new FakeFrameRepository(frame));
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        var report = await service.GetSalesReportAsync(today, today);
+
+        Assert.Equal(1, report.ReversedSales);
+        Assert.Equal(0, report.CompletedSales);
+        Assert.Equal(0m, report.Revenue);
+        Assert.Empty(report.Payments);
+        Assert.Empty(report.TopFrames);
+    }
+
+    [Fact]
     public async Task ReportRejectsInvalidPeriod()
     {
         var service = new ReportService(new FakeSaleRepository(), new FakeFrameRepository());

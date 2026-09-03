@@ -265,6 +265,8 @@
 .sale-status--draft { color: #805500; background: #fff4cc; }
 .sale-status--completed { color: #147447; background: #dff6e9; }
 .sale-status--cancelled { color: #8f1d18; background: #fde8e7; }
+.sale-status--reversed { color: #7c2d12; background: #ffedd5; }
+.sale-closed-actions { margin-top: 2rem; display: flex; justify-content: flex-end; }
 .sale-draft-card { padding: 1.5rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; border: 1px solid var(--line); border-radius: 1.25rem; background: #fff; box-shadow: var(--shadow); }
 .sale-draft-card > div { padding: 1rem; display: grid; gap: .35rem; border-radius: .85rem; background: #f6f9fc; }
 .sale-draft-card span { color: var(--muted); font-size: .75rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
@@ -281,6 +283,7 @@
 .lab-status--sent, .lab-status--inproduction { color: #075985; background: #e0f2fe; }
 .lab-status--ready { color: #147447; background: #dff6e9; }
 .lab-status--delivered { color: var(--muted); background: #edf1f5; }
+.lab-status--cancelled { color: #8f1d18; background: #fde8e7; }
 .lab-order-form { margin-top: 2rem; }
 .lab-history { margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 1.25rem; background: #fff; }
 .lab-history ol { margin: 1rem 0 0; padding: 0; display: grid; list-style: none; }
@@ -289,7 +292,7 @@
 .lab-history span { color: var(--muted); }
 .report-filters { margin-bottom: 1.5rem; padding: 1rem; display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
 .report-filters .button { min-height: 48px; }
-.report-summary { margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.report-summary { margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
 .report-summary article { padding: 1.35rem; display: grid; gap: .3rem; border: 1px solid var(--line); border-radius: 1rem; background: linear-gradient(145deg, #fff, #f6f9fc); box-shadow: 0 10px 30px rgba(7,39,102,.05); }
 .report-summary span, .report-summary small { color: var(--muted); }
 .report-summary span { font-size: .78rem; font-weight: 800; text-transform: uppercase; }

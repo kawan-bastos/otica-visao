@@ -15,5 +15,8 @@ public sealed record SaleListItem(
     decimal? FinalTotal,
     DateTimeOffset? CompletedAtUtc,
     DateTimeOffset? CancelledAtUtc,
+    DateTimeOffset? ReversedAtUtc,
+    string? ReversalReason,
+    string? ReversedBy,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);

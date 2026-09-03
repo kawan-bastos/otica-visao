@@ -19,6 +19,7 @@
         <article><span>Ticket médio</span><strong>@Model.Report.AverageTicket.ToString("C", culture)</strong><small>Média por venda</small></article>
         <article><span>Unidades vendidas</span><strong>@Model.Report.SoldUnits</strong><small>@Model.Report.CompleteGlasses óculos completo(s)</small></article>
         <article><span>Clientes atendidos</span><strong>@Model.Report.UniqueCustomers</strong><small>@Model.Report.CancelledSales cancelamento(s)</small></article>
+        <article><span>Vendas estornadas</span><strong>@Model.Report.ReversedSales</strong><small>Não contabilizadas no faturamento</small></article>
     </section>
 
     <div class="report-grid">

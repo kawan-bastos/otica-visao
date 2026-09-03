@@ -32,11 +32,11 @@
                 <div class="form-field form-field--wide"><label asp-for="Input.Notes"></label><textarea asp-for="Input.Notes" rows="4" placeholder="Ex.: pedido 123 do laboratório, detalhes combinados com o cliente"></textarea><span asp-validation-for="Input.Notes"></span></div>
             </div>
         </section>
-        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.Order.Status == LaboratoryOrderStatus.Delivered ? "disabled" : null)>Salvar acompanhamento</button></div>
+        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.Order.Status is LaboratoryOrderStatus.Delivered or LaboratoryOrderStatus.Cancelled ? "disabled" : null)>Salvar acompanhamento</button></div>
     </form>
 
     <section class="lab-history"><div class="admin-form__section-heading"><h2>Histórico</h2><p>Registro das etapas já informadas.</p></div><ol>@foreach (var entry in Model.Order.History) { <li><strong>@StatusName(entry.Status)</strong><span>@entry.ChangedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span></li> }</ol></section>
 </main>
 
-@functions { private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", _ => "Entregue ao cliente" }; }
+@functions { private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", LaboratoryOrderStatus.Delivered => "Entregue ao cliente", _ => "Cancelado por estorno" }; }
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

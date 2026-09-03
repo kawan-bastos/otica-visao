@@ -18,6 +18,9 @@ internal sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.Property(sale => sale.FinalTotal).HasColumnName("final_total").HasPrecision(10, 2);
         builder.Property(sale => sale.CompletedAtUtc).HasColumnName("completed_at_utc");
         builder.Property(sale => sale.CancelledAtUtc).HasColumnName("cancelled_at_utc");
+        builder.Property(sale => sale.ReversedAtUtc).HasColumnName("reversed_at_utc");
+        builder.Property(sale => sale.ReversalReason).HasColumnName("reversal_reason").HasMaxLength(500);
+        builder.Property(sale => sale.ReversedBy).HasColumnName("reversed_by").HasMaxLength(200);
         builder.Property(sale => sale.CreatedAtUtc).HasColumnName("created_at_utc").IsRequired();
         builder.Property(sale => sale.UpdatedAtUtc).HasColumnName("updated_at_utc").IsRequired();
         builder.HasIndex(sale => sale.CustomerId).HasDatabaseName("ix_sales_customer_id");

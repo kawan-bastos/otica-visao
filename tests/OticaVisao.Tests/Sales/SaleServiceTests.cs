@@ -139,6 +139,44 @@ public sealed class SaleServiceTests
         Assert.Single(sales.Sales);
     }
 
+    [Fact]
+    public async Task ReverseSaleRestoresStockAndCancelsLaboratoryOrder()
+    {
+        var customer = Customer();
+        var frame = Frame();
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var orders = new FakeLaboratoryOrderRepository();
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame), orders);
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(frame.Id, 1, true, "Visão simples", 300m, OpticalLaboratory.StandardOptical));
+        await service.CompleteAsync(sale.Id, PaymentMethod.Pix, 1);
+
+        await service.ReverseAsync(sale.Id, "Venda de teste", "Carlos");
+
+        Assert.Equal(SaleStatus.Reversed, sale.Status);
+        Assert.Equal(3, frame.StockQuantity);
+        Assert.Equal(LaboratoryOrderStatus.Cancelled, Assert.Single(orders.Orders).Status);
+    }
+
+    [Fact]
+    public async Task DeleteReversedSaleRemovesSaleAndLaboratoryOrders()
+    {
+        var customer = Customer();
+        var frame = Frame();
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var orders = new FakeLaboratoryOrderRepository();
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame), orders);
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(frame.Id, 1, true, "Visão simples", 300m, OpticalLaboratory.StandardOptical));
+        await service.CompleteAsync(sale.Id, PaymentMethod.Pix, 1);
+        await service.ReverseAsync(sale.Id, "Venda de teste", "Carlos");
+
+        await service.DeleteReversedAsync(sale.Id);
+
+        Assert.Empty(sales.Sales);
+        Assert.Empty(orders.Orders);
+    }
+
     private static Customer Customer() => new(
         "Maria", "21999990000", "52998224725", new DateOnly(1990, 1, 1),
         new CustomerAddress("25931-770", "Rua A", "10", null, "Piabetá", "Magé", "RJ"));
@@ -175,7 +213,9 @@ public sealed class SaleServiceTests
         public Task<IReadOnlyList<LaboratoryOrder>> ListAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<LaboratoryOrder>>(Orders);
         public Task<LaboratoryOrder?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(Orders.SingleOrDefault(order => order.Id == id));
         public Task<bool> ExistsForSaleItemAsync(Guid saleItemId, CancellationToken cancellationToken = default) => Task.FromResult(Orders.Any(order => order.SaleItemId == saleItemId));
+        public Task<IReadOnlyList<LaboratoryOrder>> ListBySaleIdAsync(Guid saleId, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<LaboratoryOrder>>(Orders.Where(order => order.SaleId == saleId).ToArray());
         public Task AddAsync(LaboratoryOrder order, CancellationToken cancellationToken = default) { Orders.Add(order); return Task.CompletedTask; }
+        public void RemoveRange(IEnumerable<LaboratoryOrder> orders) { foreach (var order in orders.ToArray()) Orders.Remove(order); }
         public Task SaveChangesAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 
