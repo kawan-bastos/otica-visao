@@ -58,6 +58,16 @@ public sealed class LaboratoryOrderTests
         Assert.Throws<InvalidOperationException>(() => order.Update(LaboratoryOrderStatus.Sent, null, null));
     }
 
+    [Fact]
+    public void OrderAcceptsPrivateDocumentReference()
+    {
+        var (sale, item) = CompletedSaleWithLenses();
+        var order = new LaboratoryOrder(sale, item);
+        order.SetDocument("1234567890abcdef1234567890abcdef.jpg");
+        Assert.Equal("1234567890abcdef1234567890abcdef.jpg", order.DocumentFileName);
+        Assert.Throws<ArgumentException>(() => order.SetDocument("../foto.jpg"));
+    }
+
     private static (Sale Sale, SaleItem Item) CompletedSaleWithLenses()
     {
         var sale = new Sale(Guid.NewGuid());

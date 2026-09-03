@@ -21,18 +21,22 @@
         <div><span>Entregue em</span><strong>@(Model.Order.DeliveredAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")</strong></div>
     </section>
 
-    <form method="post" class="admin-form lab-order-form">
+    <section class="admin-form"><div class="admin-form__section-heading"><h2>Grau solicitado</h2><p>Informações registradas no item da venda.</p></div><partial name="/Pages/Admin/Shared/_PrescriptionDisplay.cshtml" model="Model.Order.Prescription" /></section>
+
+    <form method="post" enctype="multipart/form-data" class="admin-form lab-order-form">
         <input type="hidden" name="id" value="@Model.Order.Id" />
         <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
         <section class="admin-form__section">
             <div class="admin-form__section-heading"><h2>Atualizar acompanhamento</h2><p>A mudança de situação será registrada automaticamente no histórico.</p></div>
             <div class="form-grid">
+                <div class="form-field"><label asp-for="Input.Laboratory"></label><select asp-for="Input.Laboratory"><option value="StandardOptical">Padrão Optical</option><option value="ImperialLab">Imperial Lab</option></select><span asp-validation-for="Input.Laboratory"></span></div>
                 <div class="form-field"><label asp-for="Input.Status"></label><select asp-for="Input.Status"><option value="AwaitingShipment">Aguardando envio</option><option value="Sent">Enviado</option><option value="InProduction">Em produção</option><option value="Ready">Pronto</option><option value="Delivered">Entregue ao cliente</option></select><span asp-validation-for="Input.Status"></span></div>
                 <div class="form-field"><label asp-for="Input.ExpectedDeliveryDate"></label><input asp-for="Input.ExpectedDeliveryDate" type="date" /><span asp-validation-for="Input.ExpectedDeliveryDate"></span></div>
                 <div class="form-field form-field--wide"><label asp-for="Input.Notes"></label><textarea asp-for="Input.Notes" rows="4" placeholder="Ex.: pedido 123 do laboratório, detalhes combinados com o cliente"></textarea><span asp-validation-for="Input.Notes"></span></div>
+                <div class="form-field form-field--wide"><label asp-for="Document">Foto do pedido enviado ao laboratório</label><input asp-for="Document" type="file" accept="image/jpeg,image/png,image/webp" />@if (Model.Order.DocumentFileName is not null) { <a class="admin-table__button" asp-page-handler="Document" asp-route-id="@Model.Order.Id" target="_blank">Ver foto atual</a> }</div>
             </div>
         </section>
-        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.Order.Status is LaboratoryOrderStatus.Delivered or LaboratoryOrderStatus.Cancelled ? "disabled" : null)>Salvar acompanhamento</button></div>
+        <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.Order.Status == LaboratoryOrderStatus.Cancelled ? "disabled" : null)>Salvar acompanhamento</button></div>
     </form>
 
     <section class="lab-history"><div class="admin-form__section-heading"><h2>Histórico</h2><p>Registro das etapas já informadas.</p></div><ol>@foreach (var entry in Model.Order.History) { <li><strong>@StatusName(entry.Status)</strong><span>@entry.ChangedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span></li> }</ol></section>

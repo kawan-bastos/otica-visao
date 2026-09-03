@@ -13,6 +13,7 @@ public sealed class ProductionConfigurationValidatorTests
             ["ConnectionStrings:DefaultConnection"] = "Host=database.internal;Database=otica;Username=app;Password=secret",
             ["Database:ApplyMigrations"] = "true",
             ["FrameImageStorage:Path"] = Path.Combine(Path.GetTempPath(), "frame-images"),
+            ["LaboratoryDocumentStorage:Path"] = Path.Combine(Path.GetTempPath(), "laboratory-documents"),
             ["AllowedHosts"] = "otica.example.com",
             ["AdminAccounts:Accounts:0:DisplayName"] = "Carlos",
             ["AdminAccounts:Accounts:0:Email"] = "carlos@example.com",

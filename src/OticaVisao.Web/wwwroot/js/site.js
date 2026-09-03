@@ -70,12 +70,97 @@ document.querySelectorAll("[data-cep-lookup]").forEach((cepInput) => {
 
 document.querySelectorAll("[data-sale-includes-lenses]").forEach((toggle) => {
     const form = toggle.closest("form");
-    const lensFields = form?.querySelector("[data-sale-lens-fields]");
+    const lensFields = form?.querySelectorAll("[data-sale-lens-fields]") ?? [];
     const updateLensFields = () => {
-        if (!lensFields) return;
-        lensFields.hidden = !toggle.checked;
-        lensFields.querySelectorAll("input, select").forEach((field) => field.disabled = !toggle.checked);
+        lensFields.forEach((group) => {
+            group.hidden = !toggle.checked;
+            group.querySelectorAll("input, select").forEach((field) => field.disabled = !toggle.checked);
+        });
     };
     toggle.addEventListener("change", updateLensFields);
     updateLensFields();
 });
+
+// Progressive enhancement: content remains visible without JavaScript or animation support.
+document.querySelectorAll("[data-highlights]").forEach(carousel => {
+    const photos = [...carousel.querySelectorAll("[data-highlight-photo]")];
+    const tabs = [...carousel.querySelectorAll("[data-highlight-index]")];
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let current = 0;
+    let hovered = false;
+    let focused = false;
+    let timer;
+    let elapsed = 0;
+    let lastTime = null;
+    const tick = time => {
+        if (lastTime !== null) elapsed += time - lastTime;
+        lastTime = time;
+        if (elapsed >= 6000) { show(current + 1); return; }
+        timer = requestAnimationFrame(tick);
+    };
+    const schedule = () => {
+        cancelAnimationFrame(timer);
+        lastTime = null;
+        if (!hovered && !focused && !document.hidden && !preference.matches)
+            timer = requestAnimationFrame(tick);
+    };
+    const show = (index, manual = false) => {
+        current = (index + photos.length) % photos.length;
+        elapsed = 0;
+        photos.forEach((photo, i) => {
+            photo.classList.toggle("is-current", i === current);
+            photo.setAttribute("aria-hidden", String(i !== current));
+        });
+        tabs.forEach((tab, i) => tab.setAttribute("aria-pressed", String(i === current)));
+        if (manual) carousel.querySelector("[data-highlight-status]").textContent = `Foto ${current + 1} de ${photos.length}: ${photos[current].alt}`;
+        schedule();
+    };
+    tabs.forEach((tab, index) => tab.addEventListener("click", () => show(index, true)));
+    carousel.querySelector("[data-highlight-prev]").addEventListener("click", () => show(current - 1, true));
+    carousel.querySelector("[data-highlight-next]").addEventListener("click", () => show(current + 1, true));
+    carousel.addEventListener("mouseenter", () => { hovered = true; schedule(); });
+    carousel.addEventListener("mouseleave", () => { hovered = false; schedule(); });
+    carousel.addEventListener("focusin", () => { focused = true; schedule(); });
+    carousel.addEventListener("focusout", event => { focused = carousel.contains(event.relatedTarget); schedule(); });
+    document.addEventListener("visibilitychange", schedule);
+    preference.addEventListener("change", schedule);
+    carousel.querySelector("[data-highlight-controls]").hidden = false;
+    schedule();
+});
+
+// One-time entrances on public pages.
+(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (preference.matches || !Element.prototype.animate || !("IntersectionObserver" in window)) return;
+
+    const animations = new Set();
+    const reveal = (element, delay = 0) => {
+        if (preference.matches) return;
+        const animation = element.animate([
+            { opacity: 0.35, translate: "0 18px" },
+            { opacity: 1, translate: "0 0" }
+        ], { duration: 550, delay, easing: "cubic-bezier(.2,.65,.3,1)", fill: "backwards" });
+        animations.add(animation);
+        animation.finished.then(() => animations.delete(animation), () => animations.delete(animation));
+    };
+
+    document.querySelectorAll(".hero__content > *").forEach((element, index) => reveal(element, index * 65));
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            reveal(entry.target);
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll(
+        ".catalog-preview .section-heading, .frame-card, .offer__card, .journey__steps > article, .about__grid, .contact__card"
+    ).forEach(element => observer.observe(element));
+
+    preference.addEventListener("change", event => {
+        if (!event.matches) return;
+        observer.disconnect();
+        animations.forEach(animation => animation.cancel());
+        animations.clear();
+    });
+})();

@@ -17,6 +17,7 @@ internal sealed class LaboratoryOrderConfiguration : IEntityTypeConfiguration<La
         builder.Property(order => order.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(30).IsRequired();
         builder.Property(order => order.ExpectedDeliveryDate).HasColumnName("expected_delivery_date");
         builder.Property(order => order.Notes).HasColumnName("notes").HasMaxLength(1000);
+        builder.Property(order => order.DocumentFileName).HasColumnName("document_file_name").HasMaxLength(80);
         builder.Property(order => order.SentAtUtc).HasColumnName("sent_at_utc");
         builder.Property(order => order.ReadyAtUtc).HasColumnName("ready_at_utc");
         builder.Property(order => order.DeliveredAtUtc).HasColumnName("delivered_at_utc");

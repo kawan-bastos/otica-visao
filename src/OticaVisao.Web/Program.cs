@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using OticaVisao.Web.Configuration;
+using OticaVisao.Web.Models;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,13 +24,15 @@ builder.Services.AddRazorPages(options =>
     options.Conventions.AuthorizeFolder("/Admin", AdminAuthorization.Policy);
     options.Conventions.AllowAnonymousToPage("/Admin/Account/Login");
     options.Conventions.AllowAnonymousToPage("/Admin/Account/AccessDenied");
-});
+}).AddMvcOptions(options => options.ModelBinderProviders.Insert(0, new FlexibleDecimalModelBinderProvider()));
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("A conexão 'DefaultConnection' não foi configurada.");
 
 builder.Services.AddInfrastructure(connectionString, options =>
     builder.Configuration.GetSection(FrameImageStorageOptions.SectionName).Bind(options));
+builder.Services.Configure<LaboratoryDocumentStorageOptions>(
+    builder.Configuration.GetSection(LaboratoryDocumentStorageOptions.SectionName));
 builder.Services.Configure<AdminAccountOptions>(
     builder.Configuration.GetSection(AdminAccountOptions.SectionName));
 builder.Services.ConfigureApplicationCookie(options =>
@@ -83,6 +87,14 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+var brazilianCulture = CultureInfo.GetCultureInfo("pt-BR");
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(brazilianCulture),
+    SupportedCultures = [brazilianCulture],
+    SupportedUICultures = [brazilianCulture]
+});
 
 if (builder.Configuration.GetValue<bool>("Database:ApplyMigrations"))
 {

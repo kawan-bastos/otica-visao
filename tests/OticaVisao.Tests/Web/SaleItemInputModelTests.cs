@@ -15,6 +15,7 @@ public sealed class SaleItemInputModelTests
 
         Assert.Contains(results, result => result.MemberNames.Contains(nameof(model.LensDescription)));
         Assert.Contains(results, result => result.MemberNames.Contains(nameof(model.Laboratory)));
+        Assert.Contains(results, result => result.MemberNames.Contains(nameof(model.LensUnitPrice)));
     }
 
     [Fact]

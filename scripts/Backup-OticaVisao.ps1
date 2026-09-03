@@ -2,7 +2,8 @@
 param(
     [string]$Destination = (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'OticaVisaoBackups'),
     [string]$ConnectionString,
-    [string]$ImagePath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\frame-images')
+    [string]$ImagePath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\frame-images'),
+    [string]$LaboratoryDocumentPath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\laboratory-documents')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,6 +52,7 @@ New-Item -ItemType Directory -Path $backupDirectory -Force | Out-Null
 
 $databaseFile = Join-Path $backupDirectory 'database.dump'
 $imagesFile = Join-Path $backupDirectory 'frame-images.zip'
+$documentsFile = Join-Path $backupDirectory 'laboratory-documents.zip'
 $previousPassword = $env:PGPASSWORD
 try {
     $env:PGPASSWORD = $connection.Password
@@ -75,12 +77,23 @@ finally {
     Remove-Item -LiteralPath $imageStaging -Recurse -Force
 }
 
+$documentStaging = Join-Path $backupDirectory '.document-staging'
+$stagedDocuments = Join-Path $documentStaging 'laboratory-documents'
+New-Item -ItemType Directory -Path $stagedDocuments -Force | Out-Null
+try {
+    $resolvedDocuments = [IO.Path]::GetFullPath($LaboratoryDocumentPath)
+    if (Test-Path -LiteralPath $resolvedDocuments) { Get-ChildItem -LiteralPath $resolvedDocuments -Force | Copy-Item -Destination $stagedDocuments -Recurse -Force }
+    [IO.Compression.ZipFile]::CreateFromDirectory($documentStaging, $documentsFile, [IO.Compression.CompressionLevel]::Optimal, $false)
+}
+finally { Remove-Item -LiteralPath $documentStaging -Recurse -Force }
+
 $manifest = [ordered]@{
     createdAt = (Get-Date).ToString('o')
     database = $connection.Database
     databaseFile = 'database.dump'
     imagesFile = 'frame-images.zip'
-    formatVersion = 1
+    laboratoryDocumentsFile = 'laboratory-documents.zip'
+    formatVersion = 2
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $backupDirectory 'manifest.json') -Encoding utf8
 

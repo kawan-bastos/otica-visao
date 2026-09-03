@@ -8,7 +8,7 @@ public sealed class SaleItem
 
     private SaleItem() { }
 
-    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory)
+    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "A quantidade deve ser maior que zero.");
@@ -30,6 +30,8 @@ public sealed class SaleItem
         LensDescription = NormalizeOptional(lensDescription, 500);
         LensUnitPrice = lensUnitPrice;
         Laboratory = laboratory;
+        ExpectedDeliveryDate = includesLenses ? expectedDeliveryDate : null;
+        SetPrescription(includesLenses ? prescription ?? LensPrescription.Empty : LensPrescription.Empty);
     }
 
     public Guid Id { get; private set; }
@@ -46,8 +48,59 @@ public sealed class SaleItem
     public string? LensDescription { get; private set; }
     public decimal LensUnitPrice { get; private set; }
     public OpticalLaboratory? Laboratory { get; private set; }
+    public DateOnly? ExpectedDeliveryDate { get; private set; }
+    public decimal? FarRightSphere { get; private set; }
+    public decimal? FarRightCylinder { get; private set; }
+    public int? FarRightAxis { get; private set; }
+    public decimal? FarRightDnp { get; private set; }
+    public decimal? FarRightHeight { get; private set; }
+    public decimal? FarRightAddition { get; private set; }
+    public decimal? FarLeftSphere { get; private set; }
+    public decimal? FarLeftCylinder { get; private set; }
+    public int? FarLeftAxis { get; private set; }
+    public decimal? FarLeftDnp { get; private set; }
+    public decimal? FarLeftHeight { get; private set; }
+    public decimal? FarLeftAddition { get; private set; }
+    public decimal? NearRightSphere { get; private set; }
+    public decimal? NearRightCylinder { get; private set; }
+    public int? NearRightAxis { get; private set; }
+    public decimal? NearRightDnp { get; private set; }
+    public decimal? NearRightHeight { get; private set; }
+    public decimal? NearRightAddition { get; private set; }
+    public decimal? NearLeftSphere { get; private set; }
+    public decimal? NearLeftCylinder { get; private set; }
+    public int? NearLeftAxis { get; private set; }
+    public decimal? NearLeftDnp { get; private set; }
+    public decimal? NearLeftHeight { get; private set; }
+    public decimal? NearLeftAddition { get; private set; }
+    public LensPrescription Prescription => new(
+        new(FarRightSphere, FarRightCylinder, FarRightAxis, FarRightDnp, FarRightHeight, FarRightAddition),
+        new(FarLeftSphere, FarLeftCylinder, FarLeftAxis, FarLeftDnp, FarLeftHeight, FarLeftAddition),
+        new(NearRightSphere, NearRightCylinder, NearRightAxis, NearRightDnp, NearRightHeight, NearRightAddition),
+        new(NearLeftSphere, NearLeftCylinder, NearLeftAxis, NearLeftDnp, NearLeftHeight, NearLeftAddition));
     public decimal UnitTotal => FrameUnitPrice + LensUnitPrice;
     public decimal Total => UnitTotal * Quantity;
+
+    internal void UpdateLensDetails(string lensDescription, decimal lensUnitPrice, OpticalLaboratory laboratory, LensPrescription prescription, DateOnly? expectedDeliveryDate)
+    {
+        if (!IncludesLenses) throw new InvalidOperationException("Este item não possui lentes.");
+        if (lensUnitPrice < 0) throw new ArgumentOutOfRangeException(nameof(lensUnitPrice), "O preço das lentes não pode ser negativo.");
+        LensDescription = NormalizeOptional(lensDescription, 500)
+            ?? throw new ArgumentException("Descreva as lentes.", nameof(lensDescription));
+        LensUnitPrice = lensUnitPrice;
+        Laboratory = laboratory;
+        ExpectedDeliveryDate = expectedDeliveryDate;
+        SetPrescription(prescription);
+    }
+
+    private void SetPrescription(LensPrescription prescription)
+    {
+        prescription.Validate();
+        (FarRightSphere, FarRightCylinder, FarRightAxis, FarRightDnp, FarRightHeight, FarRightAddition) = prescription.FarRight;
+        (FarLeftSphere, FarLeftCylinder, FarLeftAxis, FarLeftDnp, FarLeftHeight, FarLeftAddition) = prescription.FarLeft;
+        (NearRightSphere, NearRightCylinder, NearRightAxis, NearRightDnp, NearRightHeight, NearRightAddition) = prescription.NearRight;
+        (NearLeftSphere, NearLeftCylinder, NearLeftAxis, NearLeftDnp, NearLeftHeight, NearLeftAddition) = prescription.NearLeft;
+    }
 
     private static string? NormalizeOptional(string? value, int maximumLength)
     {

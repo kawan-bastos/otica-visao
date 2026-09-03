@@ -18,11 +18,13 @@ public sealed class LaboratoryOrderService(ILaboratoryOrderRepository repository
         return order is null ? null : ToListItem(order);
     }
 
-    public async Task UpdateAsync(Guid id, LaboratoryOrderStatus status, DateOnly? expectedDate, string? notes, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(Guid id, OpticalLaboratory laboratory, LaboratoryOrderStatus status, DateOnly? expectedDate, string? notes, string? documentFileName = null, CancellationToken cancellationToken = default)
     {
         var order = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Pedido de laboratório não encontrado.");
+        if (order.Laboratory != laboratory) order.ChangeLaboratory(laboratory);
         order.Update(status, expectedDate, notes);
+        if (documentFileName is not null) order.SetDocument(documentFileName);
         await repository.SaveChangesAsync(cancellationToken);
     }
 
@@ -54,7 +56,7 @@ public sealed class LaboratoryOrderService(ILaboratoryOrderRepository repository
         order.Id, order.SaleId, order.Sale.Customer.Name, order.Sale.Customer.Phone,
         $"{order.SaleItem.FrameBrand} {order.SaleItem.FrameModel} · {order.SaleItem.FrameCode}",
         order.SaleItem.LensDescription ?? "Lentes", order.SaleItem.Quantity,
-        order.Laboratory, order.Status, order.ExpectedDeliveryDate, order.Notes,
+        order.Laboratory, order.Status, order.ExpectedDeliveryDate, order.Notes, order.SaleItem.Prescription, order.DocumentFileName,
         order.SentAtUtc, order.ReadyAtUtc, order.DeliveredAtUtc, order.CreatedAtUtc, order.UpdatedAtUtc,
         order.History.OrderByDescending(entry => entry.ChangedAtUtc)
             .Select(entry => new LaboratoryOrderHistoryItem(entry.Status, entry.ChangedAtUtc)).ToArray());

@@ -42,7 +42,7 @@ internal sealed class AdminAuditInterceptor(IHttpContextAccessor httpContextAcce
             ?? httpContext.User.Identity.Name
             ?? "Administrador";
         var trackedEntries = context.ChangeTracker.Entries()
-            .Where(entry => entry.Entity is Frame or Customer or Sale or LaboratoryOrder)
+            .Where(entry => entry.Entity is Frame or Customer or Sale or SaleItem or LaboratoryOrder)
             .Where(entry => entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
             .ToArray();
 
@@ -62,6 +62,7 @@ internal sealed class AdminAuditInterceptor(IHttpContextAccessor httpContextAcce
             entry.State == EntityState.Added ? "Cliente cadastrado" : entry.State == EntityState.Deleted ? "Cliente excluído" : "Cliente alterado",
             "Cliente", customer.Id.ToString(), customer.Name),
         Sale sale => DescribeSale(entry, sale),
+        SaleItem item => ("Lentes e grau atualizados", "Item da venda", item.Id.ToString(), $"Item da venda {item.SaleId}"),
         LaboratoryOrder order => (
             entry.State == EntityState.Added ? "Pedido de lentes criado" : entry.State == EntityState.Deleted ? "Pedido de lentes excluído" : "Pedido de lentes atualizado",
             "Pedido de lentes", order.Id.ToString(), $"Pedido da venda {order.SaleId}"),

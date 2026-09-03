@@ -23,14 +23,22 @@ public sealed class SaleItemInputModel : IValidatableObject
 
     [Range(typeof(decimal), "0", "99999999", ErrorMessage = "Informe um valor válido para as lentes.")]
     [Display(Name = "Valor das lentes")]
-    public decimal LensUnitPrice { get; set; }
+    public decimal? LensUnitPrice { get; set; }
 
     [Display(Name = "Laboratório")]
     public OpticalLaboratory? Laboratory { get; set; }
 
+    [Display(Name = "Previsão de entrega")]
+    [DataType(DataType.Date)]
+    public DateOnly? ExpectedDeliveryDate { get; set; }
+
+    public PrescriptionInputModel Prescription { get; set; } = new();
+
     public AddSaleItemRequest ToRequest() => new(
         FrameId!.Value, Quantity, IncludesLenses, IncludesLenses ? LensDescription : null,
-        IncludesLenses ? LensUnitPrice : 0, IncludesLenses ? Laboratory : null);
+        IncludesLenses ? LensUnitPrice ?? 0 : 0, IncludesLenses ? Laboratory : null,
+        IncludesLenses ? Prescription.ToDomain() : null,
+        IncludesLenses ? ExpectedDeliveryDate : null);
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -39,5 +47,7 @@ public sealed class SaleItemInputModel : IValidatableObject
             yield return new ValidationResult("Descreva as lentes.", [nameof(LensDescription)]);
         if (!Laboratory.HasValue)
             yield return new ValidationResult("Selecione o laboratório.", [nameof(Laboratory)]);
+        if (!LensUnitPrice.HasValue)
+            yield return new ValidationResult("Informe o valor das lentes.", [nameof(LensUnitPrice)]);
     }
 }

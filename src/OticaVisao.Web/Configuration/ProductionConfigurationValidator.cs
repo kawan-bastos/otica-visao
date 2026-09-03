@@ -20,6 +20,9 @@ public static class ProductionConfigurationValidator
         var imagePath = configuration[$"{FrameImageStorageOptions.SectionName}:Path"];
         if (string.IsNullOrWhiteSpace(imagePath) || !Path.IsPathRooted(imagePath))
             errors.Add("Configure FrameImageStorage:Path com um caminho absoluto e persistente.");
+        var documentPath = configuration[$"{LaboratoryDocumentStorageOptions.SectionName}:Path"];
+        if (string.IsNullOrWhiteSpace(documentPath) || !Path.IsPathRooted(documentPath))
+            errors.Add("Configure LaboratoryDocumentStorage:Path com um caminho absoluto e persistente.");
 
         if (configuration["AllowedHosts"] is not { Length: > 0 } allowedHosts || allowedHosts == "*")
             errors.Add("Restrinja AllowedHosts ao domínio usado em produção.");
