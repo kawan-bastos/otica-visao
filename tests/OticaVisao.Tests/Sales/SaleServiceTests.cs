@@ -53,6 +53,45 @@ public sealed class SaleServiceTests
         Assert.Equal(3, frame.StockQuantity);
     }
 
+    [Fact]
+    public async Task CompleteSaleKeepsReservedStockAndRecordsPayment()
+    {
+        var customer = Customer();
+        var frame = Frame();
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(frame));
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(frame.Id, 1, false, null, 0, null));
+
+        await service.CompleteAsync(sale.Id, PaymentMethod.Pix, 1);
+
+        Assert.Equal(SaleStatus.Completed, sale.Status);
+        Assert.Equal(2, frame.StockQuantity);
+        Assert.Equal(219m, sale.FinalTotal);
+    }
+
+    [Fact]
+    public async Task CancelSaleRestoresEveryReservedItem()
+    {
+        var customer = Customer();
+        var firstFrame = Frame();
+        var secondFrame = new Frame(
+            "ARM-2", "Marca", "Outro", "Azul", 219m, 4,
+            FrameType.Prescription, FrameShape.Square, TargetAudience.Adult);
+        var sale = new Sale(customer.Id);
+        var sales = new FakeSaleRepository { Sales = { sale } };
+        var service = new SaleService(sales, new FakeCustomerRepository(customer), new FakeFrameRepository(firstFrame, secondFrame));
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(firstFrame.Id, 2, false, null, 0, null));
+        await service.AddItemAsync(sale.Id, new AddSaleItemRequest(secondFrame.Id, 3, false, null, 0, null));
+
+        await service.CancelAsync(sale.Id);
+
+        Assert.Equal(SaleStatus.Cancelled, sale.Status);
+        Assert.Equal(3, firstFrame.StockQuantity);
+        Assert.Equal(4, secondFrame.StockQuantity);
+        Assert.Equal(3, sales.SaveCount);
+    }
+
     private static Customer Customer() => new(
         "Maria", "21999990000", "52998224725", new DateOnly(1990, 1, 1),
         new CustomerAddress("25931-770", "Rua A", "10", null, "Piabetá", "Magé", "RJ"));

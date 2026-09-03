@@ -1,12 +1,12 @@
 @page "{id:guid}"
 @using OticaVisao.Domain.Sales
 @model OticaVisao.Web.Pages.Admin.Sales.DetailsModel
-@{ ViewData["Title"] = "Venda em andamento"; }
+@{ ViewData["Title"] = Model.Sale.Status == SaleStatus.Draft ? "Venda em andamento" : "Detalhes da venda"; }
 
 <main class="admin-page">
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
     <header class="admin-page__header">
-        <div><span class="eyebrow">Venda em andamento</span><h1>@Model.Sale.CustomerName</h1><p>Cliente selecionado. O rascunho da venda já está salvo.</p></div>
+        <div><span class="eyebrow">@(Model.Sale.Status == SaleStatus.Draft ? "Venda em andamento" : "Venda encerrada")</span><h1>@Model.Sale.CustomerName</h1><p>@(Model.Sale.Status == SaleStatus.Draft ? "O estoque dos itens está reservado até a conclusão ou o cancelamento." : "Consulte os itens e os dados finais desta venda.")</p></div>
         <a class="button button--secondary" asp-page="Index">Voltar às vendas</a>
     </header>
     <section class="sale-draft-card">
@@ -15,6 +15,16 @@
         <div><span>Iniciada em</span><strong>@Model.Sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
         <div><span>Itens</span><strong>@Model.Sale.Items.Sum(item => item.Quantity)</strong></div>
         <div><span>Total parcial</span><strong>@Model.Sale.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></div>
+        <div><span>Situação</span><strong>@StatusName(Model.Sale.Status)</strong></div>
+        @if (Model.Sale.Status == SaleStatus.Completed)
+        {
+            <div><span>Pagamento</span><strong>@PaymentName(Model.Sale.PaymentMethod)@(Model.Sale.Installments > 1 ? $" · {Model.Sale.Installments}x sem juros" : "")</strong></div>
+            <div><span>Concluída em</span><strong>@Model.Sale.CompletedAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
+        }
+        else if (Model.Sale.Status == SaleStatus.Cancelled)
+        {
+            <div><span>Cancelada em</span><strong>@Model.Sale.CancelledAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
+        }
     </section>
 
     @if (TempData["SaleSuccessMessage"] is string successMessage)
@@ -42,7 +52,7 @@
                             <td data-label="Lentes">@(item.IncludesLenses ? $"{item.LensDescription} · {item.LensUnitPrice.ToString("C", new System.Globalization.CultureInfo("pt-BR"))}" : "Sem lentes")</td>
                             <td data-label="Laboratório">@LaboratoryName(item.Laboratory)</td>
                             <td data-label="Total"><strong>@item.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></td>
-                            <td class="admin-table__actions" data-label="Ações"><form method="post" asp-page-handler="RemoveItem"><input type="hidden" name="id" value="@Model.Sale.Id" /><input type="hidden" name="itemId" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Remover</button></form></td>
+                            <td class="admin-table__actions" data-label="Ações">@if (Model.Sale.Status == SaleStatus.Draft) { <form method="post" asp-page-handler="RemoveItem"><input type="hidden" name="id" value="@Model.Sale.Id" /><input type="hidden" name="itemId" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Remover</button></form> }</td>
                         </tr>
                     }
                     </tbody>
@@ -51,6 +61,8 @@
         }
     </section>
 
+    @if (Model.Sale.Status == SaleStatus.Draft)
+    {
     <form method="post" asp-page-handler="AddItem" class="admin-form sale-item-form">
         <input type="hidden" name="id" value="@Model.Sale.Id" />
         <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
@@ -69,6 +81,23 @@
         </section>
         <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.AvailableFrames.Count == 0 ? "disabled" : null)>Adicionar à venda</button></div>
     </form>
+
+    <section class="sale-checkout">
+        <form method="post" asp-page-handler="Complete" class="admin-form">
+            <input type="hidden" name="id" value="@Model.Sale.Id" />
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+            <section class="admin-form__section">
+                <div class="admin-form__section-heading"><h2>Concluir venda</h2><p>Confira o total e registre como o cliente pagou.</p></div>
+                <div class="form-grid form-grid--three">
+                    <div class="form-field"><label asp-for="Payment.PaymentMethod"></label><select asp-for="Payment.PaymentMethod" data-payment-method><option value="">Selecione</option><option value="Pix">Pix</option><option value="DebitCard">Cartão de débito</option><option value="CreditCard">Cartão de crédito</option></select><span asp-validation-for="Payment.PaymentMethod"></span></div>
+                    <div class="form-field" data-installments><label asp-for="Payment.Installments"></label><select asp-for="Payment.Installments">@for (var installment = 1; installment <= 10; installment++) { <option value="@installment">@(installment == 1 ? "1x (à vista)" : $"{installment}x sem juros")</option> }</select><span asp-validation-for="Payment.Installments"></span></div>
+                    <div class="sale-checkout__total"><span>Total final</span><strong>@Model.Sale.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></div>
+                </div>
+            </section>
+            <div class="admin-form__actions"><a class="button button--secondary" asp-page="Cancel" asp-route-id="@Model.Sale.Id">Cancelar venda</a><button class="button button--primary" type="submit" @(Model.Sale.Items.Count == 0 ? "disabled" : null)>Concluir venda</button></div>
+        </form>
+    </section>
+    }
 </main>
 
 @functions {
@@ -78,6 +107,25 @@
         OpticalLaboratory.ImperialLab => "Imperial Lab",
         _ => "—"
     };
+
+    private static string StatusName(SaleStatus status) => status switch { SaleStatus.Draft => "Em andamento", SaleStatus.Completed => "Concluída", _ => "Cancelada" };
+    private static string PaymentName(PaymentMethod? payment) => payment switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", PaymentMethod.CreditCard => "Cartão de crédito", _ => "—" };
 }
 
-@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const payment = document.querySelector('[data-payment-method]');
+            const installments = document.querySelector('[data-installments]');
+            if (!payment || !installments) return;
+            const update = () => {
+                const credit = payment.value === 'CreditCard';
+                installments.hidden = !credit;
+                if (!credit) installments.querySelector('select').value = '1';
+            };
+            payment.addEventListener('change', update);
+            update();
+        })();
+    </script>
+}

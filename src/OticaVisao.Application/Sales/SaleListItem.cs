@@ -8,7 +8,12 @@ public sealed record SaleListItem(
     string CustomerName,
     string CustomerPhone,
     SaleStatus Status,
+    PaymentMethod? PaymentMethod,
+    int? Installments,
     IReadOnlyList<SaleItemListItem> Items,
     decimal Total,
+    decimal? FinalTotal,
+    DateTimeOffset? CompletedAtUtc,
+    DateTimeOffset? CancelledAtUtc,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);

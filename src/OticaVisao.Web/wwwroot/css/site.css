@@ -269,6 +269,10 @@
 .sale-draft-card .sale-next-step { grid-column: 1 / -1; border: 1px dashed #93d9de; background: #eefbfc; }
 .sale-next-step p { margin: 0; color: var(--muted); }
 .sale-items-section { margin: 2rem 0; display: grid; gap: 1rem; }
+.sale-checkout { margin-top: 2rem; }
+.sale-checkout__total { padding: 1rem; display: grid; align-content: center; gap: .25rem; border-radius: .85rem; background: #eefbfc; }
+.sale-checkout__total span { color: var(--muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+.sale-checkout__total strong { color: var(--navy-900); font-size: 1.5rem; }
 .sale-item-form { margin-top: 2rem; }
 .sale-complete-toggle { align-self: end; min-height: 48px; }
 [data-sale-lens-fields][hidden] { display: none; }

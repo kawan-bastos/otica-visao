@@ -13,6 +13,11 @@ internal sealed class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.Property(sale => sale.Id).HasColumnName("id").ValueGeneratedNever();
         builder.Property(sale => sale.CustomerId).HasColumnName("customer_id").IsRequired();
         builder.Property(sale => sale.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(20).IsRequired();
+        builder.Property(sale => sale.PaymentMethod).HasColumnName("payment_method").HasConversion<string>().HasMaxLength(20);
+        builder.Property(sale => sale.Installments).HasColumnName("installments");
+        builder.Property(sale => sale.FinalTotal).HasColumnName("final_total").HasPrecision(10, 2);
+        builder.Property(sale => sale.CompletedAtUtc).HasColumnName("completed_at_utc");
+        builder.Property(sale => sale.CancelledAtUtc).HasColumnName("cancelled_at_utc");
         builder.Property(sale => sale.CreatedAtUtc).HasColumnName("created_at_utc").IsRequired();
         builder.Property(sale => sale.UpdatedAtUtc).HasColumnName("updated_at_utc").IsRequired();
         builder.HasIndex(sale => sale.CustomerId).HasDatabaseName("ix_sales_customer_id");
