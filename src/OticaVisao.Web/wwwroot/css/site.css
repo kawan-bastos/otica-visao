@@ -868,8 +868,12 @@ a { color: inherit; }
 .hero__content > p.hero__offer-note { font-size: 1rem; line-height: 1.6; margin-bottom: 1.75rem; }
 @media (min-width: 992px) {
   .hero__visual > img { position: absolute; inset: 0; }
-  .site-footer .footer-grid, .site-footer .footer-bottom { max-width: 1440px; }
-  .site-footer .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .site-footer .footer-grid, .site-footer .footer-bottom { max-width: none; }
+  .site-footer .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 2rem; }
+  .site-footer .footer-brand { justify-self: start; }
+  .site-footer .footer-column:nth-child(2) { justify-self: center; text-align: center; }
+  .site-footer .footer-column:nth-child(2) h2 { justify-content: center; }
+  .site-footer .footer-column:last-child { justify-self: end; width: 310px; max-width: 100%; }
   .site-footer .footer-column h2 { min-height: 76px; display: flex; align-items: center; margin: 0 0 1rem; }
   .footer-hours { max-width: 290px; }
 }
