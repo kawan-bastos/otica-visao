@@ -1017,23 +1017,34 @@ button, input, select, textarea { font-family: inherit; }
 .catalog-preview { background: #fff; }
 .journey { background: #eaf4f7; }
 .journey__steps article + article::before { background: #eaf4f7; }
-.about { background: #fff; }
+.about { background: #edf1f8; }
+.about > .site-container, .contact > .site-container {
+  width: min(1240px, calc(100% - clamp(32px, 6vw, 96px)));
+}
+.about__grid, .contact__card {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: center;
+}
 .about__visual {
-  min-height: 300px;
+  min-height: 0;
   display: grid;
   place-items: center;
-  padding: clamp(2rem, 4vw, 4rem);
-  border-radius: 0;
-  background: #fff;
+  padding: 0;
+  border-radius: 12px;
+  background: #334379;
   box-shadow: none;
 }
 .about__visual > img {
   position: static;
-  width: min(100%, 440px);
+  width: min(100%, 360px);
   height: auto;
   object-fit: contain;
   opacity: 1;
 }
+.about__content { min-width: 0; }
+.about__content .text-link { white-space: normal; }
 .offer, .contact, .institutional-cta {
   padding-block: clamp(2.5rem, 4vw, 4rem);
   background: var(--navy-900);
@@ -1047,6 +1058,15 @@ button, input, select, textarea { font-family: inherit; }
   box-shadow: none;
 }
 .contact__card { color: var(--ink); }
+.contact__card > div:first-child { max-width: none; }
+.contact__actions {
+  width: auto;
+  justify-self: start;
+  align-items: stretch;
+  flex-direction: column;
+  gap: .75rem;
+}
+.contact__actions .button { min-width: 240px; }
 .contact .eyebrow { color: #007780; }
 .contact p { color: #40536e; }
 .contact .button--light { color: #fff; background: var(--navy-900); }
@@ -1054,7 +1074,9 @@ button, input, select, textarea { font-family: inherit; }
 .contact .button:hover { color: #fff; background: #073783; }
 .trust-strip { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; padding-inline: 0; }
 @media (max-width: 767.98px) {
-  .about__visual { min-height: 220px; }
-  .about__grid { gap: 2rem; }
-  .contact__card { gap: 2rem; }
+  .about__visual { min-height: 0; }
+  .about__visual > img { width: min(100%, 300px); }
+  .about__grid, .contact__card { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .contact__actions { width: 100%; justify-self: stretch; }
+  .contact__actions .button { min-width: 0; }
 }
