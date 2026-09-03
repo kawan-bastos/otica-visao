@@ -10,9 +10,9 @@
         <div>
             <span class="eyebrow">Painel administrativo</span>
             <h1>Clientes</h1>
-            <p>Consulte e mantenha as fichas básicas dos clientes atendidos pela loja.</p>
+            <p>Consulte e edite clientes cadastrados pelo site ou durante uma venda presencial.</p>
         </div>
-        <a class="button button--primary" asp-page="Create">Cadastrar durante venda</a>
+        <a class="button button--primary" asp-page="/Admin/Sales/Create">Nova venda</a>
     </header>
 
     @if (TempData["SuccessMessage"] is string successMessage)
@@ -33,7 +33,7 @@
     {
         <div class="admin-empty">
             <h2>@(string.IsNullOrWhiteSpace(Model.Search) ? "Nenhum cliente cadastrado" : "Nenhum cliente encontrado")</h2>
-            <p>@(string.IsNullOrWhiteSpace(Model.Search) ? "As fichas cadastradas aparecerão aqui." : "Tente buscar por outro nome, telefone ou e-mail.")</p>
+            <p>@(string.IsNullOrWhiteSpace(Model.Search) ? "As fichas criadas pelo site ou durante uma venda aparecerão aqui." : "Tente buscar por outro nome, telefone, CPF ou e-mail.")</p>
         </div>
     }
     else
