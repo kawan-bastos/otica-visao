@@ -1073,6 +1073,13 @@ button, input, select, textarea { font-family: inherit; }
 .contact .button--outline-light { color: var(--navy-900); border-color: #8aaeb4; background: transparent; }
 .contact .button:hover { color: #fff; background: #073783; }
 .trust-strip { width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; padding-inline: 0; }
+@media (min-width: 992px) and (orientation: landscape) {
+  .about > .site-container, .contact > .site-container {
+    width: calc(100% - clamp(48px, 6vw, 144px));
+  }
+  .about__visual { width: 100%; max-width: 560px; }
+  .contact__actions { justify-self: end; }
+}
 @media (max-width: 767.98px) {
   .about__visual { min-height: 0; }
   .about__visual > img { width: min(100%, 300px); }
