@@ -114,6 +114,28 @@
   align-self: center;
 }
 
+.admin-navigation {
+  margin-bottom: 1.5rem;
+  padding: .35rem;
+  display: inline-flex;
+  gap: .25rem;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: #fff;
+}
+
+.admin-navigation a {
+  padding: .65rem 1rem;
+  color: var(--muted);
+  border-radius: .65rem;
+  font-size: .88rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-navigation a:hover,
+.admin-navigation a.active { color: #fff; background: var(--navy-900); }
+
 .admin-alert {
   margin-bottom: 1.25rem;
   padding: .9rem 1rem;
@@ -178,6 +200,22 @@
 }
 
 .admin-filters .button { min-height: 48px; }
+
+.customer-search {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) auto auto;
+  align-items: end;
+  gap: .75rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.customer-search .button { min-height: 48px; }
+.admin-contact-link { color: var(--teal-600); font-weight: 750; text-decoration: none; }
+.admin-contact-link:hover { text-decoration: underline; }
 
 .stock-control {
   display: inline-flex;
@@ -274,7 +312,8 @@
 }
 
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
   width: 100%;
   min-height: 48px;
   padding: .7rem .85rem;
@@ -286,7 +325,8 @@
 }
 
 .form-field input:focus,
-.form-field select:focus {
+.form-field select:focus,
+.form-field textarea:focus {
   border-color: var(--teal-600);
   outline: 3px solid rgba(0, 169, 181, .15);
 }
@@ -370,13 +410,36 @@
 .login-card--message { max-width: 600px; padding: 3.5rem; display: block; text-align: center; }
 .login-card--message p { margin-bottom: 1.5rem; color: var(--muted); }
 .account-form { padding-top: 2rem; padding-bottom: 2rem; }
+.login-card--register { width: min(100%, 1180px); grid-template-columns: minmax(280px, .7fr) minmax(0, 1.5fr); }
+.login-card--register .login-card__intro { display: flex; flex-direction: column; justify-content: center; }
+.account-form__section { display: grid; gap: .85rem; }
+.account-form__section h2 { margin: 0; color: var(--navy-900); font-size: 1rem; font-weight: 900; }
 .account-form__aside { margin: .5rem 0 0; color: var(--muted); text-align: center; }
 .account-form__aside a { color: var(--teal-600); font-weight: 800; }
 .form-field small { color: var(--muted); font-size: .78rem; }
+.form-field .cep-lookup-status { min-height: 1em; }
+.form-field .cep-lookup-status[data-state="success"] { color: #147447; }
+.form-field .cep-lookup-status[data-state="error"] { color: #b42318; }
 .account-page { min-height: 560px; padding: 5rem 1rem; background: linear-gradient(145deg, #f6f9fc, #edf5f7); }
 .account-page__shell { max-width: 760px; padding: 2.5rem; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--white); box-shadow: var(--shadow); }
 .account-page h1 { margin: .5rem 0; color: var(--navy-900); font-weight: 900; }
 .account-page__shell > p { color: var(--muted); }
+.account-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.account-edit-page { flex: 1 0 auto; padding: 4rem 1rem; background: linear-gradient(145deg, #f6f9fc, #edf5f7); }
+.account-edit-shell { max-width: 980px; }
+.account-edit-header { margin-bottom: 1.5rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.account-edit-header h1 { margin: .45rem 0; color: var(--navy-900); font-weight: 900; }
+.account-edit-header p { margin: 0; color: var(--muted); }
+.account-edit-form { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: #fff; box-shadow: var(--shadow); }
+.account-danger-zone { margin-top: 2rem; padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; border-top: 1px solid var(--line); }
+.account-danger-zone h2 { margin: 0 0 .35rem; color: #8f1d18; font-size: 1.05rem; }
+.account-danger-zone p { margin: 0; color: var(--muted); font-size: .9rem; }
+.button--danger, .button--danger:hover { color: #fff; border-color: #b42318; background: #b42318; }
+.button--danger-outline { color: #b42318; border-color: #e6aaa5; background: #fff; }
+.button--danger-outline:hover { color: #fff; border-color: #b42318; background: #b42318; }
+.account-delete-card { text-align: left; }
+.account-delete-form { padding: 1.5rem 0 0; }
+.account-delete-actions { display: flex; justify-content: flex-end; gap: .75rem; }
 .account-details { margin: 2rem 0; display: grid; gap: .75rem; }
 .account-details div { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: .8rem; background: #f8fbfc; }
 .account-details dt { color: var(--muted); font-size: .78rem; }
@@ -418,6 +481,9 @@ a { color: inherit; }
   .nav-primary { margin: 0 !important; padding: 0 280px 0 0; justify-content: flex-start; }
   .nav-actions { position: absolute; top: 50%; right: 0; z-index: 2; transform: translateY(-50%); }
 }
+
+.form-field textarea { min-height: 120px; resize: vertical; }
+.form-field--wide { grid-column: 1 / -1; }
 
 .button { min-height: 48px; padding: 0 22px; border: 1px solid transparent; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
 .button:hover { transform: translateY(-2px); }
@@ -602,6 +668,7 @@ a { color: inherit; }
 @media (max-width: 991.98px) {
   .admin-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-filters { grid-template-columns: 1fr 1fr; }
+  .customer-search { grid-template-columns: 1fr auto auto; }
   .admin-filters .button { width: 100%; }
   .story__grid, .location__grid { grid-template-columns: 1fr; }
   .location__details { padding-right: 0; }
@@ -631,7 +698,10 @@ a { color: inherit; }
 }
 
 @media (max-width: 767.98px) {
-  .admin-summary, .admin-filters { grid-template-columns: 1fr; }
+  .admin-summary, .admin-filters, .customer-search { grid-template-columns: 1fr; }
+  .customer-search .button { width: 100%; }
+  .admin-navigation { width: 100%; }
+  .admin-navigation a { flex: 1; text-align: center; }
   .admin-table-wrapper { overflow: visible; border: 0; background: transparent; box-shadow: none; }
   .admin-table { min-width: 0; display: block; }
   .admin-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
@@ -661,6 +731,10 @@ a { color: inherit; }
   .login-page { min-height: 540px; padding: 2rem 1rem; }
   .login-card { grid-template-columns: 1fr; }
   .login-card__intro, .login-form, .login-card--message { padding: 2rem 1.5rem; }
+  .account-danger-zone, .account-delete-actions { align-items: stretch; flex-direction: column; }
+  .account-danger-zone .button, .account-delete-actions .button { width: 100%; }
+  .account-actions, .account-edit-header { align-items: stretch; flex-direction: column; }
+  .account-actions .button, .account-edit-header .button { width: 100%; }
   .admin-page { width: min(100% - 28px, 1180px); margin-top: 2rem; }
   .admin-page__header { align-items: stretch; flex-direction: column; }
   .admin-page__header > .button { align-self: stretch; }

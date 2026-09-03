@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OticaVisao.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using OticaVisao.Infrastructure.Persistence;
 namespace OticaVisao.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902235201_AddCustomerPersonalData")]
+    partial class AddCustomerPersonalData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,10 +317,6 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("AccountUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("account_user_id");
-
                     b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date")
                         .HasColumnName("birth_date");
@@ -358,10 +357,6 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .HasColumnName("updated_at_utc");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountUserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_customers_account_user_id");
 
                     b.HasIndex("Cpf")
                         .IsUnique()
@@ -528,11 +523,6 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("OticaVisao.Domain.Customers.Customer", b =>
                 {
-                    b.HasOne("OticaVisao.Infrastructure.Authentication.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("OticaVisao.Domain.Customers.Customer", "AccountUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.OwnsOne("OticaVisao.Domain.Customers.CustomerAddress", "Address", b1 =>
                         {
                             b1.Property<Guid>("CustomerId")

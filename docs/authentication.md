@@ -38,3 +38,11 @@ dotnet run --project src/OticaVisao.Web
 
 Em produção, use variáveis de ambiente ou o gerenciador de segredos da hospedagem,
 nunca o arquivo de configuração versionado.
+
+## Cadastro de clientes no site
+
+O cadastro público cria uma conta comum e uma ficha comercial vinculada. Não é solicitada foto. CPF, telefone e data de nascimento também servem para associar com segurança uma ficha presencial existente, evitando duplicidade. Os dados comerciais continuam separados das credenciais, e a senha permanece sob responsabilidade do ASP.NET Core Identity.
+
+Clientes autenticados podem excluir o próprio acesso após confirmar a senha atual. A opção não é exibida para administradores e a rota também bloqueia tentativas diretas de contas administrativas. A exclusão remove o usuário e encerra a sessão, mas não apaga a ficha comercial vinculada.
+
+Clientes também podem atualizar nome, e-mail, telefone, CPF, data de nascimento e endereço em “Minha conta”. A alteração sincroniza a conta e a ficha comercial em uma única transação. Para contas antigas sem ficha vinculada, o primeiro salvamento cria a ficha ou associa uma ficha presencial compatível. Administradores não acessam esse formulário.

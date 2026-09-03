@@ -57,6 +57,21 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
         Assert.True(response.StatusCode == HttpStatusCode.OK, body);
     }
 
+    [Fact]
+    public async Task AnonymousVisitorIsRedirectedFromCustomerAdministrationToLogin()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        var response = await client.GetAsync("/Admin/Customers");
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal("/Admin/Account/Login", response.Headers.Location?.AbsolutePath);
+    }
+
     [Theory]
     [InlineData("/Account/Login")]
     [InlineData("/Account/Register")]
@@ -73,8 +88,11 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
         Assert.True(response.StatusCode == HttpStatusCode.OK, body);
     }
 
-    [Fact]
-    public async Task AnonymousVisitorIsRedirectedFromProfileToCustomerLogin()
+    [Theory]
+    [InlineData("/Account")]
+    [InlineData("/Account/Edit")]
+    [InlineData("/Account/Delete")]
+    public async Task AnonymousVisitorIsRedirectedFromProtectedCustomerPagesToCustomerLogin(string path)
     {
         var client = factory.CreateClient(new WebApplicationFactoryClientOptions
         {
@@ -82,7 +100,7 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
             BaseAddress = new Uri("https://localhost")
         });
 
-        var response = await client.GetAsync("/Account");
+        var response = await client.GetAsync(path);
 
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.Equal("/Account/Login", response.Headers.Location?.AbsolutePath);

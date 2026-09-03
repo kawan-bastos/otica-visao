@@ -1,0 +1,37 @@
+@model OticaVisao.Web.Models.Admin.CustomerInputModel
+
+<div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Dados do cliente</h2>
+        <p>Informe os dados usados para identificar e contatar o cliente.</p>
+    </div>
+    <div class="form-grid">
+        <div class="form-field"><label asp-for="Name"></label><input asp-for="Name" autocomplete="name" /><span asp-validation-for="Name"></span></div>
+        <div class="form-field"><label asp-for="Phone"></label><input asp-for="Phone" autocomplete="tel" inputmode="tel" placeholder="(21) 99999-9999" /><span asp-validation-for="Phone"></span></div>
+        <div class="form-field"><label asp-for="Cpf"></label><input asp-for="Cpf" inputmode="numeric" placeholder="000.000.000-00" /><span asp-validation-for="Cpf"></span></div>
+        <div class="form-field"><label asp-for="BirthDate"></label><input asp-for="BirthDate" type="date" /><span asp-validation-for="BirthDate"></span></div>
+        <div class="form-field form-field--wide"><label asp-for="Email"></label><input asp-for="Email" autocomplete="email" /><span asp-validation-for="Email"></span></div>
+    </div>
+</section>
+
+<section class="admin-form__section">
+    <div class="admin-form__section-heading">
+        <h2>Endereço</h2>
+        <p>O complemento é o único campo opcional desta seção.</p>
+    </div>
+    <div class="form-grid form-grid--address">
+        <div class="form-field"><label asp-for="PostalCode"></label><input asp-for="PostalCode" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" data-cep-lookup /><small class="cep-lookup-status" data-cep-status aria-live="polite"></small><span asp-validation-for="PostalCode"></span></div>
+        <div class="form-field form-field--street"><label asp-for="Street"></label><input asp-for="Street" autocomplete="address-line1" data-address-field="street" /><span asp-validation-for="Street"></span></div>
+        <div class="form-field"><label asp-for="Number"></label><input asp-for="Number" autocomplete="address-line2" /><span asp-validation-for="Number"></span></div>
+        <div class="form-field"><label asp-for="Complement"></label><input asp-for="Complement" /><span asp-validation-for="Complement"></span></div>
+        <div class="form-field"><label asp-for="Neighborhood"></label><input asp-for="Neighborhood" data-address-field="neighborhood" /><span asp-validation-for="Neighborhood"></span></div>
+        <div class="form-field"><label asp-for="City"></label><input asp-for="City" autocomplete="address-level2" data-address-field="city" /><span asp-validation-for="City"></span></div>
+        <div class="form-field"><label asp-for="State"></label><input asp-for="State" autocomplete="address-level1" maxlength="2" data-address-field="state" /><span asp-validation-for="State"></span></div>
+    </div>
+</section>
+
+<section class="admin-form__section">
+    <div class="admin-form__section-heading"><h2>Observações</h2><p>Não registre receitas ou informações médicas neste campo.</p></div>
+    <div class="form-field"><label asp-for="Notes"></label><textarea asp-for="Notes" rows="5" placeholder="Preferências ou lembretes comuns de atendimento"></textarea><span asp-validation-for="Notes"></span></div>
+</section>
