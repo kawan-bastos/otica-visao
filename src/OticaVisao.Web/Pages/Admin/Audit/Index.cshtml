@@ -1,0 +1,39 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Audit.IndexModel
+@{ ViewData["Title"] = "Auditoria"; }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Segurança e controle</span><h1>Auditoria</h1><p>Consulte as 200 ações administrativas mais recentes.</p></div>
+    </header>
+
+    @if (Model.Logs.Count == 0)
+    {
+        <section class="admin-empty"><h2>Nenhuma ação registrada</h2><p>As próximas alterações realizadas no painel aparecerão aqui.</p></section>
+    }
+    else
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead><tr><th>Data e hora</th><th>Ação</th><th>Registro</th><th>Responsável</th></tr></thead>
+                <tbody>
+                @foreach (var log in Model.Logs)
+                {
+                    <tr>
+                        <td data-label="Data e hora">@StoreTime(log.OccurredAtUtc).ToString("dd/MM/yyyy HH:mm")</td>
+                        <td data-label="Ação"><strong>@log.Action</strong></td>
+                        <td data-label="Registro"><span>@log.EntityType</span><br /><small>@log.Description</small></td>
+                        <td data-label="Responsável">@Model.ResponsibleName(log.PerformedBy)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@functions {
+    private static readonly TimeZoneInfo StoreTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+    private static DateTimeOffset StoreTime(DateTimeOffset date) => TimeZoneInfo.ConvertTime(date, StoreTimeZone);
+}

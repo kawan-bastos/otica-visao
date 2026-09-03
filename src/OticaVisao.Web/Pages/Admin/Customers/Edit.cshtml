@@ -6,7 +6,7 @@
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
     <header class="admin-page__header">
         <div><span class="eyebrow">Painel administrativo</span><h1>Editar cliente</h1><p>Atualize os dados e observações da ficha.</p></div>
-        <a class="button button--secondary" asp-page="Index">Voltar aos clientes</a>
+        <div class="admin-form__actions"><a class="button button--secondary" asp-page="Index">Voltar aos clientes</a><a class="button button--danger" asp-page="Delete" asp-route-id="@Model.CustomerId">Excluir cliente</a></div>
     </header>
     <form method="post" asp-route-id="@Model.CustomerId" class="admin-form">
         <partial name="_CustomerForm" for="Input" />

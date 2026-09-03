@@ -6,6 +6,7 @@ using OticaVisao.Domain.Customers;
 using OticaVisao.Domain.Sales;
 using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Domain.LaboratoryOrders;
+using OticaVisao.Domain.Auditing;
 
 namespace OticaVisao.Infrastructure.Persistence;
 
@@ -18,6 +19,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
     public DbSet<LaboratoryOrder> LaboratoryOrders => Set<LaboratoryOrder>();
     public DbSet<LaboratoryOrderHistory> LaboratoryOrderHistory => Set<LaboratoryOrderHistory>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -33,6 +33,32 @@ public sealed class CustomerServiceTests
         Assert.Equal(1, repository.SaveCount);
     }
 
+    [Fact]
+    public async Task DeleteRemovesCustomerWithoutSales()
+    {
+        var customer = CreateCustomer("Carlos");
+        var repository = new FakeCustomerRepository(customer);
+        var service = new CustomerService(repository);
+
+        await service.DeleteAsync(customer.Id);
+
+        Assert.Empty(repository.Customers);
+        Assert.Equal(1, repository.SaveCount);
+    }
+
+    [Fact]
+    public async Task DeleteRejectsCustomerWithSales()
+    {
+        var customer = CreateCustomer("Carlos");
+        var repository = new FakeCustomerRepository(customer) { HasSales = true };
+        var service = new CustomerService(repository);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.DeleteAsync(customer.Id));
+
+        Assert.Single(repository.Customers);
+        Assert.Equal(0, repository.SaveCount);
+    }
+
     private static CreateCustomerRequest CreateRequest(string name) => new(
         name, "21999990000", "52998224725", new DateOnly(1980, 1, 1),
         "25931-770", "Rua A", "10", null, "Piabetá", "Magé", "RJ", null, null);
@@ -45,6 +71,7 @@ public sealed class CustomerServiceTests
     {
         public List<Customer> Customers { get; } = [.. customers];
         public int SaveCount { get; private set; }
+        public bool HasSales { get; init; }
 
         public Task<IReadOnlyList<Customer>> ListAsync(string? search, CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<Customer>>(Customers);
@@ -54,9 +81,15 @@ public sealed class CustomerServiceTests
             Task.FromResult(Customers.SingleOrDefault(customer => customer.Cpf == cpf));
         public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) =>
             Task.FromResult(Customers.Any(customer => customer.Cpf == cpf && customer.Id != excludingId));
+        public Task<bool> HasSalesAsync(Guid customerId, CancellationToken cancellationToken = default) => Task.FromResult(HasSales);
         public Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
         {
             Customers.Add(customer);
+            return Task.CompletedTask;
+        }
+        public Task DeleteAsync(Customer customer, CancellationToken cancellationToken = default)
+        {
+            Customers.Remove(customer);
             return Task.CompletedTask;
         }
         public Task SaveChangesAsync(CancellationToken cancellationToken = default)

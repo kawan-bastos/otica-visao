@@ -8,6 +8,8 @@ public interface ICustomerRepository
     Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Customer?> GetByCpfAsync(string cpf, CancellationToken cancellationToken = default);
     Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default);
+    Task<bool> HasSalesAsync(Guid customerId, CancellationToken cancellationToken = default);
     Task AddAsync(Customer customer, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Customer customer, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

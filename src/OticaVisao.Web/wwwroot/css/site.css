@@ -118,6 +118,7 @@
   margin-bottom: 1.5rem;
   padding: .35rem;
   display: inline-flex;
+  flex-wrap: wrap;
   gap: .25rem;
   border: 1px solid var(--line);
   border-radius: .9rem;
