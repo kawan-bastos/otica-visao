@@ -31,6 +31,7 @@ public sealed class CustomerRegisterInputModel : IValidatableObject
 
     [Required(ErrorMessage = "Informe seu CEP.")]
     [StringLength(9)]
+    [Display(Name = "CEP")]
     public string PostalCode { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Informe sua rua.")]
