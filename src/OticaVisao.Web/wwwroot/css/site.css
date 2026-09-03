@@ -254,6 +254,20 @@
   text-decoration: none;
 }
 
+.admin-table__button { padding: 0; border: 0; color: var(--teal-600); background: transparent; font: inherit; font-weight: 800; cursor: pointer; }
+.sale-customer-actions { margin: 1.25rem 0; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #b9e6e9; border-radius: 1rem; background: #eefbfc; }
+.sale-customer-actions p { margin: 0; color: var(--navy-900); font-weight: 700; }
+.sale-status { padding: .35rem .65rem; display: inline-flex; border-radius: 999px; font-size: .78rem; font-weight: 800; }
+.sale-status--draft { color: #805500; background: #fff4cc; }
+.sale-status--completed { color: #147447; background: #dff6e9; }
+.sale-status--cancelled { color: #8f1d18; background: #fde8e7; }
+.sale-draft-card { padding: 1.5rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; border: 1px solid var(--line); border-radius: 1.25rem; background: #fff; box-shadow: var(--shadow); }
+.sale-draft-card > div { padding: 1rem; display: grid; gap: .35rem; border-radius: .85rem; background: #f6f9fc; }
+.sale-draft-card span { color: var(--muted); font-size: .75rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.sale-draft-card strong { color: var(--navy-900); }
+.sale-draft-card .sale-next-step { grid-column: 1 / -1; border: 1px dashed #93d9de; background: #eefbfc; }
+.sale-next-step p { margin: 0; color: var(--muted); }
+
 .admin-frame-thumbnail { width: 74px; height: 52px; display: grid; place-items: center; object-fit: cover; border: 1px solid var(--line); border-radius: .55rem; background: #f6f9fb; }
 .admin-frame-thumbnail--empty { color: var(--muted); font-size: .7rem; text-align: center; }
 .admin-current-image { padding: 1.25rem 2rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); background: #f6f9fb; }
@@ -699,6 +713,9 @@ a { color: inherit; }
 
 @media (max-width: 767.98px) {
   .admin-summary, .admin-filters, .customer-search { grid-template-columns: 1fr; }
+  .sale-customer-actions { align-items: stretch; flex-direction: column; }
+  .sale-customer-actions .button { width: 100%; }
+  .sale-draft-card { grid-template-columns: 1fr; }
   .customer-search .button { width: 100%; }
   .admin-navigation { width: 100%; }
   .admin-navigation a { flex: 1; text-align: center; }

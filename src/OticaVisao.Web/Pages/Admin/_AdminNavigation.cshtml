@@ -1,9 +1,12 @@
 @{
     var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
     var customersActive = page.StartsWith("/Admin/Customers", StringComparison.OrdinalIgnoreCase);
+    var salesActive = page.StartsWith("/Admin/Sales", StringComparison.OrdinalIgnoreCase);
+    var framesActive = page.StartsWith("/Admin/Frames", StringComparison.OrdinalIgnoreCase);
 }
 
 <nav class="admin-navigation" aria-label="Seções do painel administrativo">
-    <a class="@(!customersActive ? "active" : null)" asp-page="/Admin/Frames/Index">Armações e estoque</a>
+    <a class="@(framesActive ? "active" : null)" asp-page="/Admin/Frames/Index">Armações e estoque</a>
     <a class="@(customersActive ? "active" : null)" asp-page="/Admin/Customers/Index">Clientes</a>
+    <a class="@(salesActive ? "active" : null)" asp-page="/Admin/Sales/Index">Vendas</a>
 </nav>

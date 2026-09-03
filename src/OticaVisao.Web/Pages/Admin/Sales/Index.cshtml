@@ -1,0 +1,37 @@
+@page
+@using OticaVisao.Domain.Sales
+@model OticaVisao.Web.Pages.Admin.Sales.IndexModel
+@{ ViewData["Title"] = "Vendas"; }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Painel administrativo</span><h1>Vendas</h1><p>Inicie um atendimento selecionando ou cadastrando o cliente.</p></div>
+        <a class="button button--primary" asp-page="Create">Nova venda</a>
+    </header>
+
+    @if (Model.Sales.Count == 0)
+    {
+        <div class="admin-empty"><h2>Nenhuma venda iniciada</h2><p>As vendas em andamento e concluídas aparecerão aqui.</p></div>
+    }
+    else
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead><tr><th>Cliente</th><th>Telefone</th><th>Iniciada em</th><th>Situação</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <tbody>
+                @foreach (var sale in Model.Sales)
+                {
+                    <tr>
+                        <td data-label="Cliente"><strong>@sale.CustomerName</strong></td>
+                        <td data-label="Telefone">@sale.CustomerPhone</td>
+                        <td data-label="Iniciada em">@sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                        <td data-label="Situação"><span class="sale-status sale-status--@sale.Status.ToString().ToLowerInvariant()">@(sale.Status == SaleStatus.Draft ? "Em andamento" : sale.Status == SaleStatus.Completed ? "Concluída" : "Cancelada")</span></td>
+                        <td class="admin-table__actions" data-label="Ações"><a asp-page="Details" asp-route-id="@sale.Id">Continuar</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>

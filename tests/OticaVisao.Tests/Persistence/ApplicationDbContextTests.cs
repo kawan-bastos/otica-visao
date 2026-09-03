@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OticaVisao.Domain.Catalog;
 using OticaVisao.Domain.Customers;
+using OticaVisao.Domain.Sales;
 using OticaVisao.Infrastructure.Persistence;
 
 namespace OticaVisao.Tests.Persistence;
@@ -54,5 +55,21 @@ public sealed class ApplicationDbContextTests
         Assert.True(entity.GetIndexes().Single(index => index.Properties.Single().Name == nameof(Customer.AccountUserId)).IsUnique);
         Assert.Equal(DeleteBehavior.SetNull, entity.GetForeignKeys().Single(key =>
             key.Properties.Single().Name == nameof(Customer.AccountUserId)).DeleteBehavior);
+    }
+
+    [Fact]
+    public void ModelMapsSalesToPostgresqlSchema()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseNpgsql("Host=localhost;Database=otica_visao_tests;Username=postgres").Options;
+        using var context = new ApplicationDbContext(options);
+        var entity = context.Model.FindEntityType(typeof(Sale));
+
+        Assert.NotNull(entity);
+        Assert.Equal("sales", entity.GetTableName());
+        var table = StoreObjectIdentifier.Table("sales", null);
+        Assert.Equal("customer_id", entity.FindProperty(nameof(Sale.CustomerId))?.GetColumnName(table));
+        Assert.Equal("status", entity.FindProperty(nameof(Sale.Status))?.GetColumnName(table));
+        Assert.Equal(DeleteBehavior.Restrict, entity.GetForeignKeys().Single().DeleteBehavior);
     }
 }

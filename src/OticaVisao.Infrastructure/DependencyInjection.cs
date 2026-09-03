@@ -8,6 +8,8 @@ using OticaVisao.Infrastructure.Persistence;
 using OticaVisao.Infrastructure.Images;
 using OticaVisao.Application.Customers;
 using OticaVisao.Infrastructure.Customers;
+using OticaVisao.Application.Sales;
+using OticaVisao.Infrastructure.Sales;
 
 namespace OticaVisao.Infrastructure;
 
@@ -57,6 +59,8 @@ public static class DependencyInjection
         services.AddScoped<FrameCatalogService>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<CustomerService>();
+        services.AddScoped<ISaleRepository, SaleRepository>();
+        services.AddScoped<SaleService>();
 
         return services;
     }
