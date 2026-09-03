@@ -11,7 +11,7 @@
                 var key = $"{distance.Prefix}{eye.Side}";
                 <tr><th>@eye.Name</th>
                     @foreach (var field in new[] { "Sphere", "Cylinder", "Axis", "Dnp", "Height", "Addition" })
-                    { <td><input name="@($"Input.Prescription.{key}.{field}")" value="@(ViewData.Eval($"{key}.{field}"))" inputmode="decimal" aria-label="@distance.Title @eye.Name @field" /></td> }
+                    { <td><input name="@($"Input.Prescription.{key}.{field}")" value="@(ViewData.Eval($"{key}.{field}"))" inputmode="decimal" placeholder="@(field == "Axis" ? "0" : field is "Dnp" or "Height" ? "00,0" : "0,00")" aria-label="@distance.Title @eye.Name @field" /></td> }
                 </tr>
             }
             </tbody>
