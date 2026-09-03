@@ -45,5 +45,5 @@
 
 @functions {
     private static string LaboratoryName(OpticalLaboratory laboratory) => laboratory == OpticalLaboratory.StandardOptical ? "Padrão Optical" : "Imperial Lab";
-    private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", _ => "Entregue" };
+    private static string StatusName(LaboratoryOrderStatus status) => status switch { LaboratoryOrderStatus.AwaitingShipment => "Aguardando envio", LaboratoryOrderStatus.Sent => "Enviado", LaboratoryOrderStatus.InProduction => "Em produção", LaboratoryOrderStatus.Ready => "Pronto", LaboratoryOrderStatus.Delivered => "Entregue", _ => "Cancelado por estorno" };
 }

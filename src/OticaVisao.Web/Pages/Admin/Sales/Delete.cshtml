@@ -1,6 +1,7 @@
 @page "{id:guid}"
 @model OticaVisao.Web.Pages.Admin.Sales.DeleteModel
-@{ ViewData["Title"] = "Excluir venda cancelada"; }
+@using OticaVisao.Domain.Sales
+@{ ViewData["Title"] = "Excluir venda"; }
 
 <main class="admin-page admin-page--narrow">
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
@@ -8,7 +9,7 @@
         <div class="admin-form__section">
             <span class="eyebrow">Ação permanente</span>
             <h1>Excluir do histórico?</h1>
-            <p>A venda cancelada de <strong>@Model.Sale.CustomerName</strong>, iniciada em @Model.Sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), será apagada permanentemente. A ficha do cliente e o estoque não serão alterados.</p>
+            <p>A venda @(Model.Sale.Status == SaleStatus.Reversed ? "estornada" : "cancelada") de <strong>@Model.Sale.CustomerName</strong>, iniciada em @Model.Sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm"), será apagada permanentemente. A ficha do cliente e o estoque não serão alterados.</p>
         </div>
         <form method="post" class="admin-form__actions">
             <input type="hidden" name="id" value="@Model.Sale.Id" />

@@ -1,0 +1,18 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Sales.ReverseModel
+@{ ViewData["Title"] = "Estornar venda"; var culture = new System.Globalization.CultureInfo("pt-BR"); }
+
+<main class="admin-page admin-page--narrow">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <form method="post" class="admin-form">
+        <input type="hidden" name="id" value="@Model.Sale.Id" />
+        <div class="admin-form__section">
+            <span class="eyebrow">Correção financeira</span><h1>Estornar venda?</h1>
+            <p>A venda de <strong>@Model.Sale.CustomerName</strong>, no valor de <strong>@((Model.Sale.FinalTotal ?? Model.Sale.Total).ToString("C", culture))</strong>, deixará de contar nos relatórios. Os itens voltarão ao estoque e os pedidos de lentes serão cancelados.</p>
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+            <div class="form-field"><label asp-for="Input.Reason"></label><textarea asp-for="Input.Reason" rows="4" placeholder="Ex.: venda criada apenas para teste"></textarea><span asp-validation-for="Input.Reason"></span></div>
+        </div>
+        <div class="admin-form__actions"><a class="button button--secondary" asp-page="Details" asp-route-id="@Model.Sale.Id">Voltar sem estornar</a><button class="button button--danger" type="submit">Confirmar estorno</button></div>
+    </form>
+</main>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

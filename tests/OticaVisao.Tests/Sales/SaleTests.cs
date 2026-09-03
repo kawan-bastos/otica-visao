@@ -91,6 +91,21 @@ public sealed class SaleTests
         Assert.Throws<InvalidOperationException>(() => sale.Complete(PaymentMethod.Pix, 1));
     }
 
+    [Fact]
+    public void ReverseSaleRecordsReasonAndDate()
+    {
+        var sale = SaleWithItem();
+        sale.Complete(PaymentMethod.Pix, 1);
+
+        sale.Reverse(" Venda criada para teste ", "Carlos");
+
+        Assert.Equal(SaleStatus.Reversed, sale.Status);
+        Assert.Equal("Venda criada para teste", sale.ReversalReason);
+        Assert.Equal("Carlos", sale.ReversedBy);
+        Assert.NotNull(sale.ReversedAtUtc);
+        Assert.Throws<InvalidOperationException>(() => sale.Reverse("Novamente", "Carlos"));
+    }
+
     private static Sale SaleWithItem()
     {
         var sale = new Sale(Guid.NewGuid());

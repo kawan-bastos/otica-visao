@@ -25,6 +25,12 @@
         {
             <div><span>Cancelada em</span><strong>@Model.Sale.CancelledAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
         }
+        else if (Model.Sale.Status == SaleStatus.Reversed)
+        {
+            <div><span>Estornada em</span><strong>@Model.Sale.ReversedAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
+            <div><span>Responsável</span><strong>@Model.Sale.ReversedBy</strong></div>
+            <div class="sale-next-step"><span>Motivo do estorno</span><strong>@Model.Sale.ReversalReason</strong></div>
+        }
     </section>
 
     @if (TempData["SaleSuccessMessage"] is string successMessage)
@@ -98,6 +104,10 @@
         </form>
     </section>
     }
+    else if (Model.Sale.Status == SaleStatus.Completed)
+    {
+        <div class="sale-closed-actions"><a class="button button--danger-outline" asp-page="Reverse" asp-route-id="@Model.Sale.Id">Estornar venda</a></div>
+    }
 </main>
 
 @functions {
@@ -108,7 +118,7 @@
         _ => "—"
     };
 
-    private static string StatusName(SaleStatus status) => status switch { SaleStatus.Draft => "Em andamento", SaleStatus.Completed => "Concluída", _ => "Cancelada" };
+    private static string StatusName(SaleStatus status) => status switch { SaleStatus.Draft => "Em andamento", SaleStatus.Completed => "Concluída", SaleStatus.Cancelled => "Cancelada", _ => "Estornada" };
     private static string PaymentName(PaymentMethod? payment) => payment switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", PaymentMethod.CreditCard => "Cartão de crédito", _ => "—" };
 }
 

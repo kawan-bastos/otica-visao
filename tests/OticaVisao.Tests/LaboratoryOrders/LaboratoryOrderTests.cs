@@ -45,6 +45,19 @@ public sealed class LaboratoryOrderTests
         Assert.Throws<InvalidOperationException>(() => order.Update(LaboratoryOrderStatus.Ready, null, null));
     }
 
+    [Fact]
+    public void CancelOrderAddsHistoryAndLocksUpdates()
+    {
+        var (sale, item) = CompletedSaleWithLenses();
+        var order = new LaboratoryOrder(sale, item);
+
+        order.Cancel();
+
+        Assert.Equal(LaboratoryOrderStatus.Cancelled, order.Status);
+        Assert.Equal(2, order.History.Count);
+        Assert.Throws<InvalidOperationException>(() => order.Update(LaboratoryOrderStatus.Sent, null, null));
+    }
+
     private static (Sale Sale, SaleItem Item) CompletedSaleWithLenses()
     {
         var sale = new Sale(Guid.NewGuid());

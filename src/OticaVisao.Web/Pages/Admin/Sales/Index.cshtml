@@ -32,11 +32,11 @@
                         <td data-label="Itens">@sale.Items.Sum(item => item.Quantity)</td>
                         <td data-label="Total">@((sale.FinalTotal ?? sale.Total).ToString("C", new System.Globalization.CultureInfo("pt-BR")))</td>
                         <td data-label="Iniciada em">@sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                        <td data-label="Situação"><span class="sale-status sale-status--@sale.Status.ToString().ToLowerInvariant()">@(sale.Status == SaleStatus.Draft ? "Em andamento" : sale.Status == SaleStatus.Completed ? "Concluída" : "Cancelada")</span></td>
+                        <td data-label="Situação"><span class="sale-status sale-status--@sale.Status.ToString().ToLowerInvariant()">@StatusName(sale.Status)</span></td>
                         <td class="admin-table__actions" data-label="Ações">
                             <div class="sale-row-actions">
                                 <a asp-page="Details" asp-route-id="@sale.Id">@(sale.Status == SaleStatus.Draft ? "Continuar" : "Ver detalhes")</a>
-                                @if (sale.Status == SaleStatus.Cancelled) { <a class="sale-delete-link" asp-page="Delete" asp-route-id="@sale.Id">Excluir</a> }
+                                @if (sale.Status is SaleStatus.Cancelled or SaleStatus.Reversed) { <a class="sale-delete-link" asp-page="Delete" asp-route-id="@sale.Id">Excluir</a> }
                             </div>
                         </td>
                     </tr>
@@ -46,3 +46,5 @@
         </div>
     }
 </main>
+
+@functions { private static string StatusName(SaleStatus status) => status switch { SaleStatus.Draft => "Em andamento", SaleStatus.Completed => "Concluída", SaleStatus.Cancelled => "Cancelada", _ => "Estornada" }; }
