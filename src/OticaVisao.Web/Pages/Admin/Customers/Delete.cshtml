@@ -1,0 +1,22 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Customers.DeleteModel
+@{ ViewData["Title"] = "Excluir cliente"; }
+
+<main class="admin-page admin-page--form">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Ação permanente</span><h1>Excluir cliente</h1><p>Revise com atenção antes de confirmar.</p></div>
+        <a class="button button--secondary" asp-page="Edit" asp-route-id="@Model.Customer.Id">Voltar</a>
+    </header>
+
+    <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+    <section class="admin-form">
+        <h2>@Model.Customer.Name</h2>
+        <p>A ficha será apagada permanentemente do banco de dados. Se ela estiver vinculada a uma conta do site, o login também será excluído.</p>
+        <p><strong>Clientes que possuem vendas não podem ser excluídos.</strong></p>
+        <form method="post" asp-route-id="@Model.Customer.Id" class="admin-form__actions">
+            <a class="button button--secondary" asp-page="Edit" asp-route-id="@Model.Customer.Id">Cancelar</a>
+            <button class="button button--danger" type="submit">Excluir permanentemente</button>
+        </form>
+    </section>
+</main>

@@ -5,4 +5,6 @@ public static class AdminAuthorization
     public const string Policy = "AdminOnly";
 
     public const string Role = "Administrator";
+
+    public const string DisplayNameClaim = "display_name";
 }

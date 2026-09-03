@@ -32,8 +32,21 @@ public sealed class CustomerRepository(ApplicationDbContext context) : ICustomer
     public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) =>
         context.Customers.AnyAsync(customer => customer.Cpf == cpf && (!excludingId.HasValue || customer.Id != excludingId), cancellationToken);
 
+    public Task<bool> HasSalesAsync(Guid customerId, CancellationToken cancellationToken = default) =>
+        context.Sales.AnyAsync(sale => sale.CustomerId == customerId, cancellationToken);
+
     public Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
         context.Customers.AddAsync(customer, cancellationToken).AsTask();
+
+    public async Task DeleteAsync(Customer customer, CancellationToken cancellationToken = default)
+    {
+        if (customer.AccountUserId.HasValue)
+        {
+            var account = await context.Users.SingleOrDefaultAsync(user => user.Id == customer.AccountUserId.Value, cancellationToken);
+            if (account is not null) context.Users.Remove(account);
+        }
+        context.Customers.Remove(customer);
+    }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await context.SaveChangesAsync(cancellationToken);

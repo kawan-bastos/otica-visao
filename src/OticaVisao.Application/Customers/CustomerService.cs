@@ -50,6 +50,19 @@ public sealed class CustomerService(ICustomerRepository repository)
         await repository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var customer = await repository.GetByIdAsync(id, cancellationToken)
+            ?? throw new KeyNotFoundException("Cliente não encontrado.");
+        if (await repository.HasSalesAsync(id, cancellationToken))
+        {
+            throw new InvalidOperationException("Este cliente possui vendas e não pode ser excluído. A ficha deve ser preservada para manter o histórico comercial.");
+        }
+
+        await repository.DeleteAsync(customer, cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
+    }
+
     private static CustomerListItem ToListItem(Customer customer) => new(
         customer.Id, customer.Name, customer.Phone, customer.Cpf, customer.BirthDate,
         customer.Address?.PostalCode, customer.Address?.Street, customer.Address?.Number,

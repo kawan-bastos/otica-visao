@@ -7,6 +7,7 @@ using OticaVisao.Domain.Catalog;
 using OticaVisao.Domain.Customers;
 using OticaVisao.Domain.LaboratoryOrders;
 using OticaVisao.Domain.Sales;
+using OticaVisao.Infrastructure.Authentication;
 
 namespace OticaVisao.Infrastructure.Auditing;
 
@@ -37,7 +38,9 @@ internal sealed class AdminAuditInterceptor(IHttpContextAccessor httpContextAcce
             return;
         }
 
-        var actor = httpContext.User.Identity.Name ?? "Administrador";
+        var actor = httpContext.User.FindFirst(AdminAuthorization.DisplayNameClaim)?.Value
+            ?? httpContext.User.Identity.Name
+            ?? "Administrador";
         var trackedEntries = context.ChangeTracker.Entries()
             .Where(entry => entry.Entity is Frame or Customer or Sale or LaboratoryOrder)
             .Where(entry => entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)

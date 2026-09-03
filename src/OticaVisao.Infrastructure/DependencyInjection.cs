@@ -47,6 +47,7 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+        services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
 
         services.AddAuthorizationBuilder()
             .AddPolicy(AdminAuthorization.Policy, policy =>

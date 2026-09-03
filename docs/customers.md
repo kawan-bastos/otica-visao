@@ -29,3 +29,8 @@ Ao se cadastrar no site, o cliente informa CPF, data de nascimento, telefone e e
 O cadastro presencial acontece exclusivamente dentro de “Nova venda”, depois que a busca confirma que o cliente ainda não existe. Contas criadas no site continuam gerando uma ficha mesmo antes da primeira compra.
 
 Quando um cliente exclui sua conta pelo site, a ligação com `ApplicationUser` é removida e a ficha permanece no painel como atendimento presencial. Isso preserva a base necessária para o futuro histórico de vendas, garantias e obrigações comerciais.
+# Exclusão administrativa
+
+Uma ficha sem vendas pode ser excluída permanentemente pelo painel, após uma página de confirmação. Se houver uma conta do site vinculada, o login é removido na mesma operação para não deixar uma conta sem ficha.
+
+Fichas que possuem qualquer venda são preservadas para manter o histórico comercial e a integridade dos registros.

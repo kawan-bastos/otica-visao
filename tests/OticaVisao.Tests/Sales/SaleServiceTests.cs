@@ -225,7 +225,9 @@ public sealed class SaleServiceTests
         public Task<Customer?> GetByCpfAsync(string cpf, CancellationToken cancellationToken = default) => Task.FromResult(customers.SingleOrDefault(customer => customer.Cpf == cpf));
         public Task<IReadOnlyList<Customer>> ListAsync(string? search, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Customer>>(customers);
         public Task<bool> CpfExistsAsync(string cpf, Guid? excludingId = null, CancellationToken cancellationToken = default) => Task.FromResult(false);
+        public Task<bool> HasSalesAsync(Guid customerId, CancellationToken cancellationToken = default) => Task.FromResult(false);
         public Task AddAsync(Customer customer, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task DeleteAsync(Customer customer, CancellationToken cancellationToken = default) => Task.CompletedTask;
         public Task SaveChangesAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }
