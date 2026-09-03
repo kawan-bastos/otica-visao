@@ -1,0 +1,17 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Sales.NewCustomerModel
+@{ ViewData["Title"] = "Cliente da nova venda"; }
+
+<main class="admin-page admin-page--form">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Nova venda</span><h1>Cadastrar cliente</h1><p>A ficha e o rascunho da venda serão criados juntos.</p></div>
+        <a class="button button--secondary" asp-page="Create">Voltar à busca</a>
+    </header>
+    <form method="post" class="admin-form">
+        <partial name="/Pages/Admin/Customers/_CustomerForm.cshtml" for="Input" />
+        <div class="admin-form__actions"><a class="button button--secondary" asp-page="Create">Cancelar</a><button class="button button--primary" type="submit">Cadastrar e iniciar venda</button></div>
+    </form>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

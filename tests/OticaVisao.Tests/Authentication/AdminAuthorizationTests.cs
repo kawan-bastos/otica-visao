@@ -72,6 +72,21 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
         Assert.Equal("/Admin/Account/Login", response.Headers.Location?.AbsolutePath);
     }
 
+    [Fact]
+    public async Task AnonymousVisitorIsRedirectedFromSalesToLogin()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        var response = await client.GetAsync("/Admin/Sales");
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.Equal("/Admin/Account/Login", response.Headers.Location?.AbsolutePath);
+    }
+
     [Theory]
     [InlineData("/Account/Login")]
     [InlineData("/Account/Register")]

@@ -1,0 +1,17 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Sales.DetailsModel
+@{ ViewData["Title"] = "Venda em andamento"; }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Venda em andamento</span><h1>@Model.Sale.CustomerName</h1><p>Cliente selecionado. O rascunho da venda já está salvo.</p></div>
+        <a class="button button--secondary" asp-page="Index">Voltar às vendas</a>
+    </header>
+    <section class="sale-draft-card">
+        <div><span>Cliente</span><strong>@Model.Sale.CustomerName</strong></div>
+        <div><span>Telefone</span><strong>@Model.Sale.CustomerPhone</strong></div>
+        <div><span>Iniciada em</span><strong>@Model.Sale.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></div>
+        <div class="sale-next-step"><span>Próxima etapa</span><strong>Adicionar armações e lentes</strong><p>Essa parte será habilitada na próxima fase do módulo de vendas.</p></div>
+    </section>
+</main>

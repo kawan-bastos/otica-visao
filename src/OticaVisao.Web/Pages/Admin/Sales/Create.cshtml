@@ -1,0 +1,52 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Sales.CreateModel
+@{ ViewData["Title"] = "Nova venda"; }
+
+<main class="admin-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header">
+        <div><span class="eyebrow">Nova venda</span><h1>Selecione o cliente</h1><p>Busque por nome, telefone, CPF ou e-mail antes de criar uma nova ficha.</p></div>
+        <a class="button button--secondary" asp-page="Index">Cancelar</a>
+    </header>
+
+    <form class="customer-search" method="get">
+        <div class="form-field"><label asp-for="Search">Buscar cliente</label><input asp-for="Search" placeholder="Nome, telefone, CPF ou e-mail" autofocus /></div>
+        <button class="button button--primary" type="submit">Buscar</button>
+        <a class="button button--secondary" asp-page="Create">Limpar</a>
+    </form>
+
+    <div class="sale-customer-actions">
+        <p>O cliente ainda não possui ficha?</p>
+        <a class="button button--primary" asp-page="NewCustomer">Cadastrar cliente e iniciar venda</a>
+    </div>
+
+    @if (Model.Customers.Count == 0)
+    {
+        <div class="admin-empty"><h2>Nenhum cliente encontrado</h2><p>Revise a busca ou cadastre o cliente durante esta venda.</p></div>
+    }
+    else
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead><tr><th>Cliente</th><th>CPF</th><th>Telefone</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <tbody>
+                @foreach (var customer in Model.Customers)
+                {
+                    <tr>
+                        <td data-label="Cliente"><strong>@customer.Name</strong><small>@(customer.Email ?? "Sem e-mail")</small></td>
+                        <td data-label="CPF">@FormatCpf(customer.Cpf)</td>
+                        <td data-label="Telefone">@customer.Phone</td>
+                        <td class="admin-table__actions" data-label="Ações">
+                            <form method="post" asp-page-handler="Select"><input type="hidden" name="customerId" value="@customer.Id" /><button class="admin-table__button" type="submit">Selecionar</button></form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</main>
+
+@functions {
+    private static string FormatCpf(string? value) => value?.Length == 11 ? $"{value[..3]}.{value[3..6]}.{value[6..9]}-{value[9..]}" : "Não informado";
+}
