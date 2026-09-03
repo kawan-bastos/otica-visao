@@ -424,6 +424,13 @@
 .account-page__shell { max-width: 760px; padding: 2.5rem; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--white); box-shadow: var(--shadow); }
 .account-page h1 { margin: .5rem 0; color: var(--navy-900); font-weight: 900; }
 .account-page__shell > p { color: var(--muted); }
+.account-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.account-edit-page { flex: 1 0 auto; padding: 4rem 1rem; background: linear-gradient(145deg, #f6f9fc, #edf5f7); }
+.account-edit-shell { max-width: 980px; }
+.account-edit-header { margin-bottom: 1.5rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.account-edit-header h1 { margin: .45rem 0; color: var(--navy-900); font-weight: 900; }
+.account-edit-header p { margin: 0; color: var(--muted); }
+.account-edit-form { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: #fff; box-shadow: var(--shadow); }
 .account-danger-zone { margin-top: 2rem; padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; border-top: 1px solid var(--line); }
 .account-danger-zone h2 { margin: 0 0 .35rem; color: #8f1d18; font-size: 1.05rem; }
 .account-danger-zone p { margin: 0; color: var(--muted); font-size: .9rem; }
@@ -726,6 +733,8 @@ a { color: inherit; }
   .login-card__intro, .login-form, .login-card--message { padding: 2rem 1.5rem; }
   .account-danger-zone, .account-delete-actions { align-items: stretch; flex-direction: column; }
   .account-danger-zone .button, .account-delete-actions .button { width: 100%; }
+  .account-actions, .account-edit-header { align-items: stretch; flex-direction: column; }
+  .account-actions .button, .account-edit-header .button { width: 100%; }
   .admin-page { width: min(100% - 28px, 1180px); margin-top: 2rem; }
   .admin-page__header { align-items: stretch; flex-direction: column; }
   .admin-page__header > .button { align-self: stretch; }

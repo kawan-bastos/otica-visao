@@ -1,0 +1,40 @@
+@page
+@model OticaVisao.Web.Pages.Account.EditModel
+@{ ViewData["Title"] = "Editar meus dados"; }
+
+<main class="account-edit-page">
+    <div class="site-container account-edit-shell">
+        <header class="account-edit-header">
+            <div><span class="eyebrow">Minha conta</span><h1>Editar meus dados</h1><p>Mantenha suas informações de contato e atendimento atualizadas.</p></div>
+            <a class="button button--secondary" asp-page="Index">Voltar</a>
+        </header>
+        <form method="post" class="admin-form account-edit-form">
+            <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
+            <section class="admin-form__section">
+                <div class="admin-form__section-heading"><h2>Dados pessoais</h2><p>Esses dados também atualizam sua ficha de cliente na loja.</p></div>
+                <div class="form-grid">
+                    <div class="form-field"><label asp-for="Input.DisplayName"></label><input asp-for="Input.DisplayName" autocomplete="name" /><span asp-validation-for="Input.DisplayName"></span></div>
+                    <div class="form-field"><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="email" /><span asp-validation-for="Input.Email"></span></div>
+                    <div class="form-field"><label asp-for="Input.PhoneNumber"></label><input asp-for="Input.PhoneNumber" autocomplete="tel" /><span asp-validation-for="Input.PhoneNumber"></span></div>
+                    <div class="form-field"><label asp-for="Input.Cpf"></label><input asp-for="Input.Cpf" inputmode="numeric" /><span asp-validation-for="Input.Cpf"></span></div>
+                    <div class="form-field"><label asp-for="Input.BirthDate"></label><input asp-for="Input.BirthDate" autocomplete="bday" /><span asp-validation-for="Input.BirthDate"></span></div>
+                </div>
+            </section>
+            <section class="admin-form__section">
+                <div class="admin-form__section-heading"><h2>Endereço</h2><p>Ao informar o CEP, alguns campos serão preenchidos automaticamente.</p></div>
+                <div class="form-grid">
+                    <div class="form-field"><label asp-for="Input.PostalCode"></label><input asp-for="Input.PostalCode" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" data-cep-lookup /><small class="cep-lookup-status" data-cep-status aria-live="polite"></small><span asp-validation-for="Input.PostalCode"></span></div>
+                    <div class="form-field"><label asp-for="Input.Street"></label><input asp-for="Input.Street" autocomplete="address-line1" data-address-field="street" /><span asp-validation-for="Input.Street"></span></div>
+                    <div class="form-field"><label asp-for="Input.Number"></label><input asp-for="Input.Number" autocomplete="address-line2" /><span asp-validation-for="Input.Number"></span></div>
+                    <div class="form-field"><label asp-for="Input.Complement"></label><input asp-for="Input.Complement" /><span asp-validation-for="Input.Complement"></span></div>
+                    <div class="form-field"><label asp-for="Input.Neighborhood"></label><input asp-for="Input.Neighborhood" data-address-field="neighborhood" /><span asp-validation-for="Input.Neighborhood"></span></div>
+                    <div class="form-field"><label asp-for="Input.City"></label><input asp-for="Input.City" autocomplete="address-level2" data-address-field="city" /><span asp-validation-for="Input.City"></span></div>
+                    <div class="form-field"><label asp-for="Input.State"></label><input asp-for="Input.State" maxlength="2" autocomplete="address-level1" data-address-field="state" /><span asp-validation-for="Input.State"></span></div>
+                </div>
+            </section>
+            <div class="admin-form__actions"><a class="button button--secondary" asp-page="Index">Cancelar</a><button class="button button--primary" type="submit">Salvar alterações</button></div>
+        </form>
+    </div>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

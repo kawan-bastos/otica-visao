@@ -7,6 +7,10 @@
         <span class="eyebrow">Minha conta</span>
         <h1>Olá, @Model.DisplayName!</h1>
         <p>Confira os dados usados no seu cadastro.</p>
+        @if (TempData["AccountSuccessMessage"] is string successMessage)
+        {
+            <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
+        }
         <dl class="account-details">
             <div><dt>Nome</dt><dd>@Model.DisplayName</dd></div>
             <div><dt>E-mail</dt><dd>@Model.Email</dd></div>
@@ -15,7 +19,13 @@
             <div><dt>Data de nascimento</dt><dd>@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informada")</dd></div>
             <div><dt>Endereço</dt><dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "Não informado" : Model.Address)</dd></div>
         </dl>
-        <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
+        <div class="account-actions">
+            @if (Model.CanDeleteAccount)
+            {
+                <a class="button button--primary" asp-page="Edit">Editar meus dados</a>
+            }
+            <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
+        </div>
         @if (Model.CanDeleteAccount)
         {
             <section class="account-danger-zone">

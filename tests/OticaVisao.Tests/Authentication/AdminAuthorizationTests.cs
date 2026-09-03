@@ -90,6 +90,7 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
 
     [Theory]
     [InlineData("/Account")]
+    [InlineData("/Account/Edit")]
     [InlineData("/Account/Delete")]
     public async Task AnonymousVisitorIsRedirectedFromProtectedCustomerPagesToCustomerLogin(string path)
     {
