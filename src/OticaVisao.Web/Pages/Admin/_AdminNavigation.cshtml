@@ -5,6 +5,7 @@
     var framesActive = page.StartsWith("/Admin/Frames", StringComparison.OrdinalIgnoreCase);
     var laboratoryOrdersActive = page.StartsWith("/Admin/LaboratoryOrders", StringComparison.OrdinalIgnoreCase);
     var reportsActive = page.StartsWith("/Admin/Reports", StringComparison.OrdinalIgnoreCase);
+    var auditActive = page.StartsWith("/Admin/Audit", StringComparison.OrdinalIgnoreCase);
 }
 
 <nav class="admin-navigation" aria-label="Seções do painel administrativo">
@@ -13,4 +14,5 @@
     <a class="@(salesActive ? "active" : null)" asp-page="/Admin/Sales/Index">Vendas</a>
     <a class="@(laboratoryOrdersActive ? "active" : null)" asp-page="/Admin/LaboratoryOrders/Index">Pedidos de lentes</a>
     <a class="@(reportsActive ? "active" : null)" asp-page="/Admin/Reports/Index">Relatórios</a>
+    <a class="@(auditActive ? "active" : null)" asp-page="/Admin/Audit/Index">Auditoria</a>
 </nav>

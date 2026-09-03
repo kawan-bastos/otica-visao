@@ -13,6 +13,8 @@ using OticaVisao.Infrastructure.Sales;
 using OticaVisao.Application.LaboratoryOrders;
 using OticaVisao.Infrastructure.LaboratoryOrders;
 using OticaVisao.Application.Reports;
+using OticaVisao.Application.Auditing;
+using OticaVisao.Infrastructure.Auditing;
 
 namespace OticaVisao.Infrastructure;
 
@@ -25,7 +27,11 @@ public static class DependencyInjection
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddHttpContextAccessor();
+        services.AddScoped<AdminAuditInterceptor>();
+        services.AddDbContext<ApplicationDbContext>((provider, options) => options
+            .UseNpgsql(connectionString)
+            .AddInterceptors(provider.GetRequiredService<AdminAuditInterceptor>()));
         services
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
@@ -67,6 +73,8 @@ public static class DependencyInjection
         services.AddScoped<ILaboratoryOrderRepository, LaboratoryOrderRepository>();
         services.AddScoped<LaboratoryOrderService>();
         services.AddScoped<ReportService>();
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<AuditLogService>();
 
         return services;
     }

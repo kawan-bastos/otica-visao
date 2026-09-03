@@ -4,6 +4,7 @@ using OticaVisao.Domain.Catalog;
 using OticaVisao.Domain.Customers;
 using OticaVisao.Domain.Sales;
 using OticaVisao.Infrastructure.Persistence;
+using OticaVisao.Domain.Auditing;
 
 namespace OticaVisao.Tests.Persistence;
 
@@ -78,5 +79,22 @@ public sealed class ApplicationDbContextTests
         var itemTable = StoreObjectIdentifier.Table("sale_items", null);
         Assert.Equal("frame_unit_price", itemEntity.FindProperty(nameof(SaleItem.FrameUnitPrice))?.GetColumnName(itemTable));
         Assert.Equal("lens_unit_price", itemEntity.FindProperty(nameof(SaleItem.LensUnitPrice))?.GetColumnName(itemTable));
+    }
+
+    [Fact]
+    public void ModelMapsAdministrativeAuditToPostgresqlSchema()
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseNpgsql("Host=localhost;Database=otica_visao_tests;Username=postgres").Options;
+        using var context = new ApplicationDbContext(options);
+        var entity = context.Model.FindEntityType(typeof(AuditLog));
+
+        Assert.NotNull(entity);
+        Assert.Equal("audit_logs", entity.GetTableName());
+        var table = StoreObjectIdentifier.Table("audit_logs", null);
+        Assert.Equal("action", entity.FindProperty(nameof(AuditLog.Action))?.GetColumnName(table));
+        Assert.Equal("performed_by", entity.FindProperty(nameof(AuditLog.PerformedBy))?.GetColumnName(table));
+        Assert.Equal("occurred_at_utc", entity.FindProperty(nameof(AuditLog.OccurredAtUtc))?.GetColumnName(table));
+        Assert.Single(entity.GetIndexes());
     }
 }
