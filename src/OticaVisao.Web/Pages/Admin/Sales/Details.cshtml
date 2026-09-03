@@ -58,12 +58,19 @@
                             <td data-label="Lentes">@(item.IncludesLenses ? $"{item.LensDescription} · {item.LensUnitPrice.ToString("C", new System.Globalization.CultureInfo("pt-BR"))}" : "Sem lentes")</td>
                             <td data-label="Laboratório">@LaboratoryName(item.Laboratory)</td>
                             <td data-label="Total"><strong>@item.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></td>
-                            <td class="admin-table__actions" data-label="Ações">@if (Model.Sale.Status == SaleStatus.Draft) { <form method="post" asp-page-handler="RemoveItem"><input type="hidden" name="id" value="@Model.Sale.Id" /><input type="hidden" name="itemId" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Remover</button></form> }</td>
+                            <td class="admin-table__actions" data-label="Ações">
+                                @if (item.IncludesLenses && Model.Sale.Status is SaleStatus.Draft or SaleStatus.Completed) { <a class="admin-table__button" asp-page="EditItem" asp-route-saleId="@Model.Sale.Id" asp-route-itemId="@item.Id">Editar lentes e grau</a> }
+                                @if (Model.Sale.Status == SaleStatus.Draft) { <form method="post" asp-page-handler="RemoveItem"><input type="hidden" name="id" value="@Model.Sale.Id" /><input type="hidden" name="itemId" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Remover</button></form> }
+                            </td>
                         </tr>
                     }
                     </tbody>
                 </table>
             </div>
+            @foreach (var item in Model.Sale.Items.Where(item => item.IncludesLenses))
+            {
+                <div class="prescription-block"><h3>Grau — @item.FrameBrand @item.FrameModel (@item.FrameCode)</h3><partial name="/Pages/Admin/Shared/_PrescriptionDisplay.cshtml" model="item.Prescription" /></div>
+            }
         }
     </section>
 
@@ -83,6 +90,10 @@
                 <div class="form-field form-field--wide"><label asp-for="Input.LensDescription"></label><input asp-for="Input.LensDescription" placeholder="Ex.: visão simples, antirreflexo" /><span asp-validation-for="Input.LensDescription"></span></div>
                 <div class="form-field"><label asp-for="Input.LensUnitPrice"></label><input asp-for="Input.LensUnitPrice" inputmode="decimal" /><span asp-validation-for="Input.LensUnitPrice"></span></div>
                 <div class="form-field"><label asp-for="Input.Laboratory"></label><select asp-for="Input.Laboratory"><option value="">Selecione</option><option value="StandardOptical">Padrão Optical</option><option value="ImperialLab">Imperial Lab</option></select><span asp-validation-for="Input.Laboratory"></span></div>
+            </div>
+            <div data-sale-lens-fields>
+                <div class="admin-form__section-heading"><h2>Grau das lentes</h2><p>Informe a receita que será usada no pedido ao laboratório.</p></div>
+                <partial name="_PrescriptionFields" model="Model.Input.Prescription" />
             </div>
         </section>
         <div class="admin-form__actions"><button class="button button--primary" type="submit" @(Model.AvailableFrames.Count == 0 ? "disabled" : null)>Adicionar à venda</button></div>

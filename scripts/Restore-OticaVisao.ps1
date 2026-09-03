@@ -3,7 +3,8 @@ param(
     [Parameter(Mandatory)] [string]$BackupDirectory,
     [Parameter(Mandatory)] [switch]$ConfirmRestore,
     [string]$ConnectionString,
-    [string]$ImagePath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\frame-images')
+    [string]$ImagePath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\frame-images'),
+    [string]$LaboratoryDocumentPath = (Join-Path $PSScriptRoot '..\src\OticaVisao.Web\App_Data\laboratory-documents')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -12,6 +13,7 @@ if (-not $ConfirmRestore) { throw 'Use -ConfirmRestore para confirmar a substitu
 $resolvedBackup = [IO.Path]::GetFullPath($BackupDirectory)
 $databaseFile = Join-Path $resolvedBackup 'database.dump'
 $imagesFile = Join-Path $resolvedBackup 'frame-images.zip'
+$documentsFile = Join-Path $resolvedBackup 'laboratory-documents.zip'
 $manifestFile = Join-Path $resolvedBackup 'manifest.json'
 if (-not (Test-Path -LiteralPath $databaseFile -PathType Leaf) -or
     -not (Test-Path -LiteralPath $imagesFile -PathType Leaf) -or
@@ -61,6 +63,22 @@ try {
 }
 finally {
     $env:PGPASSWORD = $previousPassword
+}
+
+if (Test-Path -LiteralPath $documentsFile -PathType Leaf) {
+    $resolvedDocuments = [IO.Path]::GetFullPath($LaboratoryDocumentPath)
+    if ((Split-Path -Leaf $resolvedDocuments) -ne 'laboratory-documents') { throw 'Por segurança, o destino dos comprovantes deve terminar com laboratory-documents.' }
+    $documentParent = Split-Path -Parent $resolvedDocuments
+    $temporaryDocuments = Join-Path $documentParent ('.restore-documents-' + [Guid]::NewGuid().ToString('N'))
+    New-Item -ItemType Directory -Path $temporaryDocuments -Force | Out-Null
+    try {
+        Expand-Archive -LiteralPath $documentsFile -DestinationPath $temporaryDocuments -Force
+        $extractedDocuments = Join-Path $temporaryDocuments 'laboratory-documents'
+        if (-not (Test-Path -LiteralPath $extractedDocuments -PathType Container)) { throw 'O arquivo de comprovantes do backup é inválido.' }
+        if (Test-Path -LiteralPath $resolvedDocuments) { Remove-Item -LiteralPath $resolvedDocuments -Recurse -Force }
+        Move-Item -LiteralPath $extractedDocuments -Destination $resolvedDocuments
+    }
+    finally { if (Test-Path -LiteralPath $temporaryDocuments) { Remove-Item -LiteralPath $temporaryDocuments -Recurse -Force } }
 }
 
 $resolvedImages = [IO.Path]::GetFullPath($ImagePath)

@@ -257,6 +257,9 @@
 
 .admin-table__button { padding: 0; border: 0; color: var(--teal-600); background: transparent; font: inherit; font-weight: 800; cursor: pointer; }
 .admin-table__button--danger { color: #b42318; }
+.prescription-block { margin-top: 1rem; }
+.prescription-block h3 { margin: 0 0 .65rem; color: var(--navy-900); }
+.prescription-table input { min-width: 5.5rem; width: 100%; padding: .65rem; border: 1px solid var(--border); border-radius: .6rem; }
 .sale-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; white-space: nowrap; }
 .admin-table__actions .sale-delete-link { padding: .35rem .65rem; color: #b42318; border: 1px solid #e6aaa5; border-radius: .55rem; background: #fff; font-size: .78rem; }
 .admin-table__actions .sale-delete-link:hover { color: #fff; border-color: #b42318; background: #b42318; }

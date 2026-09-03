@@ -39,6 +39,29 @@ public sealed class SaleTests
     }
 
     [Fact]
+    public void PrescriptionIsStoredAndCanBeCorrectedAfterCompletion()
+    {
+        var sale = new Sale(Guid.NewGuid());
+        var original = new LensPrescription(new(-2m,-0.5m,90,31m,18m,null), PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty);
+        var item = sale.AddItem(Frame(), 1, true, "Visão simples", 300m, OpticalLaboratory.ImperialLab, original);
+        sale.Complete(PaymentMethod.Pix, 1);
+
+        var corrected = new LensPrescription(new(-2.25m,-0.5m,90,31m,18m,null), PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty);
+        sale.UpdateItemLensDetails(item.Id, "Visão simples", 310m, OpticalLaboratory.StandardOptical, corrected);
+
+        Assert.Equal(-2.25m, item.Prescription.FarRight.Sphere);
+        Assert.Equal(OpticalLaboratory.StandardOptical, item.Laboratory);
+        Assert.Equal(349m, sale.FinalTotal);
+    }
+
+    [Fact]
+    public void PrescriptionRejectsInvalidAxis()
+    {
+        var prescription = new LensPrescription(new(null,null,181,null,null,null), PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty, PrescriptionEyeValues.Empty);
+        Assert.Throws<ArgumentOutOfRangeException>(() => prescription.Validate());
+    }
+
+    [Fact]
     public void FrameWithoutLensesUsesCatalogPrice()
     {
         var sale = new Sale(Guid.NewGuid());

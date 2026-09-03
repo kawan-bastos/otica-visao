@@ -65,6 +65,8 @@ public static class DependencyInjection
         }
 
         services.AddSingleton<IFrameImageStorage, LocalFrameImageStorage>();
+        services.AddOptions<LaboratoryDocumentStorageOptions>();
+        services.AddSingleton<ILaboratoryDocumentStorage, LocalLaboratoryDocumentStorage>();
         services.AddScoped<IFrameRepository, FrameRepository>();
         services.AddScoped<FrameCatalogService>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();

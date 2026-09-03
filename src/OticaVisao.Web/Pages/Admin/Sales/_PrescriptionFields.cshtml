@@ -1,0 +1,20 @@
+@model OticaVisao.Web.Models.Admin.PrescriptionInputModel
+@foreach (var distance in new[] { (Title: "Longe", Prefix: "Far"), (Title: "Perto", Prefix: "Near") })
+{
+    <div class="prescription-block">
+        <h3>@distance.Title</h3>
+        <div class="admin-table-wrapper"><table class="admin-table prescription-table">
+            <thead><tr><th>Olho</th><th>Esférico</th><th>Cilíndrico</th><th>Eixo</th><th>DNP (mm)</th><th>Altura (mm)</th><th>Adição</th></tr></thead>
+            <tbody>
+            @foreach (var eye in new[] { (Name: "OD", Side: "Right"), (Name: "OE", Side: "Left") })
+            {
+                var key = $"{distance.Prefix}{eye.Side}";
+                <tr><th>@eye.Name</th>
+                    @foreach (var field in new[] { "Sphere", "Cylinder", "Axis", "Dnp", "Height", "Addition" })
+                    { <td><input name="@($"Input.Prescription.{key}.{field}")" value="@(ViewData.Eval($"{key}.{field}"))" inputmode="decimal" aria-label="@distance.Title @eye.Name @field" /></td> }
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    </div>
+}

@@ -33,6 +33,7 @@ public sealed class LaboratoryOrder
     public LaboratoryOrderStatus Status { get; private set; }
     public DateOnly? ExpectedDeliveryDate { get; private set; }
     public string? Notes { get; private set; }
+    public string? DocumentFileName { get; private set; }
     public DateTimeOffset? SentAtUtc { get; private set; }
     public DateTimeOffset? ReadyAtUtc { get; private set; }
     public DateTimeOffset? DeliveredAtUtc { get; private set; }
@@ -68,6 +69,21 @@ public sealed class LaboratoryOrder
         Status = LaboratoryOrderStatus.Cancelled;
         UpdatedAtUtc = DateTimeOffset.UtcNow;
         history.Add(new LaboratoryOrderHistory(Status));
+    }
+
+    public void ChangeLaboratory(OpticalLaboratory laboratory)
+    {
+        if (Status is LaboratoryOrderStatus.Delivered or LaboratoryOrderStatus.Cancelled)
+            throw new InvalidOperationException("Um pedido entregue ou cancelado não pode ter o laboratório alterado.");
+        Laboratory = laboratory;
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
+    }
+
+    public void SetDocument(string fileName)
+    {
+        if (Status == LaboratoryOrderStatus.Cancelled) throw new InvalidOperationException("Um pedido cancelado não pode ser alterado.");
+        if (string.IsNullOrWhiteSpace(fileName) || fileName.Length > 80 || fileName != Path.GetFileName(fileName)) throw new ArgumentException("Arquivo inválido.", nameof(fileName));
+        DocumentFileName = fileName; UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 
     private static string? NormalizeNotes(string? notes)

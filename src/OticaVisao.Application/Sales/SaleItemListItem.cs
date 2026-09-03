@@ -15,4 +15,5 @@ public sealed record SaleItemListItem(
     string? LensDescription,
     decimal LensUnitPrice,
     OpticalLaboratory? Laboratory,
+    LensPrescription Prescription,
     decimal Total);

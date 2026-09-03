@@ -1,10 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using OticaVisao.Domain.LaboratoryOrders;
+using OticaVisao.Domain.Sales;
 
 namespace OticaVisao.Web.Models.Admin;
 
 public sealed class LaboratoryOrderInputModel
 {
+    [Required(ErrorMessage = "Selecione o laboratório.")]
+    [Display(Name = "Laboratório")]
+    public OpticalLaboratory? Laboratory { get; set; }
     [Required(ErrorMessage = "Selecione a situação do pedido.")]
     [Display(Name = "Situação")]
     public LaboratoryOrderStatus Status { get; set; }

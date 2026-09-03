@@ -7,7 +7,7 @@ public sealed record LaboratoryOrderListItem(
     Guid Id, Guid SaleId, string CustomerName, string CustomerPhone,
     string FrameDescription, string LensDescription, int Quantity,
     OpticalLaboratory Laboratory, LaboratoryOrderStatus Status,
-    DateOnly? ExpectedDeliveryDate, string? Notes,
+    DateOnly? ExpectedDeliveryDate, string? Notes, LensPrescription Prescription, string? DocumentFileName,
     DateTimeOffset? SentAtUtc, DateTimeOffset? ReadyAtUtc, DateTimeOffset? DeliveredAtUtc,
     DateTimeOffset CreatedAtUtc, DateTimeOffset UpdatedAtUtc,
     IReadOnlyList<LaboratoryOrderHistoryItem> History);

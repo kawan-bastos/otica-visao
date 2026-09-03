@@ -29,6 +29,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddInfrastructure(connectionString, options =>
     builder.Configuration.GetSection(FrameImageStorageOptions.SectionName).Bind(options));
+builder.Services.Configure<LaboratoryDocumentStorageOptions>(
+    builder.Configuration.GetSection(LaboratoryDocumentStorageOptions.SectionName));
 builder.Services.Configure<AdminAccountOptions>(
     builder.Configuration.GetSection(AdminAccountOptions.SectionName));
 builder.Services.ConfigureApplicationCookie(options =>

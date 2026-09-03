@@ -28,9 +28,12 @@ public sealed class SaleItemInputModel : IValidatableObject
     [Display(Name = "Laboratório")]
     public OpticalLaboratory? Laboratory { get; set; }
 
+    public PrescriptionInputModel Prescription { get; set; } = new();
+
     public AddSaleItemRequest ToRequest() => new(
         FrameId!.Value, Quantity, IncludesLenses, IncludesLenses ? LensDescription : null,
-        IncludesLenses ? LensUnitPrice : 0, IncludesLenses ? Laboratory : null);
+        IncludesLenses ? LensUnitPrice : 0, IncludesLenses ? Laboratory : null,
+        IncludesLenses ? Prescription.ToDomain() : null);
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

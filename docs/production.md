@@ -16,6 +16,7 @@ AllowedHosts=SEU_DOMINIO;SEU_SUBDOMINIO_RAILWAY
 ConnectionStrings__DefaultConnection=${{Postgres.DATABASE_PRIVATE_URL}}
 Database__ApplyMigrations=true
 FrameImageStorage__Path=/data/frame-images
+LaboratoryDocumentStorage__Path=/data/laboratory-documents
 AdminAccounts__Accounts__0__DisplayName=Carlos
 AdminAccounts__Accounts__0__Email=EMAIL_ADMINISTRATIVO
 AdminAccounts__Accounts__0__Password=SENHA_EXCLUSIVA_DE_PRODUCAO_COM_12_OU_MAIS_CARACTERES
