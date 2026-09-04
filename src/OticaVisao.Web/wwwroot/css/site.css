@@ -1180,7 +1180,7 @@ button, input, select, textarea { font-family: inherit; }
   .contact__actions { justify-self: start; }
 }
 
-@media (max-width: 991.98px) and (orientation: landscape) {
+@media (min-width: 992px), (max-width: 991.98px) and (orientation: landscape) {
   .contact__actions { align-self: end; }
 }
 
