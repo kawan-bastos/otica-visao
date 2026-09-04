@@ -1082,6 +1082,12 @@ button, input, select, textarea { font-family: inherit; }
   background: var(--navy-900);
 }
 .contact { background: #c6e8e9; }
+.story-light-preview { position: relative; isolation: isolate; overflow: hidden; background: #062334; }
+.story-light-preview::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(2, 17, 42, .5); pointer-events: none; }
+.story-light-preview > .journey, .story-light-preview > .about { background: transparent; }
+.story-light-preview .section-heading h2, .story-light-preview .about__content h2 { color: #fff; }
+.story-light-preview .section-heading p, .story-light-preview .about__content p { color: #e0eaf5; }
+.story-light-preview .eyebrow, .story-light-preview .about__content .text-link { color: #91edf0; }
 .offer:has(.promotion-light) { position: relative; isolation: isolate; overflow: hidden; background: #062334; }
 .offer:has(.promotion-light)::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(2, 17, 42, .4); pointer-events: none; }
 .offer__card, .contact__card, .institutional-cta__card {
