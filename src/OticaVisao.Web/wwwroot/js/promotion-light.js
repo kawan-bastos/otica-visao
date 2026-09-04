@@ -1,8 +1,7 @@
 // Soffit effect adapted from the user-provided shader.
 (() => {
 "use strict";
-const canvas = document.querySelector("[data-promotion-light]");
-if (!canvas) return;
+document.querySelectorAll("[data-promotion-light]").forEach(canvas => {
 const host = canvas.parentElement;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 if (reduced.matches) return;
@@ -50,6 +49,7 @@ const CONFIG = {
   "warp": 2.58,
   "warpScale": 0.78
 };
+if (canvas.dataset.promotionLight === "offer") Object.assign(CONFIG, {"bgColor":"#062334","colorA":"#2b7be8","colorB":"#2bc8e8","colorC":"#4fe0d8","colorD":"#7fe8a0","ambient":0.04,"amount":0.22,"bounce":0.06,"bounceCurve":1.7,"breathe":0.09,"contrast":1.6,"cursor":1,"curve":2.6,"direct":0.72,"dither":1.2,"flow":0.15,"glow":0.34,"grain":0,"grainAnim":0,"horizon":-0.52,"lacunarity":2.05,"lift":0.2,"maxDpr":1,"midpoint":0.57,"moteScale":7,"motes":0.03,"parallax":0.002,"rock":0.11,"roughness":0.52,"scale":0.2,"sink":0.26,"speed":0.33,"spillCentre":0.04,"spillFloor":0.16,"spillWidth":0.2,"spread":1.3,"steer":0.22,"sweep":0.3,"tilt":-1.3,"vignette":0.44,"warp":1.1,"warpScale":0.72});
 const VERT = `#version 300 es
 void main() {
 vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
@@ -124,5 +124,5 @@ canvas.addEventListener("webglcontextlost",()=>{cancelAnimationFrame(raf);canvas
  canvas.hidden=true;
  console.warn("Fundo animado indisponível; usando fundo estático.",error);
 }
+});
 })();
-
