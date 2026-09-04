@@ -1007,6 +1007,21 @@ a { color: inherit; }
   .footer-bottom { align-items: flex-start; flex-direction: column; }
 }
 
+@media (min-width: 992px), (max-width: 991.98px) and (orientation: landscape) {
+  .site-footer { padding-top: 1rem; }
+  .site-footer .footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; padding-bottom: 1rem; }
+  .site-footer .footer-brand { grid-column: auto; }
+  .site-footer .footer-column h2 { min-height: 0; margin: 0 0 .6rem; }
+  .site-footer .footer-column p { margin-bottom: .55rem; line-height: 1.6; }
+  .site-footer .footer-brand p { margin-top: .4rem; }
+  .footer-brand__logo img { width: 120px; height: 40px; }
+  .footer-hours { margin-bottom: .6rem; }
+  .footer-hours div { gap: .75rem; margin-bottom: .3rem; }
+  .site-footer .footer-contact { padding: .4rem .65rem; }
+  .site-footer .footer-bottom { flex-direction: row; align-items: center; flex-wrap: wrap; gap: .5rem 1rem; padding-block: .6rem; }
+  .footer-bottom__links { gap: .4rem 1rem; }
+}
+
 @media (max-width: 767.98px) {
   .topbar__content { flex-wrap: wrap; gap: .4rem 1rem; padding-block: .5rem; }
   .topbar__location { min-width: 0; line-height: 1.5; }
