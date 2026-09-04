@@ -1,14 +1,18 @@
 @model OticaVisao.Domain.Sales.LensPrescription
 @functions { static string V(object? value) => value?.ToString() ?? "—"; }
-<div class="admin-table-wrapper"><table class="admin-table prescription-table">
-    <thead><tr><th>Uso</th><th>Olho</th><th>Esférico</th><th>Cilíndrico</th><th>Eixo</th><th>DNP</th><th>Altura</th><th>Adição</th></tr></thead>
-    <tbody>
+<div class="prescription-cards">
     @foreach (var row in new[] { ("Longe", "OD", Model.FarRight), ("Longe", "OE", Model.FarLeft), ("Perto", "OD", Model.NearRight), ("Perto", "OE", Model.NearLeft) })
-    { <tr>
-        <td data-label="Uso">@row.Item1</td><td data-label="Olho">@(row.Item2 == "OD" ? "OD — Direito" : "OE — Esquerdo")</td>
-        <td data-label="Esférico">@V(row.Item3.Sphere)</td><td data-label="Cilíndrico">@V(row.Item3.Cylinder)</td>
-        <td data-label="Eixo (°)">@V(row.Item3.Axis)</td><td data-label="DNP (mm)">@V(row.Item3.Dnp)</td>
-        <td data-label="Altura (mm)">@V(row.Item3.Height)</td><td data-label="Adição">@V(row.Item3.Addition)</td>
-    </tr> }
-    </tbody>
-</table></div>
+    {
+        <section class="prescription-card">
+            <h4>@row.Item1 · @(row.Item2 == "OD" ? "OD — Olho direito" : "OE — Olho esquerdo")</h4>
+            <dl>
+                <div><dt>Esférico</dt><dd>@V(row.Item3.Sphere)</dd></div>
+                <div><dt>Cilíndrico</dt><dd>@V(row.Item3.Cylinder)</dd></div>
+                <div><dt>Eixo (°)</dt><dd>@V(row.Item3.Axis)</dd></div>
+                <div><dt>DNP (mm)</dt><dd>@V(row.Item3.Dnp)</dd></div>
+                <div><dt>Altura (mm)</dt><dd>@V(row.Item3.Height)</dd></div>
+                <div><dt>Adição</dt><dd>@V(row.Item3.Addition)</dd></div>
+            </dl>
+        </section>
+    }
+</div>
