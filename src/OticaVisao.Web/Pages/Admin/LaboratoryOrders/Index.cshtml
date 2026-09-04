@@ -35,8 +35,8 @@
                 @foreach (var order in Model.Orders)
                 {
                     <tr>
-                        <td data-label="Cliente"><strong>@order.CustomerName</strong><small>@order.CustomerPhone</small></td>
-                        <td data-label="Armação e lentes"><strong>@order.FrameDescription</strong><small>@order.Quantity× · @order.LensDescription</small></td>
+                        <td data-label="Cliente"><span class="admin-cell-stack"><strong>@order.CustomerName</strong><small>@order.CustomerPhone</small></span></td>
+                        <td data-label="Armação e lentes"><span class="admin-cell-stack"><strong>@order.FrameDescription</strong><small>@order.Quantity× · @order.LensDescription</small></span></td>
                         <td data-label="Laboratório">@LaboratoryName(order.Laboratory)</td>
                         <td data-label="Previsão">@(order.ExpectedDeliveryDate?.ToString("dd/MM/yyyy") ?? "Não informada")</td>
                         <td data-label="Situação"><span class="lab-status lab-status--@order.Status.ToString().ToLowerInvariant()">@StatusName(order.Status)</span></td>

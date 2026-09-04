@@ -262,18 +262,28 @@
   .prescription-cards { grid-template-columns: minmax(0, 1fr); }
 }
 .prescription-card { min-width: 0; overflow: hidden; border: 1px solid #9ca7b5; border-radius: .75rem; background: #e0e2e5; }
-.prescription-card h4 { margin: 0; padding: 1rem; background: #414b58; color: #fff; font-size: 1rem; }
+.prescription-card h4 { margin: 0; padding: 1rem; background: #414b58; color: #fff; font-size: 1rem; white-space: normal; overflow-wrap: anywhere; }
 .prescription-card dl { margin: 0; padding: .25rem 1rem; }
 .prescription-card dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid #b9c0c9; }
 .prescription-card dl > div:last-child { border-bottom: 0; }
 .prescription-card dt { color: #354252; font-weight: 700; }
-.prescription-card dd { margin: 0; color: #10224a; font-variant-numeric: tabular-nums; }
+.prescription-card dd { margin: 0; color: #10224a; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.lab-order-details, .lab-order-details > *, .lab-order-details .form-grid > *, .lab-order-details .sale-draft-card > div { min-width: 0; max-width: 100%; }
+.lab-order-details { overflow-wrap: anywhere; }
+.lab-prescription { padding: clamp(16px, 3vw, 28px); margin-block: 24px; }
+.lab-order-details input, .lab-order-details select, .lab-order-details textarea { min-width: 0; max-width: 100%; }
+@media (max-width: 599.98px) {
+  .lab-order-details .prescription-cards { grid-template-columns: minmax(0, 1fr); }
+  .lab-order-details .sale-draft-card { padding: 1rem; }
+}
 .prescription-block { margin-top: 1rem; }
 .prescription-block h3 { margin: 0 0 .65rem; color: var(--navy-900); }
 .prescription-table input { min-width: 5.5rem; width: 100%; padding: .65rem; border: 1px solid var(--border); border-radius: .6rem; }
 input::placeholder, textarea::placeholder { color: #98a2b3; opacity: 1; }
 .sale-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; white-space: nowrap; }
 .customer-row-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: .65rem; white-space: nowrap; }
+.admin-cell-stack { min-width: 0; display: flex; flex-direction: column; gap: .3rem; }
+.admin-cell-stack strong, .admin-cell-stack small { display: block; max-width: 100%; overflow-wrap: anywhere; }
 .admin-table__actions .customer-row-actions__edit { color: var(--teal-600); }
 .admin-table__actions .customer-row-actions__sales { padding: .4rem .7rem; color: #fff; border-radius: .55rem; background: var(--navy-900); }
 .admin-table__actions .customer-row-actions__sales:hover { color: #fff; background: var(--teal-600); }
@@ -817,6 +827,7 @@ a { color: inherit; }
   .admin-table td::before { content: attr(data-label); color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
   .admin-table td:last-child { border-bottom: 0; }
   .admin-table td > * { justify-self: end; }
+  .admin-table .admin-cell-stack { width: 100%; align-items: flex-end; text-align: right; }
   .admin-table td small { text-align: right; }
   .admin-table__actions { text-align: right !important; }
   .institutional-hero, .institutional-hero--compact { padding: 4rem 0; }

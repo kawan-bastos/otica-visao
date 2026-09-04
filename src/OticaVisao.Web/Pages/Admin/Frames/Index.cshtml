@@ -68,6 +68,7 @@
                         <th>Código</th>
                         <th>Foto</th>
                         <th>Armação</th>
+                        <th>Cor</th>
                         <th>Tipo</th>
                         <th>Preço</th>
                         <th>Estoque</th>
@@ -90,7 +91,8 @@
                                     <span class="admin-frame-thumbnail admin-frame-thumbnail--empty">Sem foto</span>
                                 }
                             </td>
-                            <td data-label="Armação">@frame.Brand @frame.Model <small>@frame.Color</small></td>
+                            <td data-label="Armação">@frame.Brand @frame.Model</td>
+                            <td data-label="Cor">@frame.Color</td>
                             <td data-label="Tipo">@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
                             <td data-label="Preço">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
                             <td data-label="Estoque">
