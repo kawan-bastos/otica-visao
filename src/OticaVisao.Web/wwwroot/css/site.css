@@ -1178,6 +1178,40 @@ button, input, select, textarea { font-family: inherit; }
   .contact__actions { justify-self: start; }
 }
 
+/* Clean header and compact footer, with a dedicated mobile drawer. */
+.site-header { box-shadow: none; }
+.topbar { background: #eef5f7; color: #40536e; }
+.topbar__content { min-height: 34px; }
+.topbar a { color: #06266c; }
+.topbar__location svg { color: #007780; }
+.topbar__contact-label { color: #40536e; border: 0; padding: 0; }
+.site-header .site-nav { min-height: 82px; border-bottom: 1px solid #e3e9f1; }
+.site-header .brand img { height: 62px; }
+.site-header .navbar-toggler { border: 0; padding: .65rem; border-radius: .6rem; background: #eef5f7; }
+.site-header .nav-actions { border: 0; background: transparent; box-shadow: none; }
+.site-header .button--panel { background: transparent; border: 0; box-shadow: none; }
+.site-header .button--account { border-radius: .55rem; box-shadow: none; }
+.site-header .nav-link.active { background: transparent; color: #007780; }
+.navigation-drawer { --bs-offcanvas-width: min(360px, 90vw); }
+.navigation-drawer .offcanvas-title { font-size: 1.1rem; color: #06266c; }
+.navigation-drawer .offcanvas-header { padding: 1.5rem; border-bottom: 1px solid #e3e9f1; }
+.site-footer { background: #071d35; border-top: 0; }
+.site-footer .footer-brand__logo { padding: 0; background: transparent; border-radius: 0; }
+.site-footer .footer-brand__logo img { filter: brightness(0) invert(1); }
+.site-footer .footer-column h2 { color: #91dce0; font-size: .9rem; min-height: 0; }
+.site-footer .footer-contact { border: 0; border-radius: 0; padding: .3rem 0; color: #91dce0; }
+.site-footer .footer-bottom { border-top-color: #263b50; }
+@media (min-width: 992px) {
+  .site-header .navigation-drawer { position: static; display: block; visibility: visible !important; transform: none !important; border: 0; background: transparent; width: auto; flex: 1; transition: none; }
+  .navigation-drawer .offcanvas-header { display: none; }
+  .navigation-body { display: flex; align-items: center; gap: 1rem; padding: 0; overflow: visible; }
+}
+@media (max-width: 991.98px) {
+  .navigation-body { padding: 1.25rem; }
+  .navigation-body .nav-link { padding: .85rem; }
+  .site-header .navigation-body .nav-actions { margin-top: 1.25rem; padding: 1rem; background: #eef5f7; border: 0; }
+}
+
 /* Distinct surfaces for navigation, filters and records. */
 body:has(.admin-page) { background: #e8edf3; }
 .admin-navigation { display: flex; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; background: #d0deed; border-color: #afc3da; scrollbar-width: thin; scrollbar-color: #7189a5 #d0deed; }

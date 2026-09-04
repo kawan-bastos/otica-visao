@@ -32,11 +32,16 @@
                 <a class="brand" asp-area="" asp-page="/Index" aria-label="Ótica Visão - página inicial">
                     <img src="~/images/brand/logo-horizontal.png" alt="Ótica Visão de Piabetá" />
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation"
-                        aria-expanded="false" aria-label="Abrir menu de navegação">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNavigation" aria-controls="mainNavigation"
+                        aria-label="Abrir menu de navegação">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse" id="mainNavigation">
+                <div class="offcanvas offcanvas-end navigation-drawer" tabindex="-1" id="mainNavigation" aria-labelledby="navigation-title">
+                    <div class="offcanvas-header">
+                        <h2 class="offcanvas-title" id="navigation-title">Explore a Ótica Visão</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+                    </div>
+                    <div class="offcanvas-body navigation-body">
                     <ul class="navbar-nav nav-links nav-primary mx-lg-auto align-items-lg-center">
                         <li class="nav-item">
                             <a class="nav-link @(isHome ? "active" : null)" asp-page="/Index" asp-fragment="inicio" aria-current="@(isHome ? "page" : null)">Início</a>
@@ -72,6 +77,7 @@
                             <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
                             <a class="button button--small button--panel" asp-page="/Admin/Frames/Index">Painel</a>
                         }
+                    </div>
                     </div>
                 </div>
             </div>

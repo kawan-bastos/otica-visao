@@ -164,3 +164,16 @@ document.querySelectorAll("[data-highlights]").forEach(carousel => {
         animations.clear();
     });
 })();
+// Close the mobile drawer before following an in-page navigation link.
+matchMedia("(min-width: 992px)").addEventListener("change", event => {
+    if (event.matches) {
+        const drawer = document.getElementById("mainNavigation");
+        if (drawer) bootstrap.Offcanvas.getInstance(drawer)?.hide();
+    }
+});
+document.querySelectorAll("#mainNavigation a").forEach(link => {
+    link.addEventListener("click", () => {
+        const drawer = document.getElementById("mainNavigation");
+        if (drawer?.classList.contains("show")) bootstrap.Offcanvas.getInstance(drawer)?.hide();
+    });
+});
