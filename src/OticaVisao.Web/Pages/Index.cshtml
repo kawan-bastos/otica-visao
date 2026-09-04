@@ -1,5 +1,8 @@
 ﻿@page
 @model IndexModel
+@section Scripts {
+    <script src="~/js/promotion-light.js" asp-append-version="true" defer></script>
+}
 @{
     ViewData["Title"] = "Início";
 }
@@ -8,6 +11,7 @@
     <div class="site-container">
         <div class="hero__card">
             <div class="hero__content">
+                <canvas class="promotion-light" data-promotion-light aria-hidden="true" hidden></canvas>
                 <span class="hero__offer-label">Condição especial · Ótica Visão</span>
                 <h1 class="hero__offer-title">Sua armação por <strong><span>R$</span> 39</strong></h1>
                 <p class="hero__offer-condition">Na compra dos seus óculos completos com a gente.</p>
