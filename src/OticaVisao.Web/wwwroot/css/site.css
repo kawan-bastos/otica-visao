@@ -1082,6 +1082,11 @@ button, input, select, textarea { font-family: inherit; }
   background: var(--navy-900);
 }
 .contact { background: #c6e8e9; }
+.catalog-preview:has(.promotion-light) { position: relative; isolation: isolate; overflow: hidden; background: #08153a; }
+.catalog-preview:has(.promotion-light)::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(2, 17, 42, .4); pointer-events: none; }
+.catalog-preview:has(.promotion-light) .section-heading h2 { color: #fff; }
+.catalog-preview:has(.promotion-light) .section-heading p, .catalog-preview:has(.promotion-light) .prototype-note { color: #e0eaf5; }
+.catalog-preview:has(.promotion-light) .section-heading .eyebrow, .catalog-preview:has(.promotion-light) .section-heading .text-link { color: #91edf0; }
 .story-light-preview { position: relative; isolation: isolate; overflow: hidden; background: #062334; }
 .story-light-preview::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(2, 17, 42, .5); pointer-events: none; }
 .story-light-preview > .journey, .story-light-preview > .about { background: transparent; }
