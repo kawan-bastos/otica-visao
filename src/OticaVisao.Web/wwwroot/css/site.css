@@ -1141,6 +1141,7 @@ button, input, select, textarea { font-family: inherit; }
     width: calc(100% - clamp(48px, 6vw, 144px));
   }
   .about__visual { width: 100%; max-width: 560px; }
+  .about__grid { grid-template-columns: minmax(0, 560px) minmax(0, 740px); justify-content: start; gap: clamp(32px, 3vw, 64px); }
   .contact__actions { justify-self: end; }
 }
 @media (max-width: 767.98px) {
