@@ -1,6 +1,11 @@
 // Soffit effect adapted from the user-provided shader.
 (() => {
 "use strict";
+// Do not create GPU contexts or animation loops on phones and tablets.
+const desktop = matchMedia("(min-width: 1200px) and (hover: hover) and (pointer: fine)");
+const touch = matchMedia("(any-pointer: coarse)");
+const desktopEnabled = () => desktop.matches && !touch.matches && navigator.maxTouchPoints === 0;
+if (!desktopEnabled()) return;
 document.querySelectorAll("[data-promotion-light]").forEach(canvas => {
 const host = canvas.parentElement;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
@@ -101,7 +106,7 @@ host.addEventListener("pointermove",aim,{passive:true});
 host.addEventListener("pointerdown",aim,{passive:true});
 function frame(now) {
  raf=0;
- if (!visible || document.hidden || reduced.matches || gl.isContextLost()) return;
+ if (!visible || document.hidden || reduced.matches || !desktopEnabled() || gl.isContextLost()) return;
  if(dirty){resize();dirty=false;}
  const ms=Math.min(50,Math.max(4.167,previous?now-previous:16.667));
  previous=now;clock+=ms/1000;
@@ -115,12 +120,14 @@ function frame(now) {
 }
 function sync() {
  cancelAnimationFrame(raf);raf=0;previous=0;
- if(reduced.matches) canvas.hidden=true;
- if(visible&&!document.hidden&&!reduced.matches) raf=requestAnimationFrame(frame);
+ if(reduced.matches || !desktopEnabled()) canvas.hidden=true;
+ if(visible&&!document.hidden&&!reduced.matches&&desktopEnabled()) raf=requestAnimationFrame(frame);
 }
 new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();}).observe(host);
 document.addEventListener("visibilitychange",sync);
 reduced.addEventListener("change",sync);
+desktop.addEventListener("change",sync);
+touch.addEventListener("change",sync);
 canvas.addEventListener("webglcontextlost",()=>{cancelAnimationFrame(raf);canvas.hidden=true;});
 } catch(error) {
  canvas.hidden=true;
