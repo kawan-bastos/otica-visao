@@ -1152,6 +1152,10 @@ button, input, select, textarea { font-family: inherit; }
   .contact__actions .button { min-width: 0; }
 }
 
+@media (max-width: 767.98px) and (orientation: portrait) {
+  .contact__actions { justify-self: start; }
+}
+
 /* Distinct surfaces for navigation, filters and records. */
 body:has(.admin-page) { background: #e8edf3; }
 .admin-navigation { display: flex; flex-wrap: nowrap; max-width: 100%; overflow-x: auto; background: #d0deed; border-color: #afc3da; scrollbar-width: thin; scrollbar-color: #7189a5 #d0deed; }
