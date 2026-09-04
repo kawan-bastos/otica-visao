@@ -1116,7 +1116,11 @@ button, input, select, textarea { font-family: inherit; }
 .visit-details dd span { display: block; color: #e0eaf5; }
 @media (min-width: 1200px) {
   .contact__card:has(.visit-details) { grid-template-columns: minmax(0, 1fr) auto; }
-  .visit-details { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; }
+  .visit-details { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem 3rem; margin-top: 3rem; }
+  .visit-details dt { font-size: 1.125rem; margin-bottom: .8rem; gap: .75rem; }
+  .visit-details dd { font-size: 1.0625rem; line-height: 1.85; }
+  .visit-details dd span { margin-top: .3rem; }
+  .visit-details svg { width: 24px; height: 24px; }
 }
 .contact__actions {
   width: auto;
