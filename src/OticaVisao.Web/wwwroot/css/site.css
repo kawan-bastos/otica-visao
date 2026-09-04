@@ -626,6 +626,7 @@ a { color: inherit; }
 .frame-crop label { display: block; margin-top: .75rem; }
 .frame-crop input[type=range] { display: block; width: 100%; max-width: 600px; }
 .frame-crop button { margin: 1rem .5rem 0 0; }
+.frame-camera-button { margin-top: .75rem; justify-self: start; }
 .frame-card__visual img { width: 100%; height: 100%; object-fit: contain; transition: transform .35s ease; }
 .frame-placeholder { color: var(--muted); font-size: .85rem; font-weight: 750; }
 .frame-card__visual svg { width: 100%; fill: rgba(15,29,51,.04); stroke: #151c27; stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 13px 8px rgba(8,25,55,.12)); }

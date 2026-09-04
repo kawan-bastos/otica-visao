@@ -1,6 +1,22 @@
 (() => {
     const input = document.querySelector('input[type="file"][name="Input.Image"]');
     if (!input) return;
+    const camera = document.createElement('input');
+    camera.type = 'file';
+    camera.accept = 'image/jpeg,image/png,image/webp';
+    camera.setAttribute('capture', 'environment');
+    camera.hidden = true;
+    const cameraButton = document.createElement('button');
+    cameraButton.type = 'button';
+    cameraButton.className = 'button button--secondary frame-camera-button';
+    cameraButton.textContent = 'Tirar foto';
+    cameraButton.addEventListener('click', () => { camera.value = ''; camera.click(); });
+    camera.addEventListener('change', () => {
+        if (!camera.files.length) return;
+        input.files = camera.files;
+        input.dispatchEvent(new Event('change', {bubbles: true}));
+    });
+    input.after(cameraButton, camera);
     const editor = document.createElement('div');
     editor.className = 'frame-crop';
     editor.hidden = true;
