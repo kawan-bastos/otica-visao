@@ -15,9 +15,16 @@
         <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
     }
 
+    <form class="customer-search" method="get">
+        @if (Model.CustomerId.HasValue) { <input type="hidden" asp-for="CustomerId" /> }
+        <div class="form-field"><label asp-for="Search">Buscar venda</label><input asp-for="Search" placeholder="Cliente, telefone, código ou modelo" /></div>
+        <button class="button button--primary" type="submit">Buscar</button>
+        <a class="button button--secondary" asp-page="Index">Limpar</a>
+    </form>
+
     @if (Model.Sales.Count == 0)
     {
-        <div class="admin-empty"><h2>Nenhuma venda iniciada</h2><p>As vendas em andamento e concluídas aparecerão aqui.</p></div>
+            <div class="admin-empty"><h2>@((Model.CustomerId.HasValue || !string.IsNullOrWhiteSpace(Model.Search)) ? "Nenhuma venda encontrada" : "Nenhuma venda iniciada")</h2><p>@((Model.CustomerId.HasValue || !string.IsNullOrWhiteSpace(Model.Search)) ? "Tente ajustar a busca ou remover o filtro." : "As vendas em andamento e concluídas aparecerão aqui.")</p></div>
     }
     else
     {

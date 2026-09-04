@@ -262,6 +262,10 @@
 .prescription-table input { min-width: 5.5rem; width: 100%; padding: .65rem; border: 1px solid var(--border); border-radius: .6rem; }
 input::placeholder, textarea::placeholder { color: #98a2b3; opacity: 1; }
 .sale-row-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; white-space: nowrap; }
+.customer-row-actions { display: inline-flex; align-items: center; justify-content: flex-end; gap: .65rem; white-space: nowrap; }
+.admin-table__actions .customer-row-actions__edit { color: var(--teal-600); }
+.admin-table__actions .customer-row-actions__sales { padding: .4rem .7rem; color: #fff; border-radius: .55rem; background: var(--navy-900); }
+.admin-table__actions .customer-row-actions__sales:hover { color: #fff; background: var(--teal-600); }
 .admin-table__actions .sale-delete-link { padding: .35rem .65rem; color: #b42318; border: 1px solid #e6aaa5; border-radius: .55rem; background: #fff; font-size: .78rem; }
 .admin-table__actions .sale-delete-link:hover { color: #fff; border-color: #b42318; background: #b42318; }
 .sale-customer-actions { margin: 1.25rem 0; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #b9e6e9; border-radius: 1rem; background: #eefbfc; }
