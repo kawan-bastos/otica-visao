@@ -1,7 +1,7 @@
 @model OticaVisao.Domain.Sales.LensPrescription
 @functions { static string V(object? value) => value?.ToString() ?? "—"; }
 <div class="prescription-cards">
-    @foreach (var row in new[] { ("Longe", "OD", Model.FarRight), ("Longe", "OE", Model.FarLeft), ("Perto", "OD", Model.NearRight), ("Perto", "OE", Model.NearLeft) })
+    @foreach (var row in new[] { ("Longe", "OE", Model.FarLeft), ("Longe", "OD", Model.FarRight), ("Perto", "OE", Model.NearLeft), ("Perto", "OD", Model.NearRight) })
     {
         <section class="prescription-card">
             <h4>@row.Item1 · @(row.Item2 == "OD" ? "OD — Olho direito" : "OE — Olho esquerdo")</h4>
