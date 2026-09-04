@@ -1097,6 +1097,13 @@ button, input, select, textarea { font-family: inherit; }
   background: var(--navy-900);
 }
 .contact { background: #c6e8e9; }
+.offer { background: #fff; }
+.offer .offer__card { color: var(--navy-900); }
+.offer .offer__price { border-color: #d3dfeb; }
+.offer .offer__price span, .offer .eyebrow { color: #007780; }
+.offer .offer__content p { color: #40536e; }
+.offer .button--light { color: #fff; background: var(--navy-900); }
+.offer .button--light:hover { color: #fff; background: var(--navy-800); }
 .catalog-preview:has(.promotion-light) { position: relative; isolation: isolate; overflow: hidden; background: #062334; }
 .catalog-preview:has(.promotion-light)::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(2, 17, 42, .4); pointer-events: none; }
 .catalog-preview:has(.promotion-light) .section-heading h2 { color: #fff; }
