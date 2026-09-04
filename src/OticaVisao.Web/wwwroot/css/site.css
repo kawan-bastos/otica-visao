@@ -1178,6 +1178,10 @@ button, input, select, textarea { font-family: inherit; }
   .contact__actions { justify-self: start; }
 }
 
+@media (max-width: 991.98px) and (orientation: landscape) {
+  .contact__actions { align-self: end; }
+}
+
 /* Clean header and compact footer, with a dedicated mobile drawer. */
 .site-header { box-shadow: none; }
 .topbar { background: #eef5f7; color: #40536e; }
