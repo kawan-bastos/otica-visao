@@ -1,0 +1,30 @@
+@page "/pagina-nao-encontrada"
+@model OticaVisao.Web.Pages.NotFoundModel
+@{
+    ViewData["Title"] = "Página não encontrada";
+}
+
+<main class="not-found-page">
+    <div class="site-container not-found-page__layout">
+        <section class="not-found-page__content" aria-labelledby="not-found-title">
+            <span class="not-found-page__code" aria-hidden="true">404</span>
+            <span class="eyebrow eyebrow--dark">Essa página não foi encontrada</span>
+            <h1 id="not-found-title">Parece que este endereço saiu de foco.</h1>
+            <p>O endereço pode ter mudado ou não existir. Você pode voltar ao início ou continuar procurando sua próxima armação.</p>
+            <div class="not-found-page__actions">
+                <a class="button button--primary" asp-page="/Index">Voltar ao início</a>
+                <a class="button button--secondary" asp-page="/Frames/Index">Ver armações</a>
+            </div>
+        </section>
+
+        <aside class="not-found-page__help" aria-label="Precisa de ajuda?">
+            <span class="not-found-page__help-icon" aria-hidden="true">?</span>
+            <div>
+                <h2>Precisa de ajuda?</h2>
+                <p>Nossa equipe pode orientar você pelo WhatsApp.</p>
+            </div>
+            <a href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20para%20encontrar%20uma%20p%C3%A1gina%20no%20site."
+               target="_blank" rel="noopener noreferrer">Falar com a equipe <span aria-hidden="true">↗</span></a>
+        </aside>
+    </div>
+</main>

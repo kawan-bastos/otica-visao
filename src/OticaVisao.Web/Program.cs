@@ -110,6 +110,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithReExecute("/pagina-nao-encontrada");
+
 app.UseHttpsRedirection();
 
 app.Use(async (context, next) =>
