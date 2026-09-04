@@ -4,6 +4,11 @@
     <thead><tr><th>Uso</th><th>Olho</th><th>Esférico</th><th>Cilíndrico</th><th>Eixo</th><th>DNP</th><th>Altura</th><th>Adição</th></tr></thead>
     <tbody>
     @foreach (var row in new[] { ("Longe", "OD", Model.FarRight), ("Longe", "OE", Model.FarLeft), ("Perto", "OD", Model.NearRight), ("Perto", "OE", Model.NearLeft) })
-    { <tr><td>@row.Item1</td><th>@row.Item2</th><td>@V(row.Item3.Sphere)</td><td>@V(row.Item3.Cylinder)</td><td>@V(row.Item3.Axis)</td><td>@V(row.Item3.Dnp)</td><td>@V(row.Item3.Height)</td><td>@V(row.Item3.Addition)</td></tr> }
+    { <tr>
+        <td data-label="Uso">@row.Item1</td><td data-label="Olho">@(row.Item2 == "OD" ? "OD — Direito" : "OE — Esquerdo")</td>
+        <td data-label="Esférico">@V(row.Item3.Sphere)</td><td data-label="Cilíndrico">@V(row.Item3.Cylinder)</td>
+        <td data-label="Eixo (°)">@V(row.Item3.Axis)</td><td data-label="DNP (mm)">@V(row.Item3.Dnp)</td>
+        <td data-label="Altura (mm)">@V(row.Item3.Height)</td><td data-label="Adição">@V(row.Item3.Addition)</td>
+    </tr> }
     </tbody>
 </table></div>
