@@ -1108,6 +1108,16 @@ button, input, select, textarea { font-family: inherit; }
 }
 .contact__card { color: var(--ink); }
 .contact__card > div:first-child { max-width: none; }
+.visit-details { display: grid; gap: 1.5rem; margin: 1.75rem 0 0; }
+.visit-details > div { min-width: 0; }
+.visit-details dt { display: flex; align-items: center; gap: .6rem; margin-bottom: .45rem; color: #91edf0; font-size: .95rem; font-weight: 750; }
+.visit-details svg { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.visit-details dd { margin: 0; color: #fff; font-size: .9375rem; line-height: 1.7; }
+.visit-details dd span { display: block; color: #e0eaf5; }
+@media (min-width: 1200px) {
+  .contact__card:has(.visit-details) { grid-template-columns: minmax(0, 1fr) auto; }
+  .visit-details { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2rem; }
+}
 .contact__actions {
   width: auto;
   justify-self: end;
