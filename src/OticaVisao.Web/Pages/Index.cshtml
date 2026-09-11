@@ -1,154 +1,79 @@
-﻿@page
+@page
 @model IndexModel
-@{
-    ViewData["Title"] = "Início";
-}
+@section Scripts { <script src="~/js/promotion-light.js" asp-append-version="true" defer></script> }
+@{ ViewData["Title"] = "Início"; }
 
-<section class="hero section-shell" id="inicio">
+<section class="hero home-hero section-shell" id="inicio">
     <div class="site-container">
         <div class="hero__card">
             <div class="hero__content">
-                <span class="hero__offer-label">Condição especial · Ótica Visão</span>
-                <h1 class="hero__offer-title">Sua armação por <strong><span>R$</span> 39</strong></h1>
-                <p class="hero__offer-condition">Na compra dos seus óculos completos com a gente.</p>
-                <p class="hero__offer-note">Escolha sua armação e consulte as condições com nossa equipe em Piabetá.</p>
-                <div class="hero__actions">
-                    <a class="button button--primary" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20a%20arma%C3%A7%C3%A3o%20por%20R%24%2039%20na%20compra%20dos%20%C3%B3culos%20completos." target="_blank" rel="noopener noreferrer">Quero aproveitar a promoção</a>
-                    <a class="button button--outline-light" href="#armacoes">Ver armações</a>
-                </div>
+                <canvas class="promotion-light" data-promotion-light aria-hidden="true" hidden></canvas>
+                <span class="hero__offer-label">Ótica Visão · Piabetá</span>
+                <h1>Encontre os óculos que combinam com você.</h1>
+                <p class="home-hero__lead">Escolha online, reserve seus favoritos e experimente com calma na loja.</p>
+                <aside class="home-hero__promotion"><span>Condição especial</span><strong>Armação por R$ 39*</strong><small>na compra dos óculos completos</small></aside>
+                <div class="hero__actions"><a class="button button--primary" href="#armacoes">Encontrar minha armação</a><a class="button button--outline-light" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a></div>
             </div>
             <div class="hero__visual hero-highlights" data-highlights role="region" aria-roledescription="carrossel" aria-label="Conheça a Ótica Visão">
-                <img class="highlight-photo is-current" data-highlight-photo src="~/images/store/interior-vitrine.png" alt="Interior da Ótica Visão visto pela vitrine" />
-                <img class="highlight-photo" data-highlight-photo src="~/images/store/fachada-frontal.png" alt="Fachada da Ótica Visão em Piabetá" aria-hidden="true" />
-                <img class="highlight-photo" data-highlight-photo src="~/images/store/fachada-noturna.png" alt="Fachada iluminada da Ótica Visão à noite" aria-hidden="true" />
-                <div class="highlight-controls" data-highlight-controls hidden>
-                    <div class="highlight-navigation">
-                        <button type="button" data-highlight-prev aria-label="Foto anterior">‹</button>
-                        <div class="highlight-tabs" role="group" aria-label="Escolher destaque">
-                            <button type="button" data-highlight-index="0" aria-pressed="true" aria-label="Foto 1: Por dentro"><span></span></button>
-                            <button type="button" data-highlight-index="1" aria-pressed="false" aria-label="Foto 2: Nossa loja"><span></span></button>
-                            <button type="button" data-highlight-index="2" aria-pressed="false" aria-label="Foto 3: À noite"><span></span></button>
-                        </div>
-                        <button type="button" data-highlight-next aria-label="Próxima foto">›</button>
-                    </div>
-                    <span class="visually-hidden" data-highlight-status aria-live="polite"></span>
-                </div>
+                <img class="highlight-photo is-current" data-highlight-photo src="~/images/store/fachada-destaque.png" asp-append-version="true" alt="Fachada da Ótica Visão em Piabetá" />
+                <img class="highlight-photo" data-highlight-photo src="~/images/store/interior-destaque.png" asp-append-version="true" alt="Interior da loja e exposição de armações" aria-hidden="true" />
+                <img class="highlight-photo" data-highlight-photo src="~/images/store/atendimento-destaque.png" asp-append-version="true" alt="Atendimento presencial na Ótica Visão" aria-hidden="true" />
+                <img class="highlight-photo" data-highlight-photo src="~/images/store/oculos-estojo-destaque.png" asp-append-version="true" alt="Óculos no estojo da Ótica Visão" aria-hidden="true" />
+                <div class="highlight-controls" data-highlight-controls hidden><div class="highlight-navigation"><button type="button" data-highlight-prev aria-label="Foto anterior">‹</button><div class="highlight-tabs" role="group" aria-label="Escolher destaque">@for (var index = 0; index < 4; index++) { <button type="button" data-highlight-index="@index" aria-pressed="@(index == 0 ? "true" : "false")" aria-label="Foto @(index + 1)"><span></span></button> }</div><button type="button" data-highlight-next aria-label="Próxima foto">›</button></div><span class="visually-hidden" data-highlight-status aria-live="polite"></span></div>
             </div>
         </div>
-        <div class="trust-strip" aria-label="Diferenciais da Ótica Visão">
-            <div class="trust-item"><span class="trust-item__icon">✓</span><span><strong>Garantia de 3 meses</strong> consulte condições</span></div>
-            <div class="trust-item"><span class="trust-item__icon">◇</span><span><strong>Exame de vista</strong> consulte nossa equipe</span></div>
-            <div class="trust-item"><span class="trust-item__icon">◎</span><span><strong>Até 10x sem juros</strong> no cartão de crédito</span></div>
+        <div class="trust-strip home-benefits" aria-label="Diferenciais da Ótica Visão">
+            <div class="trust-item"><span class="trust-item__icon">✓</span><span><strong>Armação por R$ 39*</strong> consulte condições</span></div>
+            <div class="trust-item"><span class="trust-item__icon">◉</span><span><strong>Exame de vista</strong> realizado no local</span></div>
+            <div class="trust-item"><span class="trust-item__icon">◇</span><span><strong>Reserve por 24 horas</strong> até 3 armações</span></div>
+            <div class="trust-item"><span class="trust-item__icon">▣</span><span><strong>Até 10x sem juros</strong> no cartão de crédito</span></div>
         </div>
     </div>
 </section>
 
-<section class="catalog-preview section-shell" id="armacoes">
-    <div class="site-container">
-        <div class="section-heading">
-            <div>
-                <span class="eyebrow eyebrow--dark">Encontre seu estilo</span>
-                <h2>Armações em destaque</h2>
-                <p>Uma seleção inicial para você conhecer antes de visitar nossa loja.</p>
-            </div>
-            <a class="text-link" asp-page="/Frames/Index">Ver todas as armações <span aria-hidden="true">→</span></a>
-        </div>
-        <div class="category-list" aria-label="Categorias de armações">
-            <a class="category-chip category-chip--active" asp-page="/Frames/Index">Todas</a>
-            <a class="category-chip" asp-page="/Frames/Index" asp-route-type="Prescription">Óculos de grau</a>
-            <a class="category-chip" asp-page="/Frames/Index" asp-route-type="Sunglasses">Óculos de sol</a>
-            <a class="category-chip" asp-page="/Frames/Index" asp-route-targetAudience="Child">Infantil</a>
-            <a class="category-chip" asp-page="/Frames/Index" asp-route-shape="Round">Redondo</a>
-            <a class="category-chip" asp-page="/Frames/Index" asp-route-shape="Square">Quadrado</a>
-        </div>
-        <div class="frame-grid">
-            @foreach (var frame in Model.FeaturedFrames)
-            {
-                <article class="frame-card">
-                    <div class="frame-card__visual">
-                        @if (frame.ImageFileName is not null)
-                        {
-                            <img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model na cor @frame.Color" />
-                        }
-                        else
-                        {
-                            <partial name="_DemoFrameImage" model="frame.Id" />
-                        }
-                    </div>
-                    <div class="frame-card__body">
-                        <p class="frame-card__brand">@frame.Brand</p>
-                        <h3>@frame.Model</h3>
-                        <p class="frame-card__color">@frame.Color</p>
-                        <div class="frame-card__footer">
-                            <strong>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong>
-                            <a asp-page="/Frames/Details" asp-route-id="@frame.Id" aria-label="Ver detalhes da armação @frame.Brand @frame.Model">Ver detalhes</a>
-                        </div>
-                    </div>
-                </article>
-            }
-        </div>
-        <p class="prototype-note">Consulte a disponibilidade com nossa equipe antes de visitar a loja.</p>
+<section class="home-categories section-shell" aria-labelledby="categories-title"><div class="site-container">
+    <div class="section-heading"><div><span class="eyebrow eyebrow--dark">Comece pelo seu estilo</span><h2 id="categories-title">O que você procura?</h2><p>Encontre opções rapidamente e deixe os detalhes para experimentar na loja.</p></div></div>
+    <div class="home-category-grid">
+        <a asp-page="/Frames/Index" asp-route-type="Prescription"><i>▱</i><span><strong>Óculos de grau</strong><small>Para sua rotina e seu estilo</small></span><b>→</b></a>
+        <a asp-page="/Frames/Index" asp-route-type="Sunglasses"><i>◒</i><span><strong>Óculos de sol</strong><small>Proteção com personalidade</small></span><b>→</b></a>
+        <a asp-page="/Frames/Index" asp-route-targetAudience="Child"><i>☆</i><span><strong>Infantil</strong><small>Conforto para os pequenos</small></span><b>→</b></a>
+        <a asp-page="/Frames/Index"><i>⌕</i><span><strong>Todas as armações</strong><small>Explore o catálogo completo</small></span><b>→</b></a>
+    </div>
+</div></section>
+
+<section class="catalog-preview home-catalog section-shell" id="armacoes"><div class="site-container">
+    <div class="section-heading"><div><span class="eyebrow eyebrow--dark">Escolhidas para você</span><h2>Armações em destaque</h2><p>Favorite ou reserve seus modelos preferidos antes de visitar a loja.</p></div><a class="text-link" asp-page="/Frames/Index">Ver catálogo completo →</a></div>
+    @if (TempData["HomeMessage"] is string message) { <div class="admin-alert admin-alert--success" role="status">@message</div> }
+    @if (TempData["HomeError"] is string error) { <div class="admin-alert admin-alert--error" role="alert">@error</div> }
+    <div class="frame-grid">@foreach (var frame in Model.FeaturedFrames) {
+        <article class="frame-card home-frame-card"><a class="frame-card__visual" asp-page="/Frames/Details" asp-route-id="@frame.Id">@if (frame.ImageFileName is not null) { <span class="frame-card__photo-backdrop" style="background-image:url('/frame-images/@frame.ImageFileName')" aria-hidden="true"></span><img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model na cor @frame.Color" /> } else { <partial name="_DemoFrameImage" model="frame.Id" /> }</a>
+            <div class="frame-card__body"><p class="frame-card__brand">@frame.Brand</p><h3>@frame.Model</h3><p class="frame-card__color">Cor: @frame.Color</p><div class="frame-card__footer"><strong>@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong><a class="button button--secondary" asp-page="/Frames/Details" asp-route-id="@frame.Id">Ver armação</a></div>
+            </div></article>
+    }</div>
+</div></section>
+
+<section class="home-reservation section-shell" id="como-funciona"><div class="site-container home-reservation__grid">
+    <div class="home-reservation__content"><span class="eyebrow eyebrow--dark">Uma vantagem da sua conta</span><h2>Gostou? Reserve antes de visitar.</h2><p>Escolha até três armações, mantenha-as separadas por 24 horas e experimente com calma na loja.</p><div class="home-reservation__steps"><span><b>1</b> Escolha</span><span><b>2</b> Reserve</span><span><b>3</b> Experimente</span></div><a class="button button--primary" asp-page="/Frames/Index">Escolher armações</a></div>
+    <div class="home-reservation__photo"><img src="~/images/store/oculos-estojo-destaque.png" asp-append-version="true" alt="Armação preparada para experimentar na Ótica Visão" loading="lazy" /></div>
+</div></section>
+
+<section class="home-offer section-shell" aria-labelledby="offer-title">
+    <canvas class="promotion-light" data-promotion-light="offer" aria-hidden="true" hidden></canvas>
+    <div class="site-container home-offer__card">
+        <div class="home-offer__price"><small>Armação por</small><strong><span>R$</span> 39</strong><em>*</em></div>
+        <div class="home-offer__content"><span class="eyebrow">Condição especial</span><h2 id="offer-title">Faça seus óculos completos com a gente.</h2><p>Escolha entre os modelos participantes e confirme as condições com nossa equipe.</p></div>
+        <a class="button button--light" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20a%20promo%C3%A7%C3%A3o%20da%20arma%C3%A7%C3%A3o%20por%20R%24%2039." target="_blank" rel="noopener noreferrer">Consultar pelo WhatsApp</a>
     </div>
 </section>
 
-<section class="offer section-shell" aria-labelledby="offer-title">
-    <div class="site-container">
-        <div class="offer__card">
-            <div class="offer__price"><span>Armação por</span><strong>R$ 39</strong></div>
-            <div class="offer__content">
-                <span class="eyebrow">Condição especial</span>
-                <h2 id="offer-title">Faça seus óculos completos com a gente.</h2>
-                <p>Na compra dos óculos completos, a armação sai por apenas R$ 39. Consulte as condições e os modelos participantes com nossa equipe.</p>
-            </div>
-            <a class="button button--light" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20a%20promo%C3%A7%C3%A3o%20da%20arma%C3%A7%C3%A3o%20por%20R%24%2039." target="_blank" rel="noopener noreferrer">Consultar condições</a>
-        </div>
-    </div>
-</section>
+<section class="home-care section-shell" id="sobre"><div class="site-container home-care__grid">
+    <div class="home-care__photo"><img src="~/images/store/atendimento-destaque.png" asp-append-version="true" alt="Atendimento próximo na Ótica Visão de Piabetá" loading="lazy" /></div>
+    <div class="home-care__content"><span class="eyebrow eyebrow--dark">Atendimento de perto</span><h2>Cuidado para escolher, confiança para enxergar.</h2><p>Aqui você encontra orientação para escolher uma armação confortável, bonita e adequada à sua rotina.</p><ul><li>Atendimento personalizado</li><li>Exame de vista realizado no local</li><li>Loja física no coração de Piabetá</li></ul><div class="home-care__actions"><a class="button button--primary" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a equipe</a><a class="text-link" asp-page="/About">Conheça nossa história →</a></div></div>
+</div></section>
 
-<section class="journey section-shell" id="como-funciona">
-    <div class="site-container">
-        <div class="section-heading">
-            <div>
-                <span class="eyebrow eyebrow--dark">Simples e do seu jeito</span>
-                <h2>Escolha online, experimente na loja</h2>
-                <p>O site ajuda você a encontrar opções. Nossa equipe cuida do encaixe e dos detalhes presencialmente.</p>
-            </div>
-        </div>
-        <div class="journey__steps">
-            <article><span>01</span><h3>Conheça</h3><p>Explore as armações disponíveis no catálogo.</p></article>
-            <article><span>02</span><h3>Fale conosco</h3><p>Tire dúvidas e confirme a disponibilidade pelo WhatsApp.</p></article>
-            <article><span>03</span><h3>Experimente</h3><p>Visite a loja para escolher com conforto e segurança.</p></article>
-        </div>
-    </div>
-</section>
+<section class="home-reviews section-shell" aria-labelledby="reviews-title" hidden><div class="site-container"><div class="section-heading"><div><span class="eyebrow eyebrow--dark">Quem conhece recomenda</span><h2 id="reviews-title">Experiências dos nossos clientes</h2></div></div><div class="home-reviews__grid" data-real-reviews></div></div></section>
 
-<section class="about section-shell" id="sobre">
-    <div class="site-container about__grid">
-        <div class="about__visual">
-            <img src="~/images/brand/logo-original.png" alt="Ótica Visão de Piabetá" width="640" height="640" loading="lazy" />
-        </div>
-        <div class="about__content">
-            <span class="eyebrow eyebrow--dark">Sobre a Ótica Visão</span>
-            <h2>Cuidado de perto faz toda a diferença.</h2>
-            <p>Na Ótica Visão de Piabetá, cada cliente recebe atenção para encontrar uma armação confortável, bonita e adequada à sua rotina.</p>
-            <p>Estamos no coração de Piabetá, com exame de vista realizado no local. Você pode agendar com nossa equipe ou comparecer durante o horário de funcionamento.</p>
-            <a class="text-link" asp-page="/About">Conheça nossa história e atendimento <span aria-hidden="true">→</span></a>
-        </div>
-    </div>
-</section>
-
-<section class="contact section-shell" id="contato">
-    <div class="site-container">
-        <div class="contact__card">
-            <div>
-                <span class="eyebrow">Estamos em Piabetá</span>
-                <h2>Venha encontrar sua próxima armação.</h2>
-                <p>Rua Arthur Rodrigues Loivos, 370 - Piabetá, Magé - RJ.<br />Segunda a sexta, das 9h às 17h. Sábado, das 9h às 13h.<br />Aceitamos Pix, cartão de débito e crédito.</p>
-            </div>
-            <div class="contact__actions">
-                <a class="button button--light" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20%C3%93tica%20Vis%C3%A3o%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es." target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
-                <a class="button button--outline-light" asp-page="/Contact">Ver contato e localização</a>
-            </div>
-        </div>
-    </div>
-</section>
+<section class="contact home-contact section-shell" id="contato"><div class="site-container"><div class="contact__card">
+    <div><span class="eyebrow">Estamos em Piabetá</span><h2>Venha encontrar sua próxima armação.</h2><dl class="visit-details"><div><dt>Onde estamos</dt><dd>Rua Arthur Rodrigues Loivos, 370<span>Piabetá · Magé, RJ</span></dd></div><div><dt>Quando visitar</dt><dd>Seg–sex: 9h–17h<span>Sábado: 9h–13h</span></dd></div><div><dt>Como pagar</dt><dd>Pix, débito e crédito<span>Até 10x sem juros</span></dd></div></dl></div>
+    <div class="contact__actions"><a class="button button--light" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a><a class="button button--outline-light" asp-page="/Contact">Ver contato e localização</a></div>
+</div></div></section>

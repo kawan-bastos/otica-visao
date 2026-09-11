@@ -10,6 +10,10 @@ public sealed class SaleItemInputModel : IValidatableObject
     [Display(Name = "Armação")]
     public Guid? FrameId { get; set; }
 
+    [Range(typeof(decimal), "0", "99999999", ErrorMessage = "Informe um valor válido para a armação.")]
+    [Display(Name = "Valor da armação")]
+    public decimal? FrameUnitPrice { get; set; }
+
     [Range(1, 100, ErrorMessage = "A quantidade deve estar entre 1 e 100.")]
     [Display(Name = "Quantidade")]
     public int Quantity { get; set; } = 1;
@@ -38,10 +42,14 @@ public sealed class SaleItemInputModel : IValidatableObject
         FrameId!.Value, Quantity, IncludesLenses, IncludesLenses ? LensDescription : null,
         IncludesLenses ? LensUnitPrice ?? 0 : 0, IncludesLenses ? Laboratory : null,
         IncludesLenses ? Prescription.ToDomain() : null,
-        IncludesLenses ? ExpectedDeliveryDate : null);
+        IncludesLenses ? ExpectedDeliveryDate : null,
+        FrameUnitPrice ?? 0);
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
+        if (!FrameUnitPrice.HasValue)
+            yield return new ValidationResult("Informe o valor cobrado pela armação.", [nameof(FrameUnitPrice)]);
+
         if (!IncludesLenses) yield break;
         if (string.IsNullOrWhiteSpace(LensDescription))
             yield return new ValidationResult("Descreva as lentes.", [nameof(LensDescription)]);

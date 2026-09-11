@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OticaVisao.Application.Catalog;
@@ -13,8 +14,12 @@ using OticaVisao.Infrastructure.Sales;
 using OticaVisao.Application.LaboratoryOrders;
 using OticaVisao.Infrastructure.LaboratoryOrders;
 using OticaVisao.Application.Reports;
+using OticaVisao.Application.Costs;
+using OticaVisao.Infrastructure.Costs;
 using OticaVisao.Application.Auditing;
 using OticaVisao.Infrastructure.Auditing;
+using OticaVisao.Application.Engagement;
+using OticaVisao.Infrastructure.Engagement;
 
 namespace OticaVisao.Infrastructure;
 
@@ -31,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<AdminAuditInterceptor>();
         services.AddDbContext<ApplicationDbContext>((provider, options) => options
             .UseNpgsql(connectionString)
+            .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.OptionalDependentWithAllNullPropertiesWarning))
             .AddInterceptors(provider.GetRequiredService<AdminAuditInterceptor>()));
         services
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
@@ -48,10 +54,19 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
         services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
+        services.AddScoped<PasswordHistoryService>();
 
-        services.AddAuthorizationBuilder()
+        var authorization = services.AddAuthorizationBuilder()
             .AddPolicy(AdminAuthorization.Policy, policy =>
-                policy.RequireRole(AdminAuthorization.Role));
+                policy.RequireRole(AdminAuthorization.Role))
+            .AddPolicy(AdminAuthorization.GeneralPolicy, policy =>
+                policy.RequireRole(AdminAuthorization.GeneralRole));
+        foreach (var permission in AdminAuthorization.Permissions)
+        {
+            authorization.AddPolicy(permission.Policy, policy => policy.RequireAssertion(context =>
+                context.User.IsInRole(AdminAuthorization.Role)
+                && AdminAuthorization.HasPermission(context.User, permission.Value)));
+        }
 
         services.AddScoped<AdminAccountSeeder>();
         services.AddHostedService<AdminAccountInitializationService>();
@@ -76,8 +91,12 @@ public static class DependencyInjection
         services.AddScoped<ILaboratoryOrderRepository, LaboratoryOrderRepository>();
         services.AddScoped<LaboratoryOrderService>();
         services.AddScoped<ReportService>();
+        services.AddScoped<ICostRepository, CostRepository>();
+        services.AddScoped<CostService>();
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<AuditLogService>();
+        services.AddScoped<ICustomerEngagementService, CustomerEngagementService>();
+        services.AddHostedService<ReservationExpirationService>();
 
         return services;
     }

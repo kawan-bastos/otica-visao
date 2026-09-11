@@ -1,0 +1,5 @@
+@{ var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty; }
+<nav class="report-navigation" aria-label="Áreas dos relatórios">
+    <a class="@(page.EndsWith("/Reports/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-page="/Admin/Reports/Index">Visão geral</a>
+    <a class="@(page.Contains("/Reports/Costs", StringComparison.OrdinalIgnoreCase) ? "active" : null)" asp-page="/Admin/Reports/Costs">Custos</a>
+</nav>

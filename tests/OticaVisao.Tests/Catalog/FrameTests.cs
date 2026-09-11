@@ -49,6 +49,43 @@ public sealed class FrameTests
     }
 
     [Fact]
+    public void ReservationReducesAvailabilityWithoutChangingPhysicalStock()
+    {
+        var frame = CreateFrame(stockQuantity: 2);
+        frame.Publish();
+
+        frame.ReserveOne();
+
+        Assert.Equal(2, frame.StockQuantity);
+        Assert.Equal(1, frame.ReservedQuantity);
+        Assert.Equal(1, frame.AvailableQuantity);
+    }
+
+    [Fact]
+    public void ReservedUnitCannotBeSoldUntilReservationIsReleased()
+    {
+        var frame = CreateFrame(stockQuantity: 1);
+        frame.Publish();
+        frame.ReserveOne();
+
+        Assert.Throws<InvalidOperationException>(() => frame.RemoveFromStock());
+
+        frame.ReleaseReservation();
+        frame.RemoveFromStock();
+        Assert.Equal(0, frame.StockQuantity);
+    }
+
+    [Fact]
+    public void StockCannotBeSetBelowReservedQuantity()
+    {
+        var frame = CreateFrame(stockQuantity: 2);
+        frame.Publish();
+        frame.ReserveOne();
+
+        Assert.Throws<InvalidOperationException>(() => frame.SetStock(0));
+    }
+
+    [Fact]
     public void DeactivatingFrameAlsoUnpublishesIt()
     {
         var frame = CreateFrame(stockQuantity: 2);

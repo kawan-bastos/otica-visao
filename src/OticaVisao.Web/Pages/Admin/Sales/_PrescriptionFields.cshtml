@@ -9,9 +9,12 @@
             @foreach (var eye in new[] { (Name: "OD", Side: "Right"), (Name: "OE", Side: "Left") })
             {
                 var key = $"{distance.Prefix}{eye.Side}";
-                <tr><th>@eye.Name</th>
+                <tr><td data-label="Olho">@eye.Name</td>
                     @foreach (var field in new[] { "Sphere", "Cylinder", "Axis", "Dnp", "Height", "Addition" })
-                    { <td><input name="@($"Input.Prescription.{key}.{field}")" value="@(ViewData.Eval($"{key}.{field}"))" inputmode="decimal" placeholder="@(field == "Axis" ? "0" : field is "Dnp" or "Height" ? "00,0" : "0,00")" aria-label="@distance.Title @eye.Name @field" /></td> }
+                    {
+                        var label = field switch { "Sphere" => "Esférico", "Cylinder" => "Cilíndrico", "Axis" => "Eixo (°)", "Dnp" => "DNP (mm)", "Height" => "Altura (mm)", _ => "Adição" };
+                        <td data-label="@label"><input name="@($"Input.Prescription.{key}.{field}")" value="@(ViewData.Eval($"{key}.{field}"))" inputmode="decimal" placeholder="@(field == "Axis" ? "0" : field is "Dnp" or "Height" ? "00,0" : "0,00")" aria-label="@distance.Title @eye.Name @label" /></td>
+                    }
                 </tr>
             }
             </tbody>

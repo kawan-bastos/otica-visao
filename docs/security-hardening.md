@@ -13,6 +13,6 @@
 
 ## Validação de inicialização
 
-Em ambiente `Production`, o sistema se recusa a iniciar se detectar conexão local, migrations desativadas, armazenamento de fotos não persistente, `AllowedHosts` aberto, ausência de administrador ou senha administrativa com menos de 12 caracteres.
+Em ambiente `Production`, o sistema se recusa a iniciar se detectar conexão local, migrations desativadas, armazenamento de fotos não persistente, `AllowedHosts` aberto, SMTP sem credenciais ou sem SSL, ausência de administrador ou senha administrativa com menos de 12 caracteres.
 
 Logs técnicos e auditoria não devem registrar senhas, documentos completos, endereços ou conteúdo de formulários. Detalhes de exceções permanecem disponíveis somente no ambiente local de desenvolvimento.

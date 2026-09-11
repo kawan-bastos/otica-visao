@@ -29,10 +29,10 @@ public sealed class RegisterModel(
         await using var transaction = await context.Database.BeginTransactionAsync();
 
         var customer = await context.Customers.SingleOrDefaultAsync(item => item.Cpf == cpf);
-        if (customer is not null && !CanAssociate(customer))
+        if (customer is not null)
         {
             ModelState.AddModelError(string.Empty,
-                "Já existe uma ficha com este CPF. Confira telefone e data de nascimento ou fale com a loja.");
+                "Já existe uma ficha com este CPF. Para proteger seus dados, fale com a loja para confirmar o vínculo da conta.");
             return Page();
         }
 
@@ -51,19 +51,10 @@ public sealed class RegisterModel(
                 Input.PostalCode, Input.Street, Input.Number, Input.Complement,
                 Input.Neighborhood, Input.City, Input.State);
 
-            if (customer is null)
-            {
-                customer = new Customer(
-                    Input.DisplayName, Input.PhoneNumber, cpf, Input.BirthDate!.Value,
-                    address, email);
-                context.Customers.Add(customer);
-            }
-            else
-            {
-                customer.Update(
-                    Input.DisplayName, Input.PhoneNumber, cpf, Input.BirthDate!.Value,
-                    address, email, customer.Notes);
-            }
+            customer = new Customer(
+                Input.DisplayName, Input.PhoneNumber, cpf, Input.BirthDate!.Value,
+                address, email);
+            context.Customers.Add(customer);
 
             customer.LinkToAccount(user.Id);
             try
@@ -85,13 +76,6 @@ public sealed class RegisterModel(
         foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, TranslateIdentityError(error.Code));
         return Page();
     }
-
-    private bool CanAssociate(Customer customer) =>
-        !customer.AccountUserId.HasValue
-        && customer.BirthDate == Input.BirthDate
-        && OnlyDigits(customer.Phone) == OnlyDigits(Input.PhoneNumber);
-
-    private static string OnlyDigits(string value) => new(value.Where(char.IsDigit).ToArray());
 
     private static string TranslateIdentityError(string code) => code switch
     {

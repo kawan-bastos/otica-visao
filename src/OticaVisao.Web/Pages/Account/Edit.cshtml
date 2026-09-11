@@ -32,6 +32,10 @@
                     <div class="form-field"><label asp-for="Input.State"></label><input asp-for="Input.State" maxlength="2" autocomplete="address-level1" data-address-field="state" /><span asp-validation-for="Input.State"></span></div>
                 </div>
             </section>
+            <section class="admin-form__section account-security-option">
+                <div class="admin-form__section-heading"><h2>Senha e segurança</h2><p>Altere sua senha sem modificar os demais dados da conta.</p></div>
+                <a class="button button--secondary" asp-page="ChangePassword">Alterar minha senha</a>
+            </section>
             <div class="admin-form__actions"><a class="button button--secondary" asp-page="Index">Cancelar</a><button class="button button--primary" type="submit">Salvar alterações</button></div>
         </form>
     </div>

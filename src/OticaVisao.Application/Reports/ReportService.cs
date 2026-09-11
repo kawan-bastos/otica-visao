@@ -34,7 +34,9 @@ public sealed class ReportService(ISaleRepository saleRepository, IFrameReposito
             .OrderByDescending(item => item.Quantity).ThenByDescending(item => item.Total).Take(8).ToArray();
 
         var dailySales = completed.GroupBy(sale => LocalDate(sale.CompletedAtUtc!.Value))
-            .Select(group => new DailySalesReportItem(group.Key, group.Count(), group.Sum(sale => sale.FinalTotal ?? sale.Total)))
+            .Select(group => new DailySalesReportItem(group.Key, group.Count(),
+                group.SelectMany(sale => sale.Items).Sum(item => item.Quantity),
+                group.Sum(sale => sale.FinalTotal ?? sale.Total)))
             .OrderBy(item => item.Date).ToArray();
 
         var lowStock = (await frameRepository.ListAsync(cancellationToken))

@@ -1,0 +1,55 @@
+@page
+@model OticaVisao.Web.Pages.Admin.Audit.AdministratorsModel
+@using OticaVisao.Infrastructure.Authentication
+@using System.Security.Claims
+@{ ViewData["Title"] = "Administradores"; var generalCount = Model.Administrators.Count(item => item.IsGeneral); var currentId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; }
+
+<main class="admin-page administrator-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <partial name="/Pages/Admin/Audit/_AuditNavigation.cshtml" />
+    <header class="admin-page__header team-header">
+        <div><span class="eyebrow">Equipe e acessos</span><h1>Administradores</h1><p><strong>@Model.Administrators.Count</strong> conta(s) usando o painel administrativo.</p></div>
+        <div class="team-header__actions"><label class="team-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar por nome ou e-mail" aria-label="Buscar administradores" data-team-search /></label><button class="button button--primary" type="button" aria-expanded="@(!ViewData.ModelState.IsValid ? "true" : "false")" aria-controls="new-administrator" data-admin-create-toggle>Novo administrador</button></div>
+    </header>
+
+    @if (TempData["AdminMessage"] is string message) { <div class="admin-alert admin-alert--success">@message</div> }
+    @if (TempData["AdminError"] is string error) { <div class="admin-alert admin-alert--error">@error</div> }
+
+    <section id="new-administrator" class="administrator-create team-create @(!ViewData.ModelState.IsValid ? "is-open" : null)" data-admin-create>
+        <div class="admin-form__section-heading"><div><span class="eyebrow">Novo acesso</span><h2>Adicionar administrador</h2><p>Cadastre a conta e defina o nível de acesso inicial.</p></div><button type="button" class="team-create__close" aria-label="Fechar formulário" data-admin-create-close>×</button></div>
+        <form method="post" asp-page-handler="Create">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div><label asp-for="Input.DisplayName"></label><input asp-for="Input.DisplayName" autocomplete="name" /><span asp-validation-for="Input.DisplayName"></span></div>
+            <div><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="email" /><span asp-validation-for="Input.Email"></span></div>
+            <div><label asp-for="Input.Password"></label><input asp-for="Input.Password" autocomplete="new-password" /><span asp-validation-for="Input.Password"></span></div>
+            <div><label asp-for="Input.ConfirmPassword"></label><input asp-for="Input.ConfirmPassword" autocomplete="new-password" /><span asp-validation-for="Input.ConfirmPassword"></span></div>
+            <fieldset class="administrator-permissions"><legend>Nível e painéis permitidos</legend><label class="permission-option permission-option--featured"><input asp-for="Input.IsGeneral" /><span><strong>Administrador geral</strong><small>Acesso total e permissão para gerenciar outros administradores.</small></span></label><label class="permission-option"><input asp-for="Input.AllPanels" /><span><strong>Liberar todos os painéis</strong><small>Acesso operacional completo, sem gerenciar a equipe.</small></span></label><div class="permission-grid">@foreach (var permission in AdminAuthorization.Permissions) { <label class="permission-option"><input type="checkbox" name="Input.Permissions" value="@permission.Value" checked="@(Model.Input.Permissions.Contains(permission.Value) ? "checked" : null)" /><span>@permission.Label</span></label> }</div><span asp-validation-for="Input.Permissions"></span></fieldset>
+            <button class="button button--primary" type="submit">Criar administrador</button>
+        </form>
+    </section>
+
+    <form id="bulk-admin-form" method="post"></form>
+    <section class="team-bulk" hidden data-team-bulk><strong><span data-team-selected-count>0</span> selecionado(s)</strong><div><button class="button button--secondary" type="submit" form="bulk-admin-form" formaction="?handler=BulkGrantAll">Liberar todos os painéis</button><button class="button button--danger-outline" type="submit" form="bulk-admin-form" formaction="?handler=BulkDelete" onclick="return confirm('Remover as contas selecionadas?');">Remover selecionados</button></div></section>
+
+    <section class="team-table-card" aria-labelledby="team-list-title">
+        <div class="team-table-card__heading"><div><h2 id="team-list-title">Equipe com acesso</h2><p>Gerencie funções e abra a edição completa de cada conta.</p></div><span data-team-result-count>@Model.Administrators.Count registro(s)</span></div>
+        <div class="admin-table-wrapper"><table class="admin-table team-table"><thead><tr><th class="team-check"><input type="checkbox" aria-label="Selecionar todos" data-team-select-all /></th><th>Membro</th><th>Função</th><th>Acesso</th><th>Status</th><th><span class="visually-hidden">Ações</span></th></tr></thead><tbody>
+        @foreach (var administrator in Model.Administrators)
+        {
+            var isOwnAccount = administrator.Id.ToString() == currentId;
+            <tr data-team-row data-team-query="@($"{administrator.DisplayName} {administrator.Email}".ToLowerInvariant())">
+                <td class="team-check" data-label="Selecionar"><input type="checkbox" name="selectedIds" value="@administrator.Id" form="bulk-admin-form" aria-label="Selecionar @administrator.DisplayName" data-team-checkbox /></td>
+                <td data-label="Membro"><div class="team-member"><span class="team-avatar" aria-hidden="true">@Initials(administrator.DisplayName)</span><div><strong>@administrator.DisplayName</strong><small>@administrator.Email</small></div></div></td>
+                <td data-label="Função"><form class="team-role-form" method="post" asp-page-handler="Role" asp-route-id="@administrator.Id"><select name="role" aria-label="Função de @administrator.DisplayName" disabled="@(isOwnAccount ? "disabled" : null)" onchange="this.form.submit()"><option value="general" selected="@(administrator.IsGeneral ? "selected" : null)">Administrador geral</option><option value="admin" selected="@(!administrator.IsGeneral ? "selected" : null)">Administrador</option></select></form>@if (administrator.IsGeneral && generalCount == 1) { <small class="team-owner-warning">Último administrador geral</small> }</td>
+                <td data-label="Acesso"><span class="team-access">@(administrator.IsGeneral || administrator.AllPanels ? "Todos os painéis" : administrator.Permissions.Count + " painel(is)")</span></td>
+                <td data-label="Status"><span class="team-status team-status--active">Ativo</span></td>
+                <td class="team-row-actions" data-label="Ações"><details class="team-menu"><summary aria-label="Mais opções para @administrator.DisplayName">•••</summary><div><a asp-page="/Admin/Audit/EditAdministrator" asp-route-id="@administrator.Id">Editar conta</a>@if (!isOwnAccount) { <form method="post" asp-page-handler="Delete" asp-route-id="@administrator.Id" onsubmit="return confirm('Remover o acesso administrativo desta conta?');"><button type="submit">Remover conta</button></form> }</div></details></td>
+            </tr>
+        }
+        </tbody></table></div>
+        <p class="team-empty" hidden data-team-empty>Nenhum administrador encontrado.</p>
+    </section>
+</main>
+
+@functions { static string Initials(string name) { var parts=name.Split(' ',StringSplitOptions.RemoveEmptyEntries); return string.Concat(parts.Take(2).Select(part=>char.ToUpperInvariant(part[0]))); } }
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -40,7 +40,7 @@
     {
         <div class="admin-table-wrapper">
             <table class="admin-table">
-                <thead><tr><th>Cliente</th><th>CPF</th><th>Telefone</th><th>Nascimento</th><th>Origem</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
+                <thead><tr><th>Cliente</th><th>CPF</th><th>Telefone</th><th>Vendas concluídas</th><th>Origem</th><th><span class="visually-hidden">Ações</span></th></tr></thead>
                 <tbody>
                 @foreach (var customer in Model.Customers)
                 {
@@ -48,9 +48,14 @@
                         <td data-label="Cliente"><strong>@customer.Name</strong>@if (!string.IsNullOrWhiteSpace(customer.Notes)) { <small>Possui observações</small> }</td>
                         <td data-label="CPF">@CustomerCpf.Format(customer.Cpf)</td>
                         <td data-label="Telefone"><a class="admin-contact-link" href="https://wa.me/@CustomerPhone.WhatsAppNumber(customer.Phone)" target="_blank" rel="noopener noreferrer">@customer.Phone</a></td>
-                        <td data-label="Nascimento">@(customer.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informado")</td>
+                        <td data-label="Vendas concluídas">@Model.SalesCountByCustomer.GetValueOrDefault(customer.Id) venda(s)</td>
                         <td data-label="Origem">@(customer.AccountUserId.HasValue ? "Conta do site" : "Atendimento presencial")</td>
-                        <td class="admin-table__actions" data-label="Ações"><a asp-page="Edit" asp-route-id="@customer.Id">Ver e editar</a></td>
+                        <td class="admin-table__actions" data-label="Ações">
+                            <div class="customer-row-actions">
+                                <a class="customer-row-actions__edit" asp-page="Edit" asp-route-id="@customer.Id">Editar</a>
+                                <a class="customer-row-actions__sales" asp-page="/Admin/Sales/Index" asp-route-customerId="@customer.Id">Ver vendas</a>
+                            </div>
+                        </td>
                     </tr>
                 }
                 </tbody>

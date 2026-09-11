@@ -59,6 +59,18 @@ public sealed class AdminAccountSeederTests
             Assert.True(await userManager.IsInRoleAsync(user, AdminAuthorization.Role));
         }
 
+        var generalAdministrators = new List<ApplicationUser>();
+        foreach (var user in users)
+        {
+            if (await userManager.IsInRoleAsync(user, AdminAuthorization.GeneralRole)) generalAdministrators.Add(user);
+        }
+        Assert.Equal("proprietario@example.com", Assert.Single(generalAdministrators).Email);
+
+        var ordinaryAdministrator = users.Single(user => user.Email == "administrador@example.com");
+        var ordinaryClaims = await userManager.GetClaimsAsync(ordinaryAdministrator);
+        Assert.Contains(ordinaryClaims, claim => claim.Type == AdminAuthorization.PermissionClaim
+            && claim.Value == AdminAuthorization.AllPanelsPermission);
+
         Assert.True(await userManager.CheckPasswordAsync(users[1], "Senha-Forte-123!"));
     }
 }

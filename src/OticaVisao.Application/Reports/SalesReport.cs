@@ -13,5 +13,5 @@ public sealed record SalesReport(
 
 public sealed record PaymentReportItem(PaymentMethod Method, int Sales, decimal Total);
 public sealed record TopFrameReportItem(string Code, string Description, int Quantity, decimal Total);
-public sealed record DailySalesReportItem(DateOnly Date, int Sales, decimal Total);
+public sealed record DailySalesReportItem(DateOnly Date, int Sales, int SoldUnits, decimal Total);
 public sealed record LowStockReportItem(Guid FrameId, string Code, string Description, int StockQuantity);

@@ -28,15 +28,15 @@
 
     <section class="admin-summary" aria-label="Resumo do estoque">
         <article><span>Total cadastrado</span><strong>@Model.TotalFrames</strong></article>
-        <article><span>Disponíveis no site</span><strong>@Model.AvailableFrames</strong></article>
-        <article class="admin-summary__warning"><span>Estoque baixo</span><strong>@Model.LowStockFrames</strong></article>
-        <article class="admin-summary__danger"><span>Sem estoque</span><strong>@Model.OutOfStockFrames</strong></article>
+        <article><span>Disponíveis no site</span><strong data-stock-summary="available">@Model.AvailableFrames</strong></article>
+        <article class="admin-summary__warning"><span>Estoque baixo</span><strong data-stock-summary="low">@Model.LowStockFrames</strong></article>
+        <article class="admin-summary__danger"><span>Sem estoque</span><strong data-stock-summary="out">@Model.OutOfStockFrames</strong></article>
     </section>
 
-    <form class="admin-filters" method="get">
-        <div class="form-field">
+    <form class="admin-filters frame-filters" method="get">
+        <div class="form-field frame-filters__search">
             <label asp-for="Search">Buscar armação</label>
-            <input asp-for="Search" placeholder="Código, marca, modelo ou cor" />
+            <div class="frame-filters__input"><span aria-hidden="true">⌕</span><input asp-for="Search" placeholder="Código, marca, modelo ou cor" /></div>
         </div>
         <div class="form-field">
             <label asp-for="Status">Situação</label>
@@ -48,8 +48,8 @@
                 <option value="hidden">Ocultas ou desativadas</option>
             </select>
         </div>
-        <button class="button button--primary" type="submit">Filtrar</button>
-        <a class="button button--secondary" asp-page="Index">Limpar</a>
+        <button class="button button--primary" type="submit">Buscar</button>
+        <a class="frame-filters__clear" asp-page="Index">Limpar filtros</a>
     </form>
 
     @if (Model.Frames.Count == 0)
@@ -62,13 +62,11 @@
     else
     {
         <div class="admin-table-wrapper">
-            <table class="admin-table">
+            <table class="admin-table admin-frames-table">
                 <thead>
                     <tr>
-                        <th>Código</th>
-                        <th>Foto</th>
                         <th>Armação</th>
-                        <th>Tipo</th>
+                        <th>Características</th>
                         <th>Preço</th>
                         <th>Estoque</th>
                         <th>Status</th>
@@ -78,42 +76,51 @@
                 <tbody>
                     @foreach (var frame in Model.Frames)
                     {
-                        <tr>
-                            <td data-label="Código"><strong>@frame.Code</strong></td>
-                            <td data-label="Foto">
-                                @if (frame.ImageFileName is not null)
-                                {
-                                    <img class="admin-frame-thumbnail" src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model" />
-                                }
-                                else
-                                {
-                                    <span class="admin-frame-thumbnail admin-frame-thumbnail--empty">Sem foto</span>
-                                }
+                        <tr data-stock-row>
+                            <td data-label="Armação">
+                                <div class="frame-table-identity">
+                                    @if (frame.ImageFileName is not null)
+                                    {
+                                        <button class="frame-photo-trigger" type="button"
+                                                aria-label="Ampliar foto de @frame.Brand @frame.Model"
+                                                data-frame-photo="/frame-images/@frame.ImageFileName"
+                                                data-frame-photo-title="@frame.Brand @frame.Model"
+                                                data-frame-photo-code="@frame.Code">
+                                            <img class="admin-frame-thumbnail" src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model" />
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-frame-thumbnail admin-frame-thumbnail--empty">Sem foto</span>
+                                    }
+                                    <span><strong class="frame-name-value">@frame.Brand @frame.Model</strong><small>@frame.Code</small></span>
+                                </div>
                             </td>
-                            <td data-label="Armação">@frame.Brand @frame.Model <small>@frame.Color</small></td>
-                            <td data-label="Tipo">@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</td>
-                            <td data-label="Preço">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</td>
+                            <td data-label="Características"><span class="frame-table-characteristics"><strong>@frame.Color</strong><small>@(frame.Type == FrameType.Sunglasses ? "Óculos de sol" : "Óculos de grau")</small></span></td>
+                            <td data-label="Preço"><strong class="frame-price-value">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></td>
                             <td data-label="Estoque">
                                 <div class="stock-control">
-                                    <form method="post" asp-page-handler="DecreaseStock">
+                                    <form method="post" asp-page-handler="DecreaseStock" data-ajax-stock>
                                         <input type="hidden" name="id" value="@frame.Id" />
                                         <input type="hidden" name="search" value="@Model.Search" />
                                         <input type="hidden" name="status" value="@Model.Status" />
-                                        <button type="submit" aria-label="Retirar uma unidade de @frame.Brand @frame.Model" @(frame.StockQuantity == 0 ? "disabled" : null)>−</button>
+                                        <button type="submit" aria-label="Retirar uma unidade de @frame.Brand @frame.Model" @(frame.AvailableQuantity == 0 ? "disabled" : null)>−</button>
                                     </form>
-                                    <strong class="@(frame.StockQuantity <= 2 ? "stock-control__low" : null)">@frame.StockQuantity</strong>
-                                    <form method="post" asp-page-handler="IncreaseStock">
+                                    <strong class="@(frame.StockQuantity <= 2 ? "stock-control__low" : null)" data-stock-quantity>@frame.StockQuantity</strong>
+                                    <form method="post" asp-page-handler="IncreaseStock" data-ajax-stock>
                                         <input type="hidden" name="id" value="@frame.Id" />
                                         <input type="hidden" name="search" value="@Model.Search" />
                                         <input type="hidden" name="status" value="@Model.Status" />
                                         <button type="submit" aria-label="Adicionar uma unidade de @frame.Brand @frame.Model">+</button>
                                     </form>
                                 </div>
+                                @if (frame.ReservedQuantity > 0) { <small>@frame.ReservedQuantity reservada(s) · @frame.AvailableQuantity disponível(is)</small> }
                             </td>
                             <td data-label="Status">
                                 <span class="status-badge @(frame.IsAvailable ? "status-badge--available" : "status-badge--unavailable")">
-                                    @(frame.IsAvailable ? "Disponível" : "Indisponível")
+                                    @(frame.IsAvailable ? "Disponível" : frame.ReservedQuantity > 0 && frame.StockQuantity > 0 ? "Reservada" : "Indisponível")
                                 </span>
+                                @if (frame.ReservedQuantity > 0) { <small><a asp-page="/Admin/Reservations/Index">Gerenciar reserva</a></small> }
                             </td>
                             <td class="admin-table__actions" data-label="Ações">
                                 <a asp-page="Edit" asp-route-id="@frame.Id">Editar</a>
@@ -124,4 +131,13 @@
             </table>
         </div>
     }
+
+    <dialog class="frame-photo-dialog" data-frame-photo-dialog aria-labelledby="frame-photo-dialog-title">
+        <button class="frame-photo-dialog__close" type="button" aria-label="Fechar foto" data-frame-photo-close>×</button>
+        <div class="frame-photo-dialog__visual"><img src="" alt="" data-frame-photo-image /></div>
+        <div class="frame-photo-dialog__caption">
+            <strong id="frame-photo-dialog-title" data-frame-photo-name></strong>
+            <span data-frame-photo-code></span>
+        </div>
+    </dialog>
 </main>

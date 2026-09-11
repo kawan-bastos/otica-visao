@@ -4,7 +4,7 @@
 @model OticaVisao.Web.Pages.Admin.LaboratoryOrders.DetailsModel
 @{ ViewData["Title"] = "Acompanhar pedido"; }
 
-<main class="admin-page admin-page--form">
+<main class="admin-page admin-page--form lab-order-details">
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
     <header class="admin-page__header">
         <div><span class="eyebrow">Pedido de lentes</span><h1>@Model.Order.CustomerName</h1><p>@Model.Order.FrameDescription · @Model.Order.LensDescription</p></div>
@@ -21,7 +21,7 @@
         <div><span>Entregue em</span><strong>@(Model.Order.DeliveredAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "—")</strong></div>
     </section>
 
-    <section class="admin-form"><div class="admin-form__section-heading"><h2>Grau solicitado</h2><p>Informações registradas no item da venda.</p></div><partial name="/Pages/Admin/Shared/_PrescriptionDisplay.cshtml" model="Model.Order.Prescription" /></section>
+    <section class="admin-form lab-prescription"><div class="admin-form__section-heading"><h2>Grau solicitado</h2><p>Informações registradas no item da venda.</p></div><partial name="/Pages/Admin/Shared/_PrescriptionDisplay.cshtml" model="Model.Order.Prescription" /></section>
 
     <form method="post" enctype="multipart/form-data" class="admin-form lab-order-form">
         <input type="hidden" name="id" value="@Model.Order.Id" />

@@ -10,9 +10,15 @@
         <div><span class="eyebrow">Acompanhamento</span><h1>Pedidos de lentes</h1><p>Acompanhe os pedidos desde o envio ao laboratório até a entrega ao cliente.</p></div>
     </header>
 
+    <form class="customer-search" method="get">
+        <div class="form-field"><label asp-for="Search">Buscar pedido</label><input asp-for="Search" placeholder="Cliente, telefone, armação ou lentes" /></div>
+        <button class="button button--primary" type="submit">Buscar</button>
+        <a class="button button--secondary" asp-page="Index">Limpar</a>
+    </form>
+
     @if (Model.Orders.Count == 0)
     {
-        <div class="admin-empty"><h2>Nenhum pedido de lentes</h2><p>Os pedidos são criados automaticamente quando uma venda com lentes é concluída.</p></div>
+        <div class="admin-empty"><h2>@(string.IsNullOrWhiteSpace(Model.Search) ? "Nenhum pedido de lentes" : "Nenhum pedido encontrado")</h2><p>@(string.IsNullOrWhiteSpace(Model.Search) ? "Os pedidos são criados automaticamente quando uma venda com lentes é concluída." : "Tente buscar por outro cliente, telefone, armação ou lente.")</p></div>
     }
     else
     {
@@ -29,8 +35,8 @@
                 @foreach (var order in Model.Orders)
                 {
                     <tr>
-                        <td data-label="Cliente"><strong>@order.CustomerName</strong><small>@order.CustomerPhone</small></td>
-                        <td data-label="Armação e lentes"><strong>@order.FrameDescription</strong><small>@order.Quantity× · @order.LensDescription</small></td>
+                        <td data-label="Cliente"><span class="admin-cell-stack"><strong>@order.CustomerName</strong><small>@order.CustomerPhone</small></span></td>
+                        <td data-label="Armação e lentes"><span class="admin-cell-stack"><strong>@order.FrameDescription</strong><small>@order.Quantity× · @order.LensDescription</small></span></td>
                         <td data-label="Laboratório">@LaboratoryName(order.Laboratory)</td>
                         <td data-label="Previsão">@(order.ExpectedDeliveryDate?.ToString("dd/MM/yyyy") ?? "Não informada")</td>
                         <td data-label="Situação"><span class="lab-status lab-status--@order.Status.ToString().ToLowerInvariant()">@StatusName(order.Status)</span></td>

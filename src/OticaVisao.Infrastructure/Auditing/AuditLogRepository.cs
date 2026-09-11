@@ -10,6 +10,12 @@ internal sealed class AuditLogRepository(ApplicationDbContext context) : IAuditL
     public async Task<IReadOnlyList<AuditLog>> ListRecentAsync(int maximumItems, CancellationToken cancellationToken = default) =>
         await context.AuditLogs.AsNoTracking()
             .OrderByDescending(log => log.OccurredAtUtc)
-            .Take(maximumItems)
-            .ToArrayAsync(cancellationToken);
+        .Take(maximumItems)
+        .ToArrayAsync(cancellationToken);
+
+    public Task AddAsync(AuditLog log, CancellationToken cancellationToken = default) =>
+        context.AuditLogs.AddAsync(log, cancellationToken).AsTask();
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        context.SaveChangesAsync(cancellationToken);
 }

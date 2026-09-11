@@ -1,29 +1,37 @@
-﻿@page
+@page
 @model PrivacyModel
 @{
-    ViewData["Title"] = "Privacidade";
+    ViewData["Title"] = "Política de Privacidade";
 }
 
 <section class="institutional-hero institutional-hero--compact">
     <div class="site-container institutional-hero__content">
         <span class="eyebrow">Transparência</span>
-        <h1>Privacidade</h1>
-        <p>Entenda como esta primeira versão do site utiliza informações durante sua navegação.</p>
+        <h1>Política de Privacidade</h1>
+        <p>Veja quais informações o site utiliza e como falar conosco sobre seus dados.</p>
     </div>
 </section>
 
 <section class="privacy-content section-shell">
     <div class="site-container privacy-content__card">
-        <h2>Dados no site público</h2>
-        <p>O catálogo público não exige cadastro e não possui formulário para coleta de dados pessoais. Ao escolher falar conosco, você será direcionado ao WhatsApp e decidirá quais informações deseja compartilhar nesse serviço.</p>
+        <h2>Informações tratadas</h2>
+        <p>O catálogo pode ser consultado sem cadastro. Ao criar uma conta, são informados nome, CPF, data de nascimento, telefone, endereço e e-mail. A senha não é armazenada em texto legível: o sistema mantém somente o hash protegido pelo ASP.NET Identity.</p>
+        <p>Durante o atendimento, a ótica também pode registrar vendas, itens adquiridos, forma de pagamento, informações de grau, pedidos e documentos de laboratório, observações operacionais e registros de auditoria administrativa.</p>
+
+        <h2>Como essas informações são utilizadas</h2>
+        <p>Os dados apoiam a identificação do cliente, o atendimento, o acompanhamento de vendas e pedidos, a preparação de lentes, a manutenção do histórico comercial e a segurança do painel. Eles não são utilizados pelo site para publicidade comportamental.</p>
+
+        <h2>Conta e ficha comercial</h2>
+        <p>Excluir o acesso ao site remove a conta de autenticação, mas não apaga automaticamente a ficha comercial e os registros de vendas. A conservação ou exclusão desses registros depende das necessidades operacionais e dos prazos que deverão ser definidos com orientação jurídica.</p>
 
         <h2>Serviços externos</h2>
-        <p>A página de contato incorpora um mapa do Google e possui links para Google Maps, WhatsApp e Instagram. Esses serviços podem tratar dados conforme suas próprias políticas de privacidade.</p>
+        <p>Na consulta de endereço, o CEP é enviado ao ViaCEP diretamente pelo navegador. A página de contato pode incorporar o Google Maps e possui links para Google Maps, WhatsApp e Instagram. Ao utilizar esses serviços, o tratamento também estará sujeito às políticas dos respectivos fornecedores.</p>
 
-        <h2>Acesso administrativo</h2>
-        <p>O painel da ótica utiliza um cookie estritamente necessário para manter o acesso do administrador protegido. Ele não é utilizado para publicidade.</p>
+        <h2>Armazenamento e segurança</h2>
+        <p>Contas, fichas e registros comerciais ficam no banco PostgreSQL. Fotos de armações e documentos de laboratório ficam em armazenamento persistente separado. O acesso administrativo exige autenticação e as cópias de segurança devem permanecer privadas.</p>
 
-        <h2>Contato</h2>
-        <p>Em caso de dúvida sobre privacidade, fale com a Ótica Visão pelo WhatsApp <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">(21) 96591-2440</a>.</p>
+        <h2>Revisão e contato</h2>
+        <p>Você pode solicitar esclarecimentos ou a revisão dos seus dados pelo WhatsApp <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">(21) 96591-2440</a>. Pedidos de exclusão ou retenção serão avaliados considerando a natureza do registro e as obrigações aplicáveis.</p>
+        <p><strong>Última atualização técnica:</strong> setembro de 2026. Este texto descreve o funcionamento do sistema e deve receber revisão jurídica antes da publicação definitiva.</p>
     </div>
 </section>

@@ -1,0 +1,14 @@
+@page
+@model OticaVisao.Web.Pages.Account.FavoritesModel
+@{ ViewData["Title"] = "Minhas favoritas"; }
+<main class="account-page engagement-account-page"><div class="site-container account-page__shell engagement-page"><span class="eyebrow">Minha conta</span><h1>Armações favoritas</h1><p>Guarde os modelos de que mais gostou para comparar depois.</p>
+<nav class="account-feature-nav"><a asp-page="Index">Minha conta</a><a asp-page="Reservations">Reservas</a><a class="active" asp-page="Favorites">Favoritos</a><a asp-page="Orders">Compras e pedidos</a></nav>
+@if (Model.Favorites.Count == 0) { <div class="catalog-empty"><h2>Nenhuma favorita</h2><a class="button button--primary" asp-page="/Frames/Index">Explorar catálogo</a></div> }
+else { <div class="engagement-grid favorite-grid">@foreach (var frame in Model.Favorites) { <article class="engagement-card favorite-card">
+    <a class="engagement-card__visual engagement-card__visual-link" asp-page="/Frames/Details" asp-route-id="@frame.Id" aria-label="Ver detalhes de @frame.Brand @frame.Model">
+        @if(frame.ImageFileName is not null){<img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model"/>}
+        else { <partial name="_DemoFrameImage" model="frame.Id" /> }
+    </a>
+    <div class="engagement-card__content"><h2>@frame.Brand @frame.Model</h2><p>@frame.Color · @frame.Code</p><strong class="engagement-card__price">@frame.Price.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong><div class="engagement-card__actions"><a class="button button--primary" asp-page="/Frames/Details" asp-route-id="@frame.Id">Ver e reservar</a><form method="post" asp-page-handler="Remove"><input type="hidden" name="frameId" value="@frame.Id"/><button class="button button--secondary" type="submit">Remover</button></form></div></div>
+</article> }</div>}
+</div></main>

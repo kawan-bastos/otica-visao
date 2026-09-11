@@ -8,7 +8,14 @@
     <section class="login-card login-card--message">
         <span class="eyebrow">Área restrita</span>
         <h1>Acesso não autorizado</h1>
-        <p>Este usuário não possui permissão para acessar o painel administrativo.</p>
-        <a class="button button--primary" asp-page="Login">Voltar ao login</a>
+        <p>Esta conta não possui permissão para acessar esta parte do painel.</p>
+        @if (User.IsInRole(OticaVisao.Infrastructure.Authentication.AdminAuthorization.Role))
+        {
+            <a class="button button--primary" asp-page="@Model.PanelLandingPage">Ir para meu painel</a>
+        }
+        else
+        {
+            <a class="button button--primary" asp-page="Login">Voltar ao login</a>
+        }
     </section>
 </main>

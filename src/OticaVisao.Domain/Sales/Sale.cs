@@ -35,13 +35,13 @@ public sealed class Sale
     public IReadOnlyCollection<SaleItem> Items => items.AsReadOnly();
     public decimal Total => items.Sum(item => item.Total);
 
-    public SaleItem AddItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null)
+    public SaleItem AddItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null, decimal? frameUnitPrice = null)
     {
         EnsureDraft();
         if (items.Any(item => item.FrameId == frame.Id))
             throw new InvalidOperationException("Esta armação já foi adicionada à venda. Remova o item para alterar seus dados.");
 
-        var item = new SaleItem(frame, quantity, includesLenses, lensDescription, lensUnitPrice, laboratory, prescription, expectedDeliveryDate);
+        var item = new SaleItem(frame, quantity, includesLenses, lensDescription, lensUnitPrice, laboratory, prescription, expectedDeliveryDate, frameUnitPrice);
         items.Add(item);
         UpdatedAtUtc = DateTimeOffset.UtcNow;
         return item;

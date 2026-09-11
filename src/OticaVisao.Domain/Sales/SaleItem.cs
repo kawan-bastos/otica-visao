@@ -8,11 +8,12 @@ public sealed class SaleItem
 
     private SaleItem() { }
 
-    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null)
+    internal SaleItem(Frame frame, int quantity, bool includesLenses, string? lensDescription, decimal lensUnitPrice, OpticalLaboratory? laboratory, LensPrescription? prescription = null, DateOnly? expectedDeliveryDate = null, decimal? frameUnitPrice = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         if (quantity <= 0) throw new ArgumentOutOfRangeException(nameof(quantity), "A quantidade deve ser maior que zero.");
         if (lensUnitPrice < 0) throw new ArgumentOutOfRangeException(nameof(lensUnitPrice), "O preço das lentes não pode ser negativo.");
+        if (frameUnitPrice < 0) throw new ArgumentOutOfRangeException(nameof(frameUnitPrice), "O preço da armação não pode ser negativo.");
         if (includesLenses && !laboratory.HasValue) throw new ArgumentException("Selecione o laboratório das lentes.", nameof(laboratory));
         if (includesLenses && string.IsNullOrWhiteSpace(lensDescription)) throw new ArgumentException("Descreva as lentes.", nameof(lensDescription));
         if (!includesLenses && (laboratory.HasValue || lensUnitPrice != 0 || !string.IsNullOrWhiteSpace(lensDescription)))
@@ -26,7 +27,7 @@ public sealed class SaleItem
         FrameColor = frame.Color;
         Quantity = quantity;
         IncludesLenses = includesLenses;
-        FrameUnitPrice = includesLenses ? CompleteGlassesFramePrice : frame.Price;
+        FrameUnitPrice = frameUnitPrice ?? (includesLenses ? CompleteGlassesFramePrice : frame.Price);
         LensDescription = NormalizeOptional(lensDescription, 500);
         LensUnitPrice = lensUnitPrice;
         Laboratory = laboratory;

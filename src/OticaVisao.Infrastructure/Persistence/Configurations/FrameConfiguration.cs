@@ -9,6 +9,7 @@ internal sealed class FrameConfiguration : IEntityTypeConfiguration<Frame>
     public void Configure(EntityTypeBuilder<Frame> builder)
     {
         builder.ToTable("frames");
+        builder.ToTable(table => table.HasCheckConstraint("ck_frames_reserved_quantity", "reserved_quantity >= 0 AND reserved_quantity <= stock_quantity"));
 
         builder.HasKey(frame => frame.Id);
         builder.Property(frame => frame.Id).HasColumnName("id").ValueGeneratedNever();
@@ -21,6 +22,7 @@ internal sealed class FrameConfiguration : IEntityTypeConfiguration<Frame>
         builder.Property(frame => frame.Color).HasColumnName("color").HasMaxLength(80).IsRequired();
         builder.Property(frame => frame.Price).HasColumnName("price").HasPrecision(10, 2).IsRequired();
         builder.Property(frame => frame.StockQuantity).HasColumnName("stock_quantity").IsRequired();
+        builder.Property(frame => frame.ReservedQuantity).HasColumnName("reserved_quantity").HasDefaultValue(0).IsRequired();
         builder.Property(frame => frame.ImageFileName).HasColumnName("image_file_name").HasMaxLength(80);
 
         builder.Property(frame => frame.Type)
@@ -44,6 +46,7 @@ internal sealed class FrameConfiguration : IEntityTypeConfiguration<Frame>
         builder.Property(frame => frame.IsActive).HasColumnName("is_active").IsRequired();
         builder.Property(frame => frame.IsPublished).HasColumnName("is_published").IsRequired();
         builder.Ignore(frame => frame.IsAvailable);
+        builder.Ignore(frame => frame.AvailableQuantity);
 
         builder.OwnsOne(frame => frame.Measurements, measurements =>
         {
@@ -77,6 +80,7 @@ internal sealed class FrameConfiguration : IEntityTypeConfiguration<Frame>
             Color = color,
             Price = 219m,
             StockQuantity = 1,
+            ReservedQuantity = 0,
             Type = type,
             Shape = shape,
             TargetAudience = targetAudience,
