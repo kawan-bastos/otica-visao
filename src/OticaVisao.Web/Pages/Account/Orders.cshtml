@@ -1,0 +1,11 @@
+@page
+@using OticaVisao.Domain.Sales
+@using OticaVisao.Domain.LaboratoryOrders
+@model OticaVisao.Web.Pages.Account.OrdersModel
+@{ ViewData["Title"] = "Compras e pedidos"; }
+<main class="account-page engagement-account-page"><div class="site-container account-page__shell engagement-page"><span class="eyebrow">Minha conta</span><h1>Compras e pedidos</h1><p>Acompanhe o histórico das suas compras e o andamento das lentes.</p>
+<nav class="account-feature-nav"><a asp-page="Index">Minha conta</a><a asp-page="Reservations">Reservas</a><a asp-page="Favorites">Favoritos</a><a class="active" asp-page="Orders">Compras e pedidos</a></nav>
+@if(Model.Sales.Count == 0){<div class="catalog-empty"><h2>Nenhuma compra registrada</h2><p>Quando uma venda for registrada pela loja, ela aparecerá aqui.</p></div>}
+else {<div class="order-history">@foreach(var sale in Model.Sales){<article class="order-history__card"><header><div><span>Venda de @sale.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</span><h2>@Status(sale.Status)</h2></div><strong>@sale.Total.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</strong></header><ul>@foreach(var item in sale.Items){<li>@item</li>}</ul>@foreach(var order in sale.LaboratoryOrders){<p class="order-tracking"><strong>Lentes:</strong> @LabStatus(order.Status) @if(order.ExpectedDate.HasValue){<span>· previsão @order.ExpectedDate.Value.ToString("dd/MM/yyyy")</span>}</p>}</article>}</div>}
+</div></main>
+@functions { static string Status(SaleStatus value)=>value switch{SaleStatus.Draft=>"Em atendimento",SaleStatus.Completed=>"Compra concluída",SaleStatus.Reversed=>"Venda estornada",_=>"Cancelada"}; static string LabStatus(LaboratoryOrderStatus value)=>value switch{LaboratoryOrderStatus.AwaitingShipment=>"Aguardando envio",LaboratoryOrderStatus.Sent=>"Enviado ao laboratório",LaboratoryOrderStatus.Ready=>"Pronto",LaboratoryOrderStatus.Delivered=>"Entregue",_=>"Cancelado"}; }

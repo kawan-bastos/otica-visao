@@ -1,0 +1,20 @@
+@page
+@using OticaVisao.Domain.Engagement
+@model OticaVisao.Web.Pages.Account.ReservationsModel
+@{ ViewData["Title"] = "Minhas reservas"; }
+<main class="account-page engagement-account-page"><div class="site-container account-page__shell engagement-page">
+    <span class="eyebrow">Minha conta</span><h1>Minhas reservas</h1><p>As armações ficam separadas por 24 horas. Visite a loja antes do horário indicado para experimentá-las.</p>
+    @if (TempData["AccountSuccessMessage"] is string ok) { <div class="admin-alert admin-alert--success">@ok</div> }
+    @if (TempData["AccountErrorMessage"] is string error) { <div class="admin-alert admin-alert--error">@error</div> }
+    <nav class="account-feature-nav"><a asp-page="Index">Minha conta</a><a class="active" asp-page="Reservations">Reservas</a><a asp-page="Favorites">Favoritos</a><a asp-page="Orders">Compras e pedidos</a></nav>
+    @if (Model.Reservations.Count == 0) { <div class="catalog-empty"><h2>Nenhuma reserva ainda</h2><p>Escolha até três armações no catálogo.</p><a class="button button--primary" asp-page="/Frames/Index">Ver armações</a></div> }
+    else { <div class="engagement-grid reservation-grid">@foreach (var item in Model.Reservations) { <article class="engagement-card reservation-card">
+        <a class="engagement-card__visual engagement-card__visual-link reservation-card__visual" asp-page="/Frames/Details" asp-route-id="@item.Frame.Id" aria-label="Ver detalhes de @item.Frame.Brand @item.Frame.Model">
+            @if (item.Frame.ImageFileName is not null) { <img src="/frame-images/@item.Frame.ImageFileName" alt="@item.Frame.Brand @item.Frame.Model" /> }
+            else { <partial name="_DemoFrameImage" model="item.Frame.Id" /> }
+        </a>
+        <div class="engagement-card__content reservation-card__content"><span class="status-badge">@Status(item.Status)</span><h2>@item.Frame.Brand @item.Frame.Model</h2><p>@item.Frame.Color · @item.Frame.Code</p><p><strong>Validade:</strong> @item.ExpiresAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</p><p><strong>Visita:</strong> @(item.VisitPeriod ?? "Não informada")</p>
+        @if (item.Status == FrameReservationStatus.Active) { <form method="post" asp-page-handler="Cancel"><input type="hidden" name="id" value="@item.Id" /><button class="button button--danger-outline" type="submit">Cancelar reserva</button></form> }
+        </div></article> }</div> }
+</div></main>
+@functions { static string Status(FrameReservationStatus status) => status switch { FrameReservationStatus.Active => "Ativa", FrameReservationStatus.Cancelled => "Cancelada", FrameReservationStatus.Expired => "Expirada", _ => "Convertida em venda" }; }

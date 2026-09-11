@@ -40,8 +40,11 @@ public sealed class PublicPageSmokeTests : IClassFixture<WebApplicationFactory<P
     [InlineData("/sobre-nos")]
     [InlineData("/contato")]
     [InlineData("/Privacy")]
+    [InlineData("/Terms")]
     [InlineData("/Account/Login")]
     [InlineData("/Account/Register")]
+    [InlineData("/Account/ForgotPassword")]
+    [InlineData("/Account/ResetPassword?requestId=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
     [InlineData("/Admin/Account/Login")]
     public async Task EssentialPublicPagesRespondSuccessfully(string route)
     {

@@ -17,6 +17,14 @@ ConnectionStrings__DefaultConnection=${{Postgres.DATABASE_PRIVATE_URL}}
 Database__ApplyMigrations=true
 FrameImageStorage__Path=/data/frame-images
 LaboratoryDocumentStorage__Path=/data/laboratory-documents
+DataProtection__KeysPath=/data/data-protection-keys
+Email__Host=smtp.gmail.com
+Email__Port=587
+Email__UserName=EMAIL_GMAIL_DO_SISTEMA
+Email__Password=SENHA_DE_APP_DO_GOOGLE
+Email__FromAddress=EMAIL_GMAIL_DO_SISTEMA
+Email__FromName=Ótica Visão de Piabetá
+Email__UseSsl=true
 AdminAccounts__Accounts__0__DisplayName=Carlos
 AdminAccounts__Accounts__0__Email=EMAIL_ADMINISTRATIVO
 AdminAccounts__Accounts__0__Password=SENHA_EXCLUSIVA_DE_PRODUCAO_COM_12_OU_MAIS_CARACTERES
@@ -26,9 +34,15 @@ O nome `Postgres` na referência da conexão deve corresponder ao nome dado ao
 serviço de banco. A senha administrativa de produção deve ser diferente da senha
 usada no computador e nunca deve ser adicionada ao repositório.
 
+Para o Gmail, use uma senha de app gerada na conta do sistema, sem espaços. Não
+use a senha normal da conta Google. Tanto a senha de app quanto a senha
+administrativa devem ser cadastradas somente nas variáveis privadas da
+hospedagem e nunca em arquivos do projeto.
+
 Anexe um volume ao serviço web com ponto de montagem `/data`. Sem esse volume,
 as fotos enviadas pelo painel desaparecem quando o serviço reinicia ou recebe
-uma nova versão. Configure `/health` como caminho de health check; ele só retorna
+uma nova versão. O mesmo volume preserva as chaves que mantêm os cookies válidos
+entre reinicializações. Configure `/health` como caminho de health check; ele só retorna
 sucesso quando a aplicação consegue acessar o banco.
 
 O encaminhamento de cabeçalhos é habilitado porque o HTTPS termina no proxy da

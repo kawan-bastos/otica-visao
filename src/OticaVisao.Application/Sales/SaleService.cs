@@ -41,7 +41,7 @@ public sealed class SaleService(
         if (!frame.IsActive) throw new InvalidOperationException("Esta armação está desativada.");
 
         frame.RemoveFromStock(request.Quantity);
-        sale.AddItem(frame, request.Quantity, request.IncludesLenses, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription, request.ExpectedDeliveryDate);
+        sale.AddItem(frame, request.Quantity, request.IncludesLenses, request.LensDescription, request.LensUnitPrice, request.Laboratory, request.Prescription, request.ExpectedDeliveryDate, request.FrameUnitPrice);
         await saleRepository.SaveChangesAsync(cancellationToken);
     }
 

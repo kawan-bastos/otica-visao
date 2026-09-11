@@ -19,6 +19,8 @@
                 }
             </div>
             <section class="frame-details__content">
+                @if (TempData["CatalogMessage"] is string message) { <div class="admin-alert admin-alert--success">@message</div> }
+                @if (TempData["CatalogError"] is string error) { <div class="admin-alert admin-alert--error">@error</div> }
                 <span class="details-code">Código @Model.Frame.Code</span>
                 <h1>@Model.Frame.Brand @Model.Frame.Model</h1>
                 <p class="details-color">@Model.Frame.Color · @DetailsModel.TypeName(Model.Frame.Type)</p>
@@ -38,6 +40,19 @@
                     <p>Confirme a disponibilidade e visite nossa loja para verificar conforto, encaixe e realizar os ajustes necessários.</p>
                 </div>
                 <a class="button button--primary details-whatsapp" href="@Model.WhatsAppUrl" target="_blank" rel="noopener noreferrer">Tenho interesse no WhatsApp</a>
+                @if (User.Identity?.IsAuthenticated == true && !User.IsInRole(OticaVisao.Infrastructure.Authentication.AdminAuthorization.Role))
+                {
+                    <div class="details-engagement">
+                        <form method="post" asp-page-handler="Favorite"><button class="button button--secondary" type="submit">@(Model.IsFavorite ? "★ Remover dos favoritos" : "☆ Adicionar aos favoritos")</button></form>
+                        @if (Model.IsReserved) { <a class="button button--secondary" asp-page="/Account/Reservations">Ver minha reserva</a> }
+                        else if (Model.Frame.AvailableQuantity > 0)
+                        {
+                            <form method="post" asp-page-handler="Reserve" class="reservation-form"><label for="visitPeriod">Quando pretende visitar?</label><select id="visitPeriod" name="visitPeriod"><option value="">Ainda não sei</option><option>Manhã</option><option>Tarde</option></select><button class="button button--primary" type="submit">Reservar por 24h</button></form>
+                        }
+                        else { <span class="button button--secondary" aria-disabled="true">Reservada no momento</span> }
+                    </div>
+                }
+                else if (User.Identity?.IsAuthenticated != true) { <a class="button button--secondary" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/Frames/Details", new { id = Model.Frame.Id })">Entrar para favoritar ou reservar</a> }
                 <p class="details-promotion">Na compra dos óculos completos, a armação sai por R$ 39. Consulte as condições.</p>
             </section>
         </div>

@@ -248,6 +248,12 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("price");
 
+                    b.Property<int>("ReservedQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("reserved_quantity");
+
                     b.Property<string>("Shape")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -276,7 +282,10 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_frames_code");
 
-                    b.ToTable("frames", (string)null);
+                    b.ToTable("frames", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_frames_reserved_quantity", "reserved_quantity >= 0 AND reserved_quantity <= stock_quantity");
+                        });
 
                     b.HasData(
                         new
@@ -289,6 +298,7 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                             IsPublished = true,
                             Model = "Clássica",
                             Price = 219m,
+                            ReservedQuantity = 0,
                             Shape = "Square",
                             StockQuantity = 1,
                             TargetAudience = "Adult",
@@ -304,6 +314,7 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                             IsPublished = true,
                             Model = "Leve",
                             Price = 219m,
+                            ReservedQuantity = 0,
                             Shape = "Round",
                             StockQuantity = 1,
                             TargetAudience = "Adult",
@@ -319,6 +330,7 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                             IsPublished = true,
                             Model = "Solar",
                             Price = 219m,
+                            ReservedQuantity = 0,
                             Shape = "Aviator",
                             StockQuantity = 1,
                             TargetAudience = "Adult",
@@ -334,6 +346,7 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                             IsPublished = true,
                             Model = "Colorida",
                             Price = 219m,
+                            ReservedQuantity = 0,
                             Shape = "Round",
                             StockQuantity = 1,
                             TargetAudience = "Child",
@@ -349,11 +362,75 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                             IsPublished = true,
                             Model = "Minimal",
                             Price = 219m,
+                            ReservedQuantity = 0,
                             Shape = "Other",
                             StockQuantity = 1,
                             TargetAudience = "Adult",
                             Type = "Prescription"
                         });
+                });
+
+            modelBuilder.Entity("OticaVisao.Domain.Costs.BusinessCost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("description");
+
+                    b.Property<DateOnly>("IncurredOn")
+                        .HasColumnType("date")
+                        .HasColumnName("incurred_on");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IncurredOn")
+                        .HasDatabaseName("ix_business_costs_incurred_on");
+
+                    b.ToTable("business_costs", (string)null);
+                });
+
+            modelBuilder.Entity("OticaVisao.Domain.Costs.MonthlyCostBudget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateOnly>("Month")
+                        .HasColumnType("date")
+                        .HasColumnName("month");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Month")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monthly_cost_budgets_month");
+
+                    b.ToTable("monthly_cost_budgets", (string)null);
                 });
 
             modelBuilder.Entity("OticaVisao.Domain.Customers.Customer", b =>
@@ -422,6 +499,91 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_customers_phone");
 
                     b.ToTable("customers", (string)null);
+                });
+
+            modelBuilder.Entity("OticaVisao.Domain.Engagement.FrameFavorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<Guid>("FrameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("frame_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FrameId");
+
+                    b.HasIndex("CustomerId", "FrameId")
+                        .IsUnique();
+
+                    b.ToTable("frame_favorites", (string)null);
+                });
+
+            modelBuilder.Entity("OticaVisao.Domain.Engagement.FrameReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<DateTime?>("EndedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ended_at_utc");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<Guid>("FrameId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("frame_id");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("VisitPeriod")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("visit_period");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("CustomerId", "FrameId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_frame_reservations_active_customer_frame")
+                        .HasFilter("status = 'Active'");
+
+                    b.HasIndex("CustomerId", "Status");
+
+                    b.HasIndex("FrameId", "Status");
+
+                    b.ToTable("frame_reservations", (string)null);
                 });
 
             modelBuilder.Entity("OticaVisao.Domain.LaboratoryOrders.LaboratoryOrder", b =>
@@ -863,6 +1025,30 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("OticaVisao.Infrastructure.Authentication.PasswordHistoryEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ChangedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "ChangedAtUtc");
+
+                    b.ToTable("PasswordHistory", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -1002,6 +1188,41 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                     b.Navigation("Address");
                 });
 
+            modelBuilder.Entity("OticaVisao.Domain.Engagement.FrameFavorite", b =>
+                {
+                    b.HasOne("OticaVisao.Domain.Customers.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OticaVisao.Domain.Catalog.Frame", null)
+                        .WithMany()
+                        .HasForeignKey("FrameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OticaVisao.Domain.Engagement.FrameReservation", b =>
+                {
+                    b.HasOne("OticaVisao.Domain.Customers.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OticaVisao.Domain.Catalog.Frame", null)
+                        .WithMany()
+                        .HasForeignKey("FrameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OticaVisao.Domain.Sales.Sale", null)
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("OticaVisao.Domain.LaboratoryOrders.LaboratoryOrder", b =>
                 {
                     b.HasOne("OticaVisao.Domain.Sales.Sale", "Sale")
@@ -1056,6 +1277,15 @@ namespace OticaVisao.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Frame");
+                });
+
+            modelBuilder.Entity("OticaVisao.Infrastructure.Authentication.PasswordHistoryEntry", b =>
+                {
+                    b.HasOne("OticaVisao.Infrastructure.Authentication.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OticaVisao.Domain.LaboratoryOrders.LaboratoryOrder", b =>

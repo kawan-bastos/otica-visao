@@ -23,6 +23,20 @@ public static class ProductionConfigurationValidator
         var documentPath = configuration[$"{LaboratoryDocumentStorageOptions.SectionName}:Path"];
         if (string.IsNullOrWhiteSpace(documentPath) || !Path.IsPathRooted(documentPath))
             errors.Add("Configure LaboratoryDocumentStorage:Path com um caminho absoluto e persistente.");
+        var dataProtectionPath = configuration["DataProtection:KeysPath"];
+        if (string.IsNullOrWhiteSpace(dataProtectionPath) || !Path.IsPathRooted(dataProtectionPath))
+            errors.Add("Configure DataProtection:KeysPath com um caminho absoluto e persistente.");
+        var email = configuration.GetSection(AccountEmailOptions.SectionName)
+            .Get<AccountEmailOptions>() ?? new AccountEmailOptions();
+        if (string.IsNullOrWhiteSpace(email.Host)
+            || string.IsNullOrWhiteSpace(email.UserName)
+            || string.IsNullOrWhiteSpace(email.Password)
+            || string.IsNullOrWhiteSpace(email.FromAddress))
+            errors.Add("Configure Email:Host, Email:UserName, Email:Password e Email:FromAddress para a recuperação de senha.");
+        if (email.Port is < 1 or > 65535)
+            errors.Add("Configure Email:Port com uma porta válida.");
+        if (!email.UseSsl)
+            errors.Add("Ative Email:UseSsl em produção.");
 
         if (configuration["AllowedHosts"] is not { Length: > 0 } allowedHosts || allowedHosts == "*")
             errors.Add("Restrinja AllowedHosts ao domínio usado em produção.");

@@ -1,3 +1,4 @@
+@using OticaVisao.Infrastructure.Authentication
 @{
     var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
     var customersActive = page.StartsWith("/Admin/Customers", StringComparison.OrdinalIgnoreCase);
@@ -6,13 +7,16 @@
     var laboratoryOrdersActive = page.StartsWith("/Admin/LaboratoryOrders", StringComparison.OrdinalIgnoreCase);
     var reportsActive = page.StartsWith("/Admin/Reports", StringComparison.OrdinalIgnoreCase);
     var auditActive = page.StartsWith("/Admin/Audit", StringComparison.OrdinalIgnoreCase);
+    var reservationsActive = page.StartsWith("/Admin/Reservations", StringComparison.OrdinalIgnoreCase);
 }
 
-<nav class="admin-navigation" aria-label="Seções do painel administrativo">
-    <a class="@(framesActive ? "active" : null)" asp-page="/Admin/Frames/Index">Armações e estoque</a>
-    <a class="@(customersActive ? "active" : null)" asp-page="/Admin/Customers/Index">Clientes</a>
-    <a class="@(salesActive ? "active" : null)" asp-page="/Admin/Sales/Index">Vendas</a>
-    <a class="@(laboratoryOrdersActive ? "active" : null)" asp-page="/Admin/LaboratoryOrders/Index">Pedidos de lentes</a>
-    <a class="@(reportsActive ? "active" : null)" asp-page="/Admin/Reports/Index">Relatórios</a>
-    <a class="@(auditActive ? "active" : null)" asp-page="/Admin/Audit/Index">Auditoria</a>
+<nav class="admin-navigation" aria-label="Seções do painel administrativo" data-panel-tabs>
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.FramesPermission)) { <a class="@(framesActive ? "active" : null)" aria-current="@(framesActive ? "page" : null)" asp-page="/Admin/Frames/Index">Armações e estoque</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.CustomersPermission)) { <a class="@(customersActive ? "active" : null)" aria-current="@(customersActive ? "page" : null)" asp-page="/Admin/Customers/Index">Clientes</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.SalesPermission)) { <a class="@(salesActive ? "active" : null)" aria-current="@(salesActive ? "page" : null)" asp-page="/Admin/Sales/Index">Vendas</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.ReservationsPermission)) { <a class="@(reservationsActive ? "active" : null)" aria-current="@(reservationsActive ? "page" : null)" asp-page="/Admin/Reservations/Index">Reservas</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.LaboratoryOrdersPermission)) { <a class="@(laboratoryOrdersActive ? "active" : null)" aria-current="@(laboratoryOrdersActive ? "page" : null)" asp-page="/Admin/LaboratoryOrders/Index">Pedidos de lentes</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.ReportsPermission)) { <a class="@(reportsActive ? "active" : null)" aria-current="@(reportsActive ? "page" : null)" asp-page="/Admin/Reports/Index">Relatórios</a> }
+    @if (AdminAuthorization.HasPermission(User, AdminAuthorization.AuditPermission)) { <a class="@(auditActive ? "active" : null)" aria-current="@(auditActive ? "page" : null)" asp-page="/Admin/Audit/Index">Auditoria</a> }
+    <span class="panel-tabs__indicator" aria-hidden="true" data-tab-indicator></span>
 </nav>

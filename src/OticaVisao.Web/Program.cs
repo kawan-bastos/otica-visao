@@ -10,10 +10,19 @@ using Microsoft.AspNetCore.RateLimiting;
 using OticaVisao.Web.Configuration;
 using OticaVisao.Web.Models;
 using System.Globalization;
+using Microsoft.AspNetCore.DataProtection;
+using OticaVisao.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsProduction())
+if (builder.Environment.IsDevelopment())
+{
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
+}
+
+if (!builder.Environment.IsDevelopment())
 {
     ProductionConfigurationValidator.Validate(builder.Configuration);
 }
@@ -22,6 +31,13 @@ if (builder.Environment.IsProduction())
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/Admin", AdminAuthorization.Policy);
+    options.Conventions.AuthorizeFolder("/Admin/Frames", AdminAuthorization.FramesPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/Customers", AdminAuthorization.CustomersPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/Sales", AdminAuthorization.SalesPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/Reservations", AdminAuthorization.ReservationsPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/LaboratoryOrders", AdminAuthorization.LaboratoryOrdersPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/Reports", AdminAuthorization.ReportsPolicy);
+    options.Conventions.AuthorizeFolder("/Admin/Audit", AdminAuthorization.AuditPolicy);
     options.Conventions.AllowAnonymousToPage("/Admin/Account/Login");
     options.Conventions.AllowAnonymousToPage("/Admin/Account/AccessDenied");
 }).AddMvcOptions(options => options.ModelBinderProviders.Insert(0, new FlexibleDecimalModelBinderProvider()));
@@ -35,6 +51,16 @@ builder.Services.Configure<LaboratoryDocumentStorageOptions>(
     builder.Configuration.GetSection(LaboratoryDocumentStorageOptions.SectionName));
 builder.Services.Configure<AdminAccountOptions>(
     builder.Configuration.GetSection(AdminAccountOptions.SectionName));
+builder.Services.Configure<AccountEmailOptions>(
+    builder.Configuration.GetSection(AccountEmailOptions.SectionName));
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddScoped<IAccountEmailSender, SmtpAccountEmailSender>();
+var dataProtection = builder.Services.AddDataProtection()
+    .SetApplicationName("OticaVisao");
+var dataProtectionPath = builder.Environment.IsDevelopment()
+    ? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "data-protection-keys")
+    : builder.Configuration["DataProtection:KeysPath"]!;
+dataProtection.PersistKeysToFileSystem(new DirectoryInfo(dataProtectionPath));
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = "OticaVisao.Auth";
@@ -63,23 +89,83 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
     {
-        var isProtectedSubmission = HttpMethods.IsPost(context.Request.Method)
-            && (context.Request.Path.Equals("/Account/Login", StringComparison.OrdinalIgnoreCase)
-                || context.Request.Path.Equals("/Account/Register", StringComparison.OrdinalIgnoreCase)
-                || context.Request.Path.Equals("/Admin/Account/Login", StringComparison.OrdinalIgnoreCase));
-        if (!isProtectedSubmission) return RateLimitPartition.GetNoLimiter("unrestricted");
-
+        var request = context.Request;
         var client = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        return RateLimitPartition.GetFixedWindowLimiter(client, _ => new FixedWindowRateLimiterOptions
-        {
-            PermitLimit = 10,
-            Window = TimeSpan.FromMinutes(5),
-            QueueLimit = 0,
-            AutoReplenishment = true
-        });
+        var authenticatedClient = context.User.Identity?.IsAuthenticated == true
+            ? $"user:{context.User.Identity.Name}"
+            : $"ip:{client}";
+
+        if (HttpMethods.IsPost(request.Method)
+            && request.Path.Equals("/Account/Register", StringComparison.OrdinalIgnoreCase))
+            return RateLimitPartition.GetFixedWindowLimiter($"register:{client}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+
+        if (HttpMethods.IsPost(request.Method)
+            && (request.Path.Equals("/Account/Login", StringComparison.OrdinalIgnoreCase)
+                || request.Path.Equals("/Admin/Account/Login", StringComparison.OrdinalIgnoreCase)
+                || request.Path.Equals("/Account/ForgotPassword", StringComparison.OrdinalIgnoreCase)
+                || request.Path.Equals("/Account/ResetPassword", StringComparison.OrdinalIgnoreCase)))
+            return RateLimitPartition.GetFixedWindowLimiter($"login:{client}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+
+        if (request.Path.Equals("/health", StringComparison.OrdinalIgnoreCase))
+            return RateLimitPartition.GetFixedWindowLimiter($"health:{client}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+
+        if (request.Path.StartsWithSegments("/frame-images"))
+            return RateLimitPartition.GetFixedWindowLimiter($"images:{client}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 120,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+
+        if (HttpMethods.IsGet(request.Method)
+            && (request.Path.Equals("/", StringComparison.OrdinalIgnoreCase)
+                || request.Path.StartsWithSegments("/Frames")))
+            return RateLimitPartition.GetFixedWindowLimiter($"catalog:{client}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 2,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                AutoReplenishment = true
+            });
+
+        if (HttpMethods.IsPost(request.Method)
+            && (request.Path.StartsWithSegments("/Admin") || request.Path.StartsWithSegments("/Account")))
+            return RateLimitPartition.GetFixedWindowLimiter($"write:{authenticatedClient}", _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+
+        return RateLimitPartition.GetNoLimiter("unrestricted");
     });
     options.OnRejected = async (context, cancellationToken) =>
     {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter = Math.Ceiling(retryAfter.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+        }
         context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
         await context.HttpContext.Response.WriteAsync(
             "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.", cancellationToken);
@@ -119,12 +205,13 @@ app.Use(async (context, next) =>
     context.Response.Headers.XContentTypeOptions = "nosniff";
     context.Response.Headers.XFrameOptions = "DENY";
     context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-    context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    context.Response.Headers["Permissions-Policy"] = "camera=(self), microphone=(), geolocation=()";
 
     if (!app.Environment.IsDevelopment())
     {
         context.Response.Headers.ContentSecurityPolicy =
             "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; " +
+            "connect-src 'self' https://viacep.com.br; " +
             "frame-src https://www.google.com; object-src 'none'; base-uri 'self'; " +
             "form-action 'self'; frame-ancestors 'none'";
     }
@@ -133,8 +220,6 @@ app.Use(async (context, next) =>
 });
 
 app.UseRouting();
-
-app.UseRateLimiter();
 
 app.Use(async (context, next) =>
 {
@@ -149,6 +234,7 @@ app.Use(async (context, next) =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapStaticAssets();
 app.MapGet("/health", async (ApplicationDbContext database, CancellationToken cancellationToken) =>

@@ -169,6 +169,8 @@ public sealed class FrameCatalogService(IFrameRepository repository)
         frame.Color,
         frame.Price,
         frame.StockQuantity,
+        frame.ReservedQuantity,
+        frame.AvailableQuantity,
         frame.Type,
         frame.Shape,
         frame.TargetAudience,

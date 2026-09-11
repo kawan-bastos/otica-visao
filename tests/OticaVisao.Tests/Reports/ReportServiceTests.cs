@@ -25,6 +25,7 @@ public sealed class ReportServiceTests
         Assert.Equal(678m, report.AverageTicket);
         Assert.Equal(2, report.SoldUnits);
         Assert.Equal(2, report.CompleteGlasses);
+        Assert.Equal(2, Assert.Single(report.DailySales).SoldUnits);
         Assert.Equal(1, report.UniqueCustomers);
         Assert.Equal(PaymentMethod.CreditCard, Assert.Single(report.Payments).Method);
         Assert.Equal(2, Assert.Single(report.TopFrames).Quantity);

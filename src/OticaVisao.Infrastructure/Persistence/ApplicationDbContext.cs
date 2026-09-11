@@ -7,6 +7,8 @@ using OticaVisao.Domain.Sales;
 using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Domain.LaboratoryOrders;
 using OticaVisao.Domain.Auditing;
+using OticaVisao.Domain.Engagement;
+using OticaVisao.Domain.Costs;
 
 namespace OticaVisao.Infrastructure.Persistence;
 
@@ -20,6 +22,11 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<LaboratoryOrder> LaboratoryOrders => Set<LaboratoryOrder>();
     public DbSet<LaboratoryOrderHistory> LaboratoryOrderHistory => Set<LaboratoryOrderHistory>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<FrameFavorite> FrameFavorites => Set<FrameFavorite>();
+    public DbSet<FrameReservation> FrameReservations => Set<FrameReservation>();
+    public DbSet<BusinessCost> BusinessCosts => Set<BusinessCost>();
+    public DbSet<MonthlyCostBudget> MonthlyCostBudgets => Set<MonthlyCostBudget>();
+    public DbSet<PasswordHistoryEntry> PasswordHistory => Set<PasswordHistoryEntry>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

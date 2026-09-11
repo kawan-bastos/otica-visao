@@ -10,6 +10,8 @@ public sealed record FrameCatalogItem(
     string Color,
     decimal Price,
     int StockQuantity,
+    int ReservedQuantity,
+    int AvailableQuantity,
     FrameType Type,
     FrameShape Shape,
     TargetAudience TargetAudience,

@@ -1,10 +1,13 @@
 ﻿<!DOCTYPE html>
+@using OticaVisao.Infrastructure.Authentication
 @{
     var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
     var isHome = string.Equals(currentPage, "/Index", StringComparison.OrdinalIgnoreCase);
     var isCatalog = currentPage.StartsWith("/Frames", StringComparison.OrdinalIgnoreCase);
     var isAbout = string.Equals(currentPage, "/About", StringComparison.OrdinalIgnoreCase);
     var isContact = string.Equals(currentPage, "/Contact", StringComparison.OrdinalIgnoreCase);
+    var isAdminPage = currentPage.StartsWith("/Admin", StringComparison.OrdinalIgnoreCase);
+    var panelLandingPage = AdminAuthorization.GetPanelLandingPage(User);
 }
 <html lang="pt-BR">
 <head>
@@ -12,7 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Conheça as armações da Ótica Visão de Piabetá e fale com nossa equipe pelo WhatsApp." />
     <title>@ViewData["Title"] - Ótica Visão de Piabetá</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/OticaVisao.Web.styles.css" asp-append-version="true" />
@@ -27,91 +29,97 @@
                 </div>
             </div>
         </div>
-        <nav class="navbar navbar-expand-lg site-nav" aria-label="Navegação principal">
+        <nav class="site-nav" aria-label="Navegação principal">
             <div class="site-container nav-shell">
                 <a class="brand" asp-area="" asp-page="/Index" aria-label="Ótica Visão - página inicial">
                     <img src="~/images/brand/logo-horizontal.png" alt="Ótica Visão de Piabetá" />
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNavigation" aria-controls="mainNavigation"
-                        aria-label="Abrir menu de navegação">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="offcanvas offcanvas-end navigation-drawer" tabindex="-1" id="mainNavigation" aria-labelledby="navigation-title">
-                    <div class="offcanvas-header">
-                        <h2 class="offcanvas-title" id="navigation-title">Explore a Ótica Visão</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
-                    </div>
-                    <div class="offcanvas-body navigation-body">
-                    <ul class="navbar-nav nav-links nav-primary mx-lg-auto align-items-lg-center">
-                        <li class="nav-item">
-                            <a class="nav-link @(isHome ? "active" : null)" asp-page="/Index" asp-fragment="inicio" aria-current="@(isHome ? "page" : null)">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(isCatalog ? "active" : null)" asp-page="/Frames/Index" aria-current="@(isCatalog ? "page" : null)">Armações</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Index" asp-fragment="como-funciona">Como funciona</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(isAbout ? "active" : null)" asp-page="/About" aria-current="@(isAbout ? "page" : null)">Sobre nós</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(isContact ? "active" : null)" asp-page="/Contact" aria-current="@(isContact ? "page" : null)">Contato</a>
-                        </li>
+                <div class="desktop-navigation">
+                    <ul class="nav-links nav-primary">
+                        <li><a class="nav-link @(isHome ? "active" : null)" asp-page="/Index" asp-fragment="inicio" aria-current="@(isHome ? "page" : null)">Início</a></li>
+                        <li><a class="nav-link @(isCatalog ? "active" : null)" asp-page="/Frames/Index" aria-current="@(isCatalog ? "page" : null)">Armações</a></li>
+                        <li><a class="nav-link" asp-page="/Index" asp-fragment="como-funciona">Como funciona</a></li>
+                        <li><a class="nav-link @(isAbout ? "active" : null)" asp-page="/About" aria-current="@(isAbout ? "page" : null)">Sobre nós</a></li>
+                        <li><a class="nav-link @(isContact ? "active" : null)" asp-page="/Contact" aria-current="@(isContact ? "page" : null)">Contato</a></li>
                     </ul>
                     <div class="nav-actions">
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole(OticaVisao.Infrastructure.Authentication.AdminAuthorization.Role))
                         {
-                            <a class="button button--small button--account" asp-page="/Admin/Frames/Index">Painel</a>
+                            <a class="nav-action-link" asp-page="/Account/Index">Minha conta</a>
+                            <a class="button button--small button--account" asp-page="@panelLandingPage">Painel</a>
                             <form method="post" asp-page="/Admin/Account/Logout"><button class="nav-action-link" type="submit">Sair</button></form>
                         }
                         else if (User.Identity?.IsAuthenticated == true)
                         {
                             <a class="nav-action-link" asp-page="/Account/Index">Minha conta</a>
-                            <a class="button button--small button--panel" asp-page="/Admin/Frames/Index">Painel</a>
+                            <a class="button button--small button--account" asp-page="/Account/Reservations">Reservas</a>
                             <form method="post" asp-page="/Account/Logout"><button class="nav-action-link" type="submit">Sair</button></form>
                         }
                         else
                         {
                             <a class="nav-action-link" asp-page="/Account/Login">Entrar</a>
                             <a class="button button--small button--account" asp-page="/Account/Register">Cadastrar</a>
-                            <a class="button button--small button--panel" asp-page="/Admin/Frames/Index">Painel</a>
                         }
                     </div>
-                    </div>
                 </div>
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Abrir menu de navegação" data-mobile-menu-toggle>
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </nav>
+                <div class="mobile-navigation" id="mobile-navigation" hidden>
+                    <button class="mobile-navigation__backdrop" type="button" aria-label="Fechar menu" data-mobile-menu-close></button>
+                    <aside class="mobile-navigation__panel" aria-label="Menu principal" aria-modal="true" role="dialog">
+                        <header class="mobile-navigation__header"><a class="mobile-navigation__brand" asp-page="/Index" aria-label="Ótica Visão - página inicial"><img src="~/images/brand/logo-horizontal.png" alt="Ótica Visão de Piabetá" /></a><button class="mobile-navigation__close" type="button" aria-label="Fechar menu de navegação" data-mobile-menu-close><span aria-hidden="true"></span></button></header>
+                        <nav class="mobile-navigation__main" aria-label="Links principais"><a class="@(isHome ? "active" : null)" asp-page="/Index" asp-fragment="inicio">Início</a><a class="@(isCatalog ? "active" : null)" asp-page="/Frames/Index">Armações</a><a asp-page="/Index" asp-fragment="como-funciona">Como funciona</a><a class="@(isAbout ? "active" : null)" asp-page="/About">Sobre nós</a><a class="@(isContact ? "active" : null)" asp-page="/Contact">Contato</a></nav>
+                        <nav class="mobile-navigation__resources" aria-label="Recursos"><span>Recursos</span>@if (!User.IsInRole(AdminAuthorization.Role)) { <a asp-page="/Account/Reservations">Minhas reservas</a> }<a asp-page="/Privacy">Privacidade</a><a asp-page="/Terms">Termos de uso</a></nav>
+                        <div class="mobile-navigation__footer">
+                            @if (User.IsInRole(OticaVisao.Infrastructure.Authentication.AdminAuthorization.Role))
+                            {
+                                <a class="button mobile-navigation__ghost" asp-page="/Account/Index">Minha conta</a><a class="button button--primary" asp-page="@panelLandingPage">Acessar painel</a><form method="post" asp-page="/Admin/Account/Logout"><button class="mobile-navigation__signout" type="submit">Sair</button></form>
+                            }
+                            else if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a class="button mobile-navigation__ghost" asp-page="/Account/Index">Minha conta</a><a class="button button--primary" asp-page="/Account/Reservations">Ver reservas</a><form method="post" asp-page="/Account/Logout"><button class="mobile-navigation__signout" type="submit">Sair</button></form>
+                            }
+                            else
+                            {
+                                <a class="button mobile-navigation__ghost" asp-page="/Account/Login">Entrar</a><a class="button button--primary" asp-page="/Account/Register">Cadastrar</a>
+                            }
+                        </div>
+                    </aside>
+                </div>
     </header>
     <main role="main">@RenderBody()</main>
 
-    <footer class="site-footer">
+    <footer class="site-footer @(isAdminPage ? "site-footer--admin" : null)">
+        @if (!isAdminPage)
+        {
+            <section class="site-container footer-cta" aria-labelledby="footer-cta-title">
+                <div><span class="eyebrow">Atendimento de perto</span><h2 id="footer-cta-title">Vamos encontrar os óculos que combinam com você?</h2><p>Veja as armações online e conte com nossa equipe para escolher com calma na loja.</p></div>
+                <div class="footer-cta__actions"><a class="button button--primary" asp-page="/Frames/Index">Ver armações</a><a class="button footer-cta__ghost" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a></div>
+            </section>
+        }
         <div class="site-container footer-grid">
             <div class="footer-brand">
                 <a class="footer-brand__logo" asp-page="/Index" aria-label="Ótica Visão - página inicial"><img src="~/images/brand/logo-horizontal.png" alt="Ótica Visão de Piabetá" width="176" height="72" /></a>
                 <p>Ótica Visão de Piabetá</p>
-                <a class="footer-instagram" href="https://www.instagram.com/oticavisaodepiabeta/" target="_blank" rel="noopener noreferrer">@@oticavisaodepiabeta <span aria-hidden="true">↗</span></a>
+                <span class="footer-brand__description">Óculos, cuidado visual e atendimento próximo no coração de Piabetá.</span>
+                <div class="footer-socials" aria-label="Canais da Ótica Visão">
+                    <a href="https://www.instagram.com/oticavisaodepiabeta/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><span aria-hidden="true">◎</span></a>
+                    <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><span aria-hidden="true">◉</span></a>
+                    <a asp-page="/Contact" aria-label="Localização da loja"><span aria-hidden="true">⌖</span></a>
+                </div>
             </div>
-            <section class="footer-column" aria-labelledby="footer-visit">
-                <h2 id="footer-visit">Visite nossa loja</h2>
-                <p>Rua Arthur Rodrigues Loivos, 370<br />Piabetá, Magé - RJ</p>
-                <a asp-page="/Contact">Contato e localização <span aria-hidden="true">→</span></a>
-            </section>
-            <section class="footer-column" aria-labelledby="footer-hours">
-                <h2 id="footer-hours">Horários de atendimento</h2>
-                <dl class="footer-hours"><div><dt>Segunda a sexta</dt><dd>9h às 17h</dd></div><div><dt>Sábado</dt><dd>9h às 13h</dd></div></dl>
-                <a class="footer-contact" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">WhatsApp · (21) 96591-2440 <span aria-hidden="true">↗</span></a>
-            </section>
+            <nav class="footer-column" aria-labelledby="footer-explore"><h2 id="footer-explore">Explore</h2><a asp-page="/Frames/Index">Armações</a><a asp-page="/Index" asp-fragment="como-funciona">Como funciona</a>@if (!User.IsInRole(AdminAuthorization.Role)) { <a asp-page="/Account/Reservations">Minhas reservas</a> }</nav>
+            <nav class="footer-column" aria-labelledby="footer-company"><h2 id="footer-company">Ótica Visão</h2><a asp-page="/About">Sobre nós</a><a asp-page="/Contact">Contato e localização</a><p>Rua Arthur Rodrigues Loivos, 370<br />Piabetá, Magé - RJ</p></nav>
+            <section class="footer-column" aria-labelledby="footer-hours"><h2 id="footer-hours">Atendimento</h2><dl class="footer-hours"><div><dt>Segunda a sexta</dt><dd>9h às 17h</dd></div><div><dt>Sábado</dt><dd>9h às 13h</dd></div></dl><a class="footer-contact" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">(21) 96591-2440 <span aria-hidden="true">↗</span></a></section>
         </div>
         <div class="site-container footer-bottom">
                 <p>&copy; @DateTime.Now.Year Ótica Visão. Todos os direitos reservados.</p>
                 <nav class="footer-bottom__links" aria-label="Links do rodapé">
-                    <a asp-page="/About">Sobre nós</a>
                     <a asp-page="/Privacy">Privacidade</a>
-                    @if (!User.IsInRole("Admin"))
-                    {
-                        <a asp-page="/Admin/Account/Login">Acesso administrativo</a>
-                    }
+                    <a asp-page="/Terms">Termos de uso</a>
                 </nav>
         </div>
     </footer>

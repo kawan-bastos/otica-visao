@@ -48,11 +48,11 @@ public sealed class EditModel(
             return Page();
         }
 
-        var customer = linkedCustomer ?? cpfCustomer;
-        if (linkedCustomer is null && customer is not null && !CanAssociate(customer))
+        var customer = linkedCustomer;
+        if (linkedCustomer is null && cpfCustomer is not null)
         {
             ModelState.AddModelError(string.Empty,
-                "Já existe uma ficha com este CPF. Confira telefone e data de nascimento ou fale com a loja.");
+                "Já existe uma ficha com este CPF. Para proteger seus dados, fale com a loja para confirmar o vínculo da conta.");
             return Page();
         }
 
@@ -102,11 +102,6 @@ public sealed class EditModel(
         return RedirectToPage("Index");
     }
 
-    private bool CanAssociate(Customer customer) =>
-        !customer.AccountUserId.HasValue
-        && customer.BirthDate == Input.BirthDate
-        && OnlyDigits(customer.Phone) == OnlyDigits(Input.PhoneNumber);
-
     private static CustomerProfileInputModel FromRecords(ApplicationUser user, Customer? customer) => new()
     {
         DisplayName = customer?.Name ?? user.DisplayName,
@@ -123,7 +118,6 @@ public sealed class EditModel(
         State = customer?.Address?.State ?? "RJ"
     };
 
-    private static string OnlyDigits(string value) => new(value.Where(char.IsDigit).ToArray());
     private static string FormatCpf(string? value) => value?.Length == 11
         ? $"{value[..3]}.{value[3..6]}.{value[6..9]}-{value[9..]}"
         : string.Empty;

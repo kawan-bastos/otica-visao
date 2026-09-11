@@ -1,0 +1,14 @@
+@using OticaVisao.Infrastructure.Authentication
+@{
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+    var historyActive = string.Equals(page, "/Admin/Audit/Index", StringComparison.OrdinalIgnoreCase);
+    var administratorsActive = page.StartsWith("/Admin/Audit/Administrators", StringComparison.OrdinalIgnoreCase)
+        || page.StartsWith("/Admin/Audit/EditAdministrator", StringComparison.OrdinalIgnoreCase);
+}
+<nav class="report-navigation audit-navigation" aria-label="Seções da auditoria">
+    <a class="@(historyActive ? "active" : null)" asp-page="/Admin/Audit/Index">Histórico</a>
+    @if (User.IsInRole(AdminAuthorization.GeneralRole))
+    {
+        <a class="@(administratorsActive ? "active" : null)" asp-page="/Admin/Audit/Administrators">Administradores</a>
+    }
+</nav>

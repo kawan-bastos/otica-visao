@@ -4,8 +4,9 @@
 
 <main class="admin-page">
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <partial name="/Pages/Admin/Audit/_AuditNavigation.cshtml" />
     <header class="admin-page__header">
-        <div><span class="eyebrow">Segurança e controle</span><h1>Auditoria</h1><p>Consulte as 200 ações administrativas mais recentes.</p></div>
+        <div><span class="eyebrow">Segurança e controle</span><h1>Histórico de alterações</h1><p>Consulte as 200 ações administrativas mais recentes.</p></div>
     </header>
 
     @if (Model.Logs.Count == 0)

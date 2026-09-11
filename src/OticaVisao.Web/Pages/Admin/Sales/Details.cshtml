@@ -39,10 +39,10 @@
     }
 
     <section class="sale-items-section">
-        <div class="admin-form__section-heading"><h2>Itens da venda</h2><p>O estoque fica reservado enquanto o item permanecer neste rascunho.</p></div>
+        <div class="admin-form__section-heading"><h2>Itens da venda</h2><p>@ItemsDescription(Model.Sale.Status)</p></div>
         @if (Model.Sale.Items.Count == 0)
         {
-            <div class="admin-empty"><h3>Nenhum item adicionado</h3><p>Use o formulário abaixo para incluir a primeira armação.</p></div>
+            <div class="admin-empty"><h3>Nenhum item adicionado</h3><p>@EmptyItemsDescription(Model.Sale.Status)</p></div>
         }
         else
         {
@@ -80,11 +80,16 @@
         <input type="hidden" name="id" value="@Model.Sale.Id" />
         <div asp-validation-summary="All" class="form-validation" role="alert"></div>
         <section class="admin-form__section">
-            <div class="admin-form__section-heading"><h2>Adicionar armação</h2><p>Óculos completo aplica automaticamente o preço promocional de R$ 39 na armação.</p></div>
+            <div class="admin-form__section-heading"><h2>Adicionar armação</h2><p>Selecione a armação e informe separadamente os valores cobrados pela armação e pelas lentes.</p></div>
+            <div class="sale-promotion-guidance">
+                <strong>@(Model.FromReservation ? "Armação da reserva selecionada" : "Promoção disponível")</strong>
+                <span>Se a venda atender às condições da promoção, informe R$ 39 no valor da armação. Nenhum preço é aplicado automaticamente.</span>
+            </div>
             <div class="form-grid form-grid--three">
-                <div class="form-field form-field--wide"><label asp-for="Input.FrameId"></label><select asp-for="Input.FrameId"><option value="">Selecione</option>@foreach (var frame in Model.AvailableFrames) { <option value="@frame.Id">@frame.Code · @frame.Brand @frame.Model · @frame.Color · estoque @frame.StockQuantity</option> }</select><span asp-validation-for="Input.FrameId"></span></div>
+                <div class="form-field form-field--wide"><label asp-for="Input.FrameId"></label><select asp-for="Input.FrameId"><option value="">Selecione</option>@foreach (var frame in Model.AvailableFrames) { <option value="@frame.Id">@frame.Code · @frame.Brand @frame.Model · @frame.Color · disponível @frame.AvailableQuantity</option> }</select><span asp-validation-for="Input.FrameId"></span></div>
+                <div class="form-field"><label asp-for="Input.FrameUnitPrice"></label><input asp-for="Input.FrameUnitPrice" inputmode="decimal" placeholder="R$ 0,00" /><span asp-validation-for="Input.FrameUnitPrice"></span></div>
                 <div class="form-field"><label asp-for="Input.Quantity"></label><input asp-for="Input.Quantity" type="number" min="1" /><span asp-validation-for="Input.Quantity"></span></div>
-                <label class="form-checkbox sale-complete-toggle"><input asp-for="Input.IncludesLenses" data-sale-includes-lenses /><span><strong>Óculos completo</strong><small>Inclui lentes e armação promocional por R$ 39</small></span></label>
+                <label class="form-checkbox sale-complete-toggle"><input asp-for="Input.IncludesLenses" data-sale-includes-lenses /><span><strong>Óculos completo</strong><small>Marque para registrar lentes, grau e laboratório.</small></span></label>
             </div>
             <div class="form-grid form-grid--three" data-sale-lens-fields>
                 <div class="form-field form-field--wide"><label asp-for="Input.LensDescription"></label><input asp-for="Input.LensDescription" placeholder="Ex.: visão simples, antirreflexo" /><span asp-validation-for="Input.LensDescription"></span></div>
@@ -132,22 +137,19 @@
 
     private static string StatusName(SaleStatus status) => status switch { SaleStatus.Draft => "Em andamento", SaleStatus.Completed => "Concluída", SaleStatus.Cancelled => "Cancelada", _ => "Estornada" };
     private static string PaymentName(PaymentMethod? payment) => payment switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", PaymentMethod.CreditCard => "Cartão de crédito", _ => "—" };
+    private static string ItemsDescription(SaleStatus status) => status switch
+    {
+        SaleStatus.Draft => "O estoque fica reservado enquanto o item permanecer neste rascunho.",
+        SaleStatus.Completed => "Estes itens foram baixados do estoque na conclusão da venda.",
+        SaleStatus.Cancelled => "A venda foi cancelada e os itens foram liberados no estoque.",
+        _ => "Os itens foram devolvidos ao estoque após o estorno."
+    };
+    private static string EmptyItemsDescription(SaleStatus status) => status == SaleStatus.Draft
+        ? "Use o formulário abaixo para incluir a primeira armação."
+        : "Esta venda foi encerrada sem itens registrados.";
 }
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        (() => {
-            const payment = document.querySelector('[data-payment-method]');
-            const installments = document.querySelector('[data-installments]');
-            if (!payment || !installments) return;
-            const update = () => {
-                const credit = payment.value === 'CreditCard';
-                installments.hidden = !credit;
-                if (!credit) installments.querySelector('select').value = '1';
-            };
-            payment.addEventListener('change', update);
-            update();
-        })();
-    </script>
+    <script src="~/js/sale-payment.js" asp-append-version="true"></script>
 }

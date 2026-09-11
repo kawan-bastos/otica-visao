@@ -7,7 +7,8 @@
         <div class="login-card__intro">
             <span class="eyebrow">Cadastro gratuito</span>
             <h1>Crie sua conta</h1>
-            <p>Ao criar a conta, sua ficha de cliente também será criada para facilitar seus próximos atendimentos. Não é necessário enviar foto.</p>
+            <p>Ao criar a conta, sua ficha de cliente também será criada para facilitar seus próximos atendimentos. Os dados abaixo identificam você e apoiam o atendimento na loja. Não é necessário enviar foto.</p>
+            <p>Já possui uma ficha feita presencialmente? Para proteger seus dados, fale com a loja antes de criar outra conta.</p>
         </div>
         <form method="post" class="login-form account-form">
             <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
@@ -39,6 +40,7 @@
             <div class="form-field"><label asp-for="Input.Password"></label><input asp-for="Input.Password" autocomplete="new-password" /><small>Use 8 caracteres com letra maiúscula, minúscula, número e símbolo.</small><span asp-validation-for="Input.Password"></span></div>
             <div class="form-field"><label asp-for="Input.ConfirmPassword"></label><input asp-for="Input.ConfirmPassword" autocomplete="new-password" /><span asp-validation-for="Input.ConfirmPassword"></span></div>
             <button type="submit" class="button button--primary">Criar minha conta</button>
+            <p class="account-form__aside">Ao continuar, você declara ter lido nossa <a asp-page="/Privacy">Política de Privacidade</a> e os <a asp-page="/Terms">Termos de Uso</a>.</p>
             <p class="account-form__aside">Já possui uma conta? <a asp-page="Login">Entrar</a></p>
         </form>
     </div>

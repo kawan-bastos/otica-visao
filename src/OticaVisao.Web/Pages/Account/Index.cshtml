@@ -1,31 +1,68 @@
 @page
 @model OticaVisao.Web.Pages.Account.IndexModel
+@using OticaVisao.Infrastructure.Authentication
 @{ ViewData["Title"] = "Minha conta"; }
 
 <section class="account-page">
     <div class="site-container account-page__shell">
-        <span class="eyebrow">Minha conta</span>
-        <h1>Olá, @Model.DisplayName!</h1>
-        <p>Confira os dados usados no seu cadastro.</p>
+        <header class="account-overview-header">
+            <span class="eyebrow">Minha conta</span>
+            <h1>Olá, @Model.DisplayName!</h1>
+            <p>@(Model.IsAdministrator ? "Confira os dados da sua conta administrativa e acesse o painel da loja." : "Gerencie seus dados, reservas e preferências em um só lugar.")</p>
+        </header>
         @if (TempData["AccountSuccessMessage"] is string successMessage)
         {
             <div class="admin-alert admin-alert--success" role="status">@successMessage</div>
         }
-        <dl class="account-details">
-            <div><dt>Nome</dt><dd>@Model.DisplayName</dd></div>
-            <div><dt>E-mail</dt><dd>@Model.Email</dd></div>
-            <div><dt>Telefone</dt><dd>@(Model.PhoneNumber ?? "Não informado")</dd></div>
-            <div><dt>CPF</dt><dd>@(string.IsNullOrWhiteSpace(Model.Cpf) ? "Não informado" : Model.Cpf)</dd></div>
-            <div><dt>Data de nascimento</dt><dd>@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informada")</dd></div>
-            <div><dt>Endereço</dt><dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "Não informado" : Model.Address)</dd></div>
-        </dl>
-        <div class="account-actions">
+        @if (TempData["AccountNoticeMessage"] is string noticeMessage)
+        {
+            <div class="admin-alert admin-alert--error" role="alert">@noticeMessage</div>
+        }
+        <section class="account-information-card" aria-labelledby="account-information-title">
+            <div class="account-information-card__heading">
+                <div><span class="account-section-kicker">Informações pessoais</span><h2 id="account-information-title">Seus dados</h2></div>
+                <span class="account-information-card__badge">Conta ativa</span>
+            </div>
+            <dl class="account-details">
+                <div><dt>Nome</dt><dd>@Model.DisplayName</dd></div>
+                <div><dt>E-mail</dt><dd>@Model.Email</dd></div>
+                <div><dt>Telefone</dt><dd>@(Model.PhoneNumber ?? "Não informado")</dd></div>
+                @if (!Model.IsAdministrator)
+                {
+                    <div><dt>CPF</dt><dd>@(string.IsNullOrWhiteSpace(Model.Cpf) ? "Não informado" : Model.Cpf)</dd></div>
+                    <div><dt>Data de nascimento</dt><dd>@(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "Não informada")</dd></div>
+                    <div><dt>Endereço</dt><dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "Não informado" : Model.Address)</dd></div>
+                }
+            </dl>
+        </section>
+
+        <section class="account-shortcuts" aria-labelledby="account-shortcuts-title">
+            <div class="account-shortcuts__heading"><span class="account-section-kicker">Acesso rápido</span><h2 id="account-shortcuts-title">O que você deseja fazer?</h2></div>
+            <nav class="account-shortcuts__grid" aria-label="Áreas da conta">
+            @if (Model.IsAdministrator)
+            {
+                <a class="account-shortcut account-shortcut--primary" asp-page="@AdminAuthorization.GetPanelLandingPage(User)"><span class="account-shortcut__icon" aria-hidden="true">▦</span><span><strong>Ir para o painel</strong><small>Administrar as áreas permitidas da loja</small></span><b aria-hidden="true">→</b></a>
+            }
+            else
+            {
+                <a class="account-shortcut account-shortcut--primary" asp-page="Reservations"><span class="account-shortcut__icon" aria-hidden="true">◇</span><span><strong>Minhas reservas</strong><small>Acompanhe armações separadas para você</small></span><b aria-hidden="true">→</b></a>
+                <a class="account-shortcut" asp-page="Favorites"><span class="account-shortcut__icon" aria-hidden="true">☆</span><span><strong>Favoritos</strong><small>Reveja os modelos que você salvou</small></span><b aria-hidden="true">→</b></a>
+                <a class="account-shortcut" asp-page="Orders"><span class="account-shortcut__icon" aria-hidden="true">▤</span><span><strong>Compras e pedidos</strong><small>Consulte seu histórico e andamento</small></span><b aria-hidden="true">→</b></a>
+            }
+            </nav>
+        </section>
+
+        <section class="account-secondary-actions" aria-label="Outras ações">
+            <a asp-page="/Frames/Index"><span aria-hidden="true">⌕</span><span><strong>Ver armações</strong><small>Explorar o catálogo</small></span></a>
             @if (Model.CanDeleteAccount)
             {
-                <a class="button button--primary" asp-page="Edit">Editar meus dados</a>
+                <a asp-page="Edit"><span aria-hidden="true">✎</span><span><strong>Editar meus dados</strong><small>Atualizar informações pessoais</small></span></a>
             }
-            <a class="button button--whatsapp" href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer">Falar com a loja</a>
-        </div>
+            @if (!Model.IsAdministrator)
+            {
+                <a href="https://wa.me/5521965912440" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">◌</span><span><strong>Falar com a loja</strong><small>Atendimento pelo WhatsApp</small></span></a>
+            }
+        </section>
         @if (Model.CanDeleteAccount)
         {
             <section class="account-danger-zone">

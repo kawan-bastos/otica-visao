@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using OticaVisao.Infrastructure.Authentication;
 using OticaVisao.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Mvc;
 
 namespace OticaVisao.Web.Pages.Account;
 
@@ -17,17 +18,20 @@ public sealed class IndexModel(UserManager<ApplicationUser> userManager, Applica
     public DateOnly? BirthDate { get; private set; }
     public string Address { get; private set; } = string.Empty;
     public bool CanDeleteAccount { get; private set; }
+    public bool IsAdministrator { get; private set; }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
         var user = await userManager.GetUserAsync(User) ?? throw new InvalidOperationException("Usuário autenticado não encontrado.");
         DisplayName = user.DisplayName;
         Email = user.Email ?? string.Empty;
         PhoneNumber = user.PhoneNumber;
-        CanDeleteAccount = !await userManager.IsInRoleAsync(user, AdminAuthorization.Role);
+        IsAdministrator = await userManager.IsInRoleAsync(user, AdminAuthorization.Role);
+        CanDeleteAccount = !IsAdministrator;
+        if (IsAdministrator) return Page();
         var customer = await context.Customers.AsNoTracking()
             .SingleOrDefaultAsync(item => item.AccountUserId == user.Id);
-        if (customer is null) return;
+        if (customer is null) return Page();
 
         Cpf = FormatCpf(customer.Cpf);
         BirthDate = customer.BirthDate;
@@ -36,6 +40,7 @@ public sealed class IndexModel(UserManager<ApplicationUser> userManager, Applica
             var complement = string.IsNullOrWhiteSpace(customer.Address.Complement) ? string.Empty : $", {customer.Address.Complement}";
             Address = $"{customer.Address.Street}, {customer.Address.Number}{complement} — {customer.Address.Neighborhood}, {customer.Address.City}/{customer.Address.State} — CEP {customer.Address.PostalCode}";
         }
+        return Page();
     }
 
     private static string FormatCpf(string? value) => value?.Length == 11

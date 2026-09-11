@@ -1,0 +1,42 @@
+@page "{id:guid}"
+@model OticaVisao.Web.Pages.Admin.Audit.EditAdministratorModel
+@using OticaVisao.Infrastructure.Authentication
+@{ ViewData["Title"] = "Editar administrador"; }
+
+<main class="admin-page administrator-page">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <partial name="/Pages/Admin/Audit/_AuditNavigation.cshtml" />
+    <header class="admin-page__header"><div><span class="eyebrow">Controle de acesso</span><h1>Editar administrador</h1><p>Atualize os dados da conta e escolha as áreas que ela poderá acessar.</p></div><a class="button button--secondary" asp-page="Administrators">Voltar</a></header>
+
+    <section class="administrator-create administrator-edit">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div><label asp-for="Input.DisplayName"></label><input asp-for="Input.DisplayName" autocomplete="name" /><span asp-validation-for="Input.DisplayName"></span></div>
+            <div><label asp-for="Input.Email"></label><input asp-for="Input.Email" autocomplete="email" /><span asp-validation-for="Input.Email"></span></div>
+            <div><label asp-for="Input.NewPassword"></label><input asp-for="Input.NewPassword" autocomplete="new-password" placeholder="Deixe vazio para manter a atual" /><span asp-validation-for="Input.NewPassword"></span></div>
+            <div><label asp-for="Input.ConfirmPassword"></label><input asp-for="Input.ConfirmPassword" autocomplete="new-password" /><span asp-validation-for="Input.ConfirmPassword"></span></div>
+            <fieldset class="administrator-permissions">
+                <legend>Nível e painéis permitidos</legend>
+                @if (Model.IsOwnAccount)
+                {
+                    <label class="permission-option permission-option--featured"><input type="checkbox" checked disabled /><input type="hidden" name="Input.IsGeneral" value="true" /><span><strong>Administrador geral</strong><small>Você não pode retirar o próprio acesso geral.</small></span></label>
+                }
+                else
+                {
+                    <label class="permission-option permission-option--featured"><input asp-for="Input.IsGeneral" /><span><strong>Administrador geral</strong><small>Acesso completo, inclusive para criar, editar e remover administradores.</small></span></label>
+                }
+                <label class="permission-option"><input asp-for="Input.AllPanels" /><span><strong>Liberar todos os painéis</strong><small>Acesso operacional completo.</small></span></label>
+                <div class="permission-grid">
+                    @foreach (var permission in AdminAuthorization.Permissions)
+                    {
+                        <label class="permission-option"><input type="checkbox" name="Input.Permissions" value="@permission.Value" checked="@(Model.Input.Permissions.Contains(permission.Value) ? "checked" : null)" /><span>@permission.Label</span></label>
+                    }
+                </div>
+                <span asp-validation-for="Input.IsGeneral"></span><span asp-validation-for="Input.Permissions"></span>
+            </fieldset>
+            <button class="button button--primary" type="submit">Salvar alterações</button>
+        </form>
+    </section>
+</main>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

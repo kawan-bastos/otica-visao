@@ -52,6 +52,8 @@ public sealed class Frame
 
     public int StockQuantity { get; private set; }
 
+    public int ReservedQuantity { get; private set; }
+
     public FrameType Type { get; private set; }
 
     public FrameShape Shape { get; private set; }
@@ -66,7 +68,9 @@ public sealed class Frame
 
     public bool IsPublished { get; private set; }
 
-    public bool IsAvailable => IsActive && IsPublished && StockQuantity > 0;
+    public int AvailableQuantity => Math.Max(0, StockQuantity - ReservedQuantity);
+
+    public bool IsAvailable => IsActive && IsPublished && AvailableQuantity > 0;
 
     public void Publish()
     {
@@ -105,7 +109,7 @@ public sealed class Frame
             throw new ArgumentOutOfRangeException(nameof(quantity), quantity, "A quantidade removida deve ser maior que zero.");
         }
 
-        if (quantity > StockQuantity)
+        if (quantity > AvailableQuantity)
         {
             throw new InvalidOperationException("Não há estoque suficiente para realizar a baixa.");
         }
@@ -115,7 +119,25 @@ public sealed class Frame
 
     public void ChangePrice(decimal price) => Price = ValidPrice(price);
 
-    public void SetStock(int stockQuantity) => StockQuantity = ValidStock(stockQuantity);
+    public void SetStock(int stockQuantity)
+    {
+        stockQuantity = ValidStock(stockQuantity);
+        if (stockQuantity < ReservedQuantity)
+            throw new InvalidOperationException("O estoque não pode ser menor que a quantidade reservada.");
+        StockQuantity = stockQuantity;
+    }
+
+    public void ReserveOne()
+    {
+        if (!IsAvailable) throw new InvalidOperationException("Esta armação não possui estoque disponível para reserva.");
+        ReservedQuantity = checked(ReservedQuantity + 1);
+    }
+
+    public void ReleaseReservation()
+    {
+        if (ReservedQuantity <= 0) throw new InvalidOperationException("A armação não possui reserva para liberar.");
+        ReservedQuantity--;
+    }
 
     public void SetImage(string imageFileName) =>
         ImageFileName = RequiredText(imageFileName, nameof(imageFileName), 80);

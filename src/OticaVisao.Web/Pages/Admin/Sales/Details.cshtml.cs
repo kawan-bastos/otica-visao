@@ -14,10 +14,16 @@ public sealed class DetailsModel(SaleService saleService, FrameCatalogService fr
     public CompleteSaleInputModel Payment { get; set; } = new();
     public SaleListItem Sale { get; private set; } = null!;
     public IReadOnlyList<FrameCatalogItem> AvailableFrames { get; private set; } = [];
+    public bool FromReservation { get; private set; }
 
-    public async Task<IActionResult> OnGetAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGetAsync(Guid id, Guid? frameId, bool fromReservation, CancellationToken cancellationToken)
     {
         if (!await LoadAsync(id, cancellationToken)) return NotFound();
+        if (frameId.HasValue && AvailableFrames.Any(frame => frame.Id == frameId.Value))
+        {
+            Input.FrameId = frameId;
+            FromReservation = fromReservation;
+        }
         return Page();
     }
 
@@ -87,7 +93,7 @@ public sealed class DetailsModel(SaleService saleService, FrameCatalogService fr
         if (sale is null) return false;
         Sale = sale;
         AvailableFrames = (await frameCatalogService.ListAsync(cancellationToken))
-            .Where(frame => frame.IsActive && frame.StockQuantity > 0 && Sale.Items.All(item => item.FrameId != frame.Id))
+            .Where(frame => frame.IsActive && frame.AvailableQuantity > 0 && Sale.Items.All(item => item.FrameId != frame.Id))
             .ToArray();
         return true;
     }

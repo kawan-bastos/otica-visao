@@ -14,9 +14,25 @@
         </div>
     </header>
 
+    <section class="site-container catalog-promotion" aria-labelledby="catalog-promotion-title">
+        <div class="catalog-promotion__price">
+            <span>Armação por</span>
+            <strong>R$ 39</strong>
+        </div>
+        <div class="catalog-promotion__content">
+            <span class="eyebrow">Condição especial</span>
+            <h2 id="catalog-promotion-title">Complete seus óculos com a gente.</h2>
+            <p>Na compra dos óculos completos, a armação sai por R$ 39. Consulte modelos e condições com nossa equipe.</p>
+        </div>
+        <a class="button button--primary" href="https://wa.me/5521965912440?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20a%20promo%C3%A7%C3%A3o%20da%20arma%C3%A7%C3%A3o%20por%20R%24%2039." target="_blank" rel="noopener noreferrer">Consultar condições</a>
+    </section>
+
     <div class="site-container catalog-layout">
         <form method="get" class="catalog-filters">
-            <h2>Filtrar armações</h2>
+            <div class="catalog-filters__heading">
+                <h2>Encontre sua armação</h2>
+                <p>Busque pelo nome ou refine os modelos usando os filtros.</p>
+            </div>
             <div class="form-field">
                 <label asp-for="Search">Buscar</label>
                 <input asp-for="Search" placeholder="Marca, modelo, cor ou código" />
@@ -47,11 +63,13 @@
                     <option value="Child">Infantil</option>
                 </select>
             </div>
-            <button class="button button--primary" type="submit">Aplicar filtros</button>
+            <button class="button button--primary" type="submit">Buscar armações</button>
             <a class="catalog-filters__clear" asp-page="Index">Limpar filtros</a>
         </form>
 
         <section class="catalog-results" aria-live="polite">
+            @if (TempData["CatalogMessage"] is string message) { <div class="admin-alert admin-alert--success">@message</div> }
+            @if (TempData["CatalogError"] is string error) { <div class="admin-alert admin-alert--error">@error</div> }
             <div class="catalog-results__heading">
                 <h2>Modelos disponíveis</h2>
                 <span>@Model.Frames.Count @(Model.Frames.Count == 1 ? "armação" : "armações")</span>
@@ -72,6 +90,7 @@
                             <a class="frame-card__visual" asp-page="Details" asp-route-id="@frame.Id">
                                 @if (frame.ImageFileName is not null)
                                 {
+                                    <span class="frame-card__photo-backdrop" style="background-image:url('/frame-images/@frame.ImageFileName')" aria-hidden="true"></span>
                                     <img src="/frame-images/@frame.ImageFileName" alt="@frame.Brand @frame.Model na cor @frame.Color" />
                                 }
                                 else
@@ -79,6 +98,18 @@
                                     <partial name="_DemoFrameImage" model="frame.Id" />
                                 }
                             </a>
+                            @if (User.Identity?.IsAuthenticated == true && !User.IsInRole(OticaVisao.Infrastructure.Authentication.AdminAuthorization.Role))
+                            {
+                                var isFavorite = Model.FavoriteIds.Contains(frame.Id);
+                                <form class="catalog-frame__favorite" method="post" asp-page-handler="Favorite" data-ajax-favorite>
+                                    <input type="hidden" name="frameId" value="@frame.Id" />
+                                    <button class="catalog-frame__favorite-button @(isFavorite ? "is-favorite" : null)" type="submit" aria-label="@(isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos")" title="@(isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos")" aria-pressed="@isFavorite.ToString().ToLowerInvariant()">@(isFavorite ? "♥" : "♡")</button>
+                                </form>
+                            }
+                            else if (User.Identity?.IsAuthenticated != true)
+                            {
+                                <a class="catalog-frame__favorite-button catalog-frame__favorite-login" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/Frames/Index")" aria-label="Entrar para adicionar aos favoritos" title="Entrar para adicionar aos favoritos">♡</a>
+                            }
                             <div class="frame-card__body">
                                 <p class="frame-card__brand">@frame.Brand · @IndexModel.TypeName(frame.Type)</p>
                                 <h3>@frame.Model</h3>

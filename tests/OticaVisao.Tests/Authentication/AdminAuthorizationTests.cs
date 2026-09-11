@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using OticaVisao.Infrastructure.Authentication;
 
 namespace OticaVisao.Tests.Authentication;
 
@@ -116,6 +118,57 @@ public sealed class AdminAuthorizationTests : IClassFixture<WebApplicationFactor
 
         Assert.Equal(HttpStatusCode.TooManyRequests, response!.StatusCode);
         Assert.Contains("Muitas tentativas", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public void GeneralAdministratorHasEveryPanelPermission()
+    {
+        var user = Principal(new Claim(ClaimTypes.Role, AdminAuthorization.GeneralRole));
+
+        Assert.All(AdminAuthorization.Permissions,
+            permission => Assert.True(AdminAuthorization.HasPermission(user, permission.Value)));
+    }
+
+    [Fact]
+    public void OrdinaryAdministratorOnlyHasSelectedPanelPermission()
+    {
+        var user = Principal(
+            new Claim(ClaimTypes.Role, AdminAuthorization.Role),
+            new Claim(AdminAuthorization.PermissionClaim, AdminAuthorization.FramesPermission));
+
+        Assert.True(AdminAuthorization.HasPermission(user, AdminAuthorization.FramesPermission));
+        Assert.False(AdminAuthorization.HasPermission(user, AdminAuthorization.ReportsPermission));
+    }
+
+    [Fact]
+    public void AllPanelsClaimUnlocksEveryPanelWithoutGeneralAdministration()
+    {
+        var user = Principal(
+            new Claim(ClaimTypes.Role, AdminAuthorization.Role),
+            new Claim(AdminAuthorization.PermissionClaim, AdminAuthorization.AllPanelsPermission));
+
+        Assert.All(AdminAuthorization.Permissions,
+            permission => Assert.True(AdminAuthorization.HasPermission(user, permission.Value)));
+        Assert.False(user.IsInRole(AdminAuthorization.GeneralRole));
+    }
+
+    private static ClaimsPrincipal Principal(params Claim[] claims) =>
+        new(new ClaimsIdentity(claims, "Test"));
+
+    [Fact]
+    public async Task RegistrationUsesStricterRateLimit()
+    {
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        HttpResponseMessage? response = null;
+        for (var attempt = 0; attempt < 6; attempt++)
+            response = await client.PostAsync("/Account/Register", new FormUrlEncodedContent([]));
+
+        Assert.Equal(HttpStatusCode.TooManyRequests, response!.StatusCode);
     }
 
     [Theory]

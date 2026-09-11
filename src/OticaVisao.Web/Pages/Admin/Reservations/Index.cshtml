@@ -1,0 +1,59 @@
+@page
+@using OticaVisao.Domain.Engagement
+@model OticaVisao.Web.Pages.Admin.Reservations.IndexModel
+@{ ViewData["Title"] = "Reservas"; }
+
+<main class="admin-page reservation-admin">
+    <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
+    <header class="admin-page__header"><div><span class="eyebrow">Atendimento</span><h1>Reservas de armações</h1><p>Pesquise o histórico, acompanhe as separações por 24 horas e identifique os modelos mais procurados.</p></div></header>
+    @if (TempData["ReservationMessage"] is string ok) { <div class="admin-alert admin-alert--success">@ok</div> }
+    @if (TempData["ReservationError"] is string error) { <div class="admin-alert admin-alert--error">@error</div> }
+
+    <section class="admin-summary reservation-summary" aria-label="Resumo das reservas">
+        <article><span>Total no histórico</span><strong>@Model.TotalReservations</strong></article>
+        <article><span>Ativas agora</span><strong>@Model.ActiveReservations</strong></article>
+        <article><span>Reservadas hoje</span><strong>@Model.TodayReservations</strong></article>
+        <article><span>Vendas concluídas</span><strong>@Model.ConvertedReservations</strong></article>
+    </section>
+
+    <form method="get" class="reservation-filters">
+        <div class="reservation-filters__heading"><h2>Buscar e filtrar</h2><p>Combine os campos para localizar uma reserva específica.</p></div>
+        <div class="form-field reservation-filters__search"><label asp-for="Search">Cliente ou armação</label><input asp-for="Search" placeholder="Nome, telefone, código, modelo ou cor" /></div>
+        <div class="form-field"><label asp-for="Status">Situação</label><select asp-for="Status"><option value="">Todas</option><option value="active">Ativas</option><option value="expired">Expiradas</option><option value="cancelled">Canceladas</option><option value="converted">Vendas concluídas</option><option value="reversed">Vendas estornadas</option></select></div>
+        <div class="form-field"><label asp-for="Date">Dia da reserva</label><input asp-for="Date" type="date" /></div>
+        <div class="form-field"><label asp-for="Sort">Ordenar por</label><select asp-for="Sort"><option value="newest">Mais recentes</option><option value="oldest">Mais antigas</option><option value="expiring">Próximas de vencer</option><option value="most-reserved">Armações mais reservadas</option></select></div>
+        <button class="button button--primary" type="submit">Aplicar filtros</button>
+        <a class="reservation-filters__clear" asp-page="Index">Limpar filtros</a>
+    </form>
+
+    @if (Model.PopularFrames.Count > 0)
+    {
+        <section class="reservation-popular" aria-labelledby="popular-title">
+            <div><span class="eyebrow eyebrow--dark">Preferência dos clientes</span><h2 id="popular-title">Armações mais reservadas</h2></div>
+            <ol>@foreach (var frame in Model.PopularFrames) { <li><span><strong>@frame.Name</strong><small>@frame.Code</small></span><b>@frame.Reservations @(frame.Reservations == 1 ? "reserva" : "reservas")</b></li> }</ol>
+        </section>
+    }
+
+    <div class="catalog-results__heading reservation-results-heading"><h2>Reservas encontradas</h2><span>@Model.Reservations.Count resultado(s)</span></div>
+    @if (Model.Reservations.Count == 0)
+    {
+        <div class="catalog-empty"><h3>Nenhuma reserva encontrada</h3><p>Altere os filtros para consultar outro período ou situação.</p></div>
+    }
+    else
+    {
+        <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Cliente</th><th>Armação</th><th>Reservada em</th><th>Visita</th><th>Validade</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
+        @foreach (var item in Model.Reservations)
+        {
+            <tr>
+                <td data-label="Cliente"><div class="reservation-cell-stack"><strong>@item.CustomerName</strong><span class="reservation-cell-detail"><small>Telefone</small>@item.CustomerPhone</span></div></td>
+                <td data-label="Armação"><div class="reservation-cell-stack"><strong>@item.Frame.Brand @item.Frame.Model</strong><span class="reservation-frame-details"><span><small>Código</small>@item.Frame.Code</span><span><small>Cor</small>@item.Frame.Color</span></span></div></td>
+                <td data-label="Reservada em">@item.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                <td data-label="Visita">@(item.VisitPeriod ?? "Não informada")</td>
+                <td data-label="Validade">@item.ExpiresAtUtc.ToLocalTime().ToString("dd/MM HH:mm")</td>
+                <td data-label="Situação"><span class="reservation-status">@Model.StatusName(item)</span></td>
+                <td class="admin-table__actions @(item.Status != FrameReservationStatus.Active && !item.SaleId.HasValue ? "reservation-actions--empty" : null)" data-label="Ações">@if (item.Status == FrameReservationStatus.Active) { <form method="post" asp-page-handler="Convert"><input type="hidden" name="id" value="@item.Id" /><button class="admin-table__button" type="submit">Iniciar venda</button></form><form method="post" asp-page-handler="Cancel"><input type="hidden" name="id" value="@item.Id" /><button class="admin-table__button admin-table__button--danger" type="submit">Cancelar</button></form> } else if (item.SaleId.HasValue) { <a class="admin-table__button" asp-page="/Admin/Sales/Details" asp-route-id="@item.SaleId">Ver venda</a> } else { <span class="reservation-no-action">Nenhuma ação disponível</span> }</td>
+            </tr>
+        }
+        </tbody></table></div>
+    }
+</main>

@@ -10,4 +10,5 @@ public sealed record AddSaleItemRequest(
     decimal LensUnitPrice,
     OpticalLaboratory? Laboratory,
     LensPrescription? Prescription = null,
-    DateOnly? ExpectedDeliveryDate = null);
+    DateOnly? ExpectedDeliveryDate = null,
+    decimal? FrameUnitPrice = null);

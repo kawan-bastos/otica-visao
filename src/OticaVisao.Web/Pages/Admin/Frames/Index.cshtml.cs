@@ -27,7 +27,7 @@ public sealed class IndexModel(FrameCatalogService catalogService) : PageModel
         var frames = await catalogService.ListAsync(cancellationToken);
         TotalFrames = frames.Count;
         AvailableFrames = frames.Count(frame => frame.IsAvailable);
-        LowStockFrames = frames.Count(frame => frame.IsAvailable && frame.StockQuantity <= 2);
+        LowStockFrames = frames.Count(frame => frame.IsAvailable && frame.AvailableQuantity <= 2);
         OutOfStockFrames = frames.Count(frame => frame.StockQuantity == 0);
 
         IEnumerable<FrameCatalogItem> filteredFrames = frames;
@@ -44,7 +44,7 @@ public sealed class IndexModel(FrameCatalogService catalogService) : PageModel
         filteredFrames = Status switch
         {
             "available" => filteredFrames.Where(frame => frame.IsAvailable),
-            "low" => filteredFrames.Where(frame => frame.IsAvailable && frame.StockQuantity <= 2),
+            "low" => filteredFrames.Where(frame => frame.IsAvailable && frame.AvailableQuantity <= 2),
             "out" => filteredFrames.Where(frame => frame.StockQuantity == 0),
             "hidden" => filteredFrames.Where(frame => !frame.IsActive || !frame.IsPublished),
             _ => filteredFrames
@@ -60,6 +60,7 @@ public sealed class IndexModel(FrameCatalogService catalogService) : PageModel
         CancellationToken cancellationToken)
     {
         await catalogService.AddToStockAsync(id, 1, cancellationToken);
+        if (WantsJson()) return await StockResultAsync(id, cancellationToken);
         TempData["SuccessMessage"] = "Uma unidade foi adicionada ao estoque.";
         return RedirectToPage(new { search, status });
     }
@@ -73,13 +74,37 @@ public sealed class IndexModel(FrameCatalogService catalogService) : PageModel
         try
         {
             await catalogService.RemoveFromStockAsync(id, 1, cancellationToken);
+            if (WantsJson()) return await StockResultAsync(id, cancellationToken);
             TempData["SuccessMessage"] = "Uma unidade foi retirada do estoque.";
         }
         catch (InvalidOperationException)
         {
-            TempData["ErrorMessage"] = "O estoque desta armação já está zerado.";
+            if (WantsJson()) return new JsonResult(new { success = false, message = "Não é possível retirar esta unidade porque ela está reservada. Cancele a reserva primeiro na aba Reservas." }) { StatusCode = StatusCodes.Status409Conflict };
+            TempData["ErrorMessage"] = "Não é possível retirar esta unidade porque ela está reservada. Cancele a reserva primeiro na aba Reservas.";
         }
 
         return RedirectToPage(new { search, status });
+    }
+
+    private bool WantsJson() => Request.Headers.Accept.ToString().Contains("application/json", StringComparison.OrdinalIgnoreCase);
+
+    private async Task<IActionResult> StockResultAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var frames = await catalogService.ListAsync(cancellationToken);
+        var frame = frames.First(item => item.Id == id);
+        return new JsonResult(new
+        {
+            success = true,
+            quantity = frame.StockQuantity,
+            availableQuantity = frame.AvailableQuantity,
+            reservedQuantity = frame.ReservedQuantity,
+            isAvailable = frame.IsAvailable,
+            summaries = new
+            {
+                available = frames.Count(item => item.IsAvailable),
+                low = frames.Count(item => item.IsAvailable && item.AvailableQuantity <= 2),
+                @out = frames.Count(item => item.StockQuantity == 0)
+            }
+        });
     }
 }

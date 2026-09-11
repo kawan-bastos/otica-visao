@@ -1,50 +1,53 @@
 @page
+@using OticaVisao.Application.Reports
 @using OticaVisao.Domain.Sales
 @model OticaVisao.Web.Pages.Admin.Reports.IndexModel
-@{ ViewData["Title"] = "Relatórios"; var culture = new System.Globalization.CultureInfo("pt-BR"); var maximumDailyTotal = Model.Report.DailySales.Count == 0 ? 0 : Model.Report.DailySales.Max(item => item.Total); }
+@{
+    ViewData["Title"] = "Visão geral";
+    var culture = new System.Globalization.CultureInfo("pt-BR");
+    var daily = Model.Report.DailySales.TakeLast(12).ToArray();
+}
 
-<main class="admin-page">
+<main class="admin-page analytics-page">
     <partial name="/Pages/Admin/_AdminNavigation.cshtml" />
-    <header class="admin-page__header"><div><span class="eyebrow">Visão do negócio</span><h1>Relatórios</h1><p>Acompanhe vendas e estoque dentro do período escolhido.</p></div></header>
+    <partial name="/Pages/Admin/Reports/_ReportNavigation.cshtml" />
+    <header class="analytics-header">
+        <div><span class="eyebrow">Visão do negócio</span><h1>Resumo da operação</h1><p>@Model.RangeLabel · @Model.ComparisonLabel</p></div>
+        <div class="analytics-header__actions">
+            <nav class="analytics-ranges" aria-label="Período do relatório">
+                @foreach (var range in new[] { (1, "24h"), (7, "7d"), (30, "30d"), (90, "90d") })
+                { <a class="@(Model.Days == range.Item1 ? "active" : null)" asp-route-days="@range.Item1" aria-current="@(Model.Days == range.Item1 ? "page" : null)">@range.Item2</a> }
+            </nav>
+            <a class="analytics-export" asp-page-handler="Export" asp-route-days="@Model.Days">Exportar CSV</a>
+        </div>
+    </header>
 
-    <form method="get" class="report-filters">
-        <div class="form-field"><label asp-for="From">Data inicial</label><input asp-for="From" type="date" /></div>
-        <div class="form-field"><label asp-for="To">Data final</label><input asp-for="To" type="date" /></div>
-        <button class="button button--primary" type="submit">Atualizar relatório</button>
-    </form>
-    <div asp-validation-summary="ModelOnly" class="form-validation" role="alert"></div>
-
-    <section class="report-summary">
-        <article><span>Faturamento</span><strong>@Model.Report.Revenue.ToString("C", culture)</strong><small>@Model.Report.CompletedSales venda(s) concluída(s)</small></article>
-        <article><span>Ticket médio</span><strong>@Model.Report.AverageTicket.ToString("C", culture)</strong><small>Média por venda</small></article>
-        <article><span>Unidades vendidas</span><strong>@Model.Report.SoldUnits</strong><small>@Model.Report.CompleteGlasses óculos completo(s)</small></article>
-        <article><span>Clientes atendidos</span><strong>@Model.Report.UniqueCustomers</strong><small>@Model.Report.CancelledSales cancelamento(s)</small></article>
-        <article><span>Vendas estornadas</span><strong>@Model.Report.ReversedSales</strong><small>Não contabilizadas no faturamento</small></article>
+    <section class="analytics-metrics" aria-label="Indicadores principais">
+        <article class="analytics-metric"><span>Faturamento</span><div class="analytics-metric__value"><strong>@Model.Report.Revenue.ToString("C", culture)</strong><b class="@ChangeClass(Model.Report.Revenue, Model.PreviousReport.Revenue)">@ChangeText(Model.Report.Revenue, Model.PreviousReport.Revenue)</b></div><div class="analytics-spark" aria-hidden="true">@if (daily.Length == 0) { for (var i = 0; i < 12; i++) { <i style="height:8%"></i> } } else { var max = daily.Max(x => x.Total); foreach (var day in daily) { <i style="height:@BarHeight(day.Total, max)%"></i> } }</div></article>
+        <article class="analytics-metric"><span>Vendas concluídas</span><div class="analytics-metric__value"><strong>@Model.Report.CompletedSales</strong><b class="@ChangeClass(Model.Report.CompletedSales, Model.PreviousReport.CompletedSales)">@ChangeText(Model.Report.CompletedSales, Model.PreviousReport.CompletedSales)</b></div><div class="analytics-spark" aria-hidden="true">@if (daily.Length == 0) { for (var i = 0; i < 12; i++) { <i style="height:8%"></i> } } else { var max = daily.Max(x => x.Sales); foreach (var day in daily) { <i style="height:@BarHeight(day.Sales, max)%"></i> } }</div></article>
+        <article class="analytics-metric"><span>Ticket médio</span><div class="analytics-metric__value"><strong>@Model.Report.AverageTicket.ToString("C", culture)</strong><b class="@ChangeClass(Model.Report.AverageTicket, Model.PreviousReport.AverageTicket)">@ChangeText(Model.Report.AverageTicket, Model.PreviousReport.AverageTicket)</b></div><div class="analytics-spark" aria-hidden="true">@if (daily.Length == 0) { for (var i = 0; i < 12; i++) { <i style="height:8%"></i> } } else { var max = daily.Max(x => x.Sales == 0 ? 0 : x.Total / x.Sales); foreach (var day in daily) { <i style="height:@BarHeight(day.Sales == 0 ? 0 : day.Total / day.Sales, max)%"></i> } }</div></article>
+        <article class="analytics-metric"><span>Unidades vendidas</span><div class="analytics-metric__value"><strong>@Model.Report.SoldUnits</strong><b class="@ChangeClass(Model.Report.SoldUnits, Model.PreviousReport.SoldUnits)">@ChangeText(Model.Report.SoldUnits, Model.PreviousReport.SoldUnits)</b></div><div class="analytics-spark" aria-hidden="true">@if (daily.Length == 0) { for (var i = 0; i < 12; i++) { <i style="height:8%"></i> } } else { var max = daily.Max(x => x.SoldUnits); foreach (var day in daily) { <i style="height:@BarHeight(day.SoldUnits, max)%"></i> } }</div></article>
     </section>
 
-    <div class="report-grid">
-        <section class="report-card">
-            <div class="admin-form__section-heading"><h2>Vendas por dia</h2><p>Movimento financeiro no período.</p></div>
-            @if (Model.Report.DailySales.Count == 0) { <p class="report-empty">Nenhuma venda concluída no período.</p> }
-            else { <div class="report-bars">@foreach (var day in Model.Report.DailySales) { var width = maximumDailyTotal == 0 ? 0 : day.Total / maximumDailyTotal * 100; <div class="report-bar"><div><strong>@day.Date.ToString("dd/MM")</strong><span>@day.Sales venda(s) · @day.Total.ToString("C", culture)</span></div><div class="report-bar__track"><span style="width: @width.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%"></span></div></div> }</div> }
-        </section>
-        <section class="report-card">
-            <div class="admin-form__section-heading"><h2>Formas de pagamento</h2><p>Distribuição do faturamento.</p></div>
-            @if (Model.Report.Payments.Count == 0) { <p class="report-empty">Nenhum pagamento no período.</p> }
-            else { <ul class="report-list">@foreach (var payment in Model.Report.Payments) { <li><div><strong>@PaymentName(payment.Method)</strong><span>@payment.Sales venda(s)</span></div><strong>@payment.Total.ToString("C", culture)</strong></li> }</ul> }
-        </section>
-        <section class="report-card">
-            <div class="admin-form__section-heading"><h2>Armações mais vendidas</h2><p>Ranking por quantidade.</p></div>
-            @if (Model.Report.TopFrames.Count == 0) { <p class="report-empty">Nenhuma armação vendida no período.</p> }
-            else { <ol class="report-ranking">@foreach (var frame in Model.Report.TopFrames) { <li><span>@frame.Code</span><div><strong>@frame.Description</strong><small>@frame.Quantity unidade(s) · @frame.Total.ToString("C", culture)</small></div></li> }</ol> }
-        </section>
-        <section class="report-card">
-            <div class="admin-form__section-heading"><h2>Estoque baixo</h2><p>Armações ativas com até 2 unidades.</p></div>
-            @if (Model.Report.LowStock.Count == 0) { <p class="report-empty">Nenhum alerta de estoque.</p> }
-            else { <ul class="report-list">@foreach (var frame in Model.Report.LowStock) { <li><div><strong>@frame.Description</strong><span>@frame.Code</span></div><a asp-page="/Admin/Frames/Edit" asp-route-id="@frame.FrameId">@frame.StockQuantity unidade(s)</a></li> }</ul> }
-        </section>
+    <section class="analytics-chart-card">
+        <header><div><h2>Desempenho no período</h2><p>Vendas concluídas; estornos não entram no faturamento.</p></div><div class="analytics-legend"><span><i class="revenue"></i>Faturamento</span><span><i class="sales"></i>Vendas</span></div></header>
+        @if (Model.Report.DailySales.Count == 0) { <div class="analytics-chart-empty">Ainda não há vendas concluídas neste período.</div> }
+        else { <div class="analytics-chart" role="img" aria-label="Evolução de faturamento e quantidade de vendas"><svg viewBox="0 0 900 280" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="revenueArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#08aab4" stop-opacity=".28"/><stop offset="1" stop-color="#08aab4" stop-opacity="0"/></linearGradient></defs><g class="analytics-gridlines"><line x1="0" y1="50" x2="900" y2="50"/><line x1="0" y1="105" x2="900" y2="105"/><line x1="0" y1="160" x2="900" y2="160"/><line x1="0" y1="215" x2="900" y2="215"/><line x1="0" y1="260" x2="900" y2="260"/></g><polygon class="analytics-area" points="0,260 @ChartPoints(Model.Report.DailySales, true) 900,260"/><polyline class="analytics-line analytics-line--revenue" points="@ChartPoints(Model.Report.DailySales, true)"/><polyline class="analytics-line analytics-line--sales" points="@ChartPoints(Model.Report.DailySales, false)"/></svg><div class="analytics-chart__dates"><span>@Model.Report.From.ToString("dd/MM")</span><span>@Model.Report.To.ToString("dd/MM")</span></div></div> }
+        <footer><span><strong>@Model.Report.UniqueCustomers</strong> clientes atendidos</span><span><strong>@Model.Report.CompleteGlasses</strong> óculos completos</span><span><strong>@Model.Report.ReversedSales</strong> estornos</span><span><strong>@Model.Report.DraftSales</strong> vendas em andamento</span></footer>
+    </section>
+
+    <div class="report-grid analytics-details">
+        <section class="report-card"><div class="admin-form__section-heading"><h2>Formas de pagamento</h2><p>Distribuição do faturamento.</p></div>@if (Model.Report.Payments.Count == 0) { <p class="report-empty">Nenhum pagamento no período.</p> } else { <ul class="report-list">@foreach (var payment in Model.Report.Payments) { <li><div><strong>@PaymentName(payment.Method)</strong><span>@payment.Sales venda(s)</span></div><strong>@payment.Total.ToString("C", culture)</strong></li> }</ul> }</section>
+        <section class="report-card"><div class="admin-form__section-heading"><h2>Armações mais vendidas</h2><p>Ranking por quantidade.</p></div>@if (Model.Report.TopFrames.Count == 0) { <p class="report-empty">Nenhuma armação vendida no período.</p> } else { <ol class="report-ranking">@foreach (var frame in Model.Report.TopFrames) { <li><span>@frame.Code</span><div><strong>@frame.Description</strong><small>@frame.Quantity unidade(s) · @frame.Total.ToString("C", culture)</small></div></li> }</ol> }</section>
+        <section class="report-card"><div class="admin-form__section-heading"><h2>Estoque baixo</h2><p>Armações ativas com até 2 unidades.</p></div>@if (Model.Report.LowStock.Count == 0) { <p class="report-empty">Nenhum alerta de estoque.</p> } else { <ul class="report-list">@foreach (var frame in Model.Report.LowStock) { <li><div><strong>@frame.Description</strong><span>@frame.Code</span></div><a asp-page="/Admin/Frames/Edit" asp-route-id="@frame.FrameId">@frame.StockQuantity unidade(s)</a></li> }</ul> }</section>
     </div>
-    @if (Model.Report.DraftSales > 0) { <div class="admin-alert admin-alert--error report-drafts"><strong>@Model.Report.DraftSales venda(s) ainda em andamento.</strong> Confira se algum atendimento antigo deve ser concluído ou cancelado.</div> }
 </main>
 
-@functions { private static string PaymentName(PaymentMethod method) => method switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", _ => "Cartão de crédito" }; }
+@functions {
+    private static string PaymentName(PaymentMethod method) => method switch { PaymentMethod.Pix => "Pix", PaymentMethod.DebitCard => "Cartão de débito", _ => "Cartão de crédito" };
+    private static decimal Change(decimal current, decimal previous) => previous == 0 ? (current == 0 ? 0 : 100) : (current - previous) / previous * 100;
+    private static string ChangeClass(decimal current, decimal previous) => Change(current, previous) < 0 ? "negative" : "positive";
+    private static string ChangeText(decimal current, decimal previous) { var value = Change(current, previous); return $"{(value >= 0 ? "+" : "")}{value:0.#}%"; }
+    private static string BarHeight(decimal value, decimal maximum) => (maximum <= 0 ? 8 : Math.Max(8, value / maximum * 100)).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+    private static string ChartPoints(IReadOnlyList<DailySalesReportItem> values, bool revenue) { var source = values.Select(x => revenue ? x.Total : x.Sales).ToArray(); var maximum = source.Length == 0 ? 0 : source.Max(); return string.Join(" ", source.Select((value, index) => { var x = source.Length == 1 ? 450 : index * 900d / (source.Length - 1); var y = maximum <= 0 ? 260 : 250 - (double)(value / maximum) * 205; return $"{x.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)},{y.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)}"; })); }
+}
